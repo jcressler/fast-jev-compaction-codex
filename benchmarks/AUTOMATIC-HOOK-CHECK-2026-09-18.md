@@ -1,9 +1,10 @@
 # Automatic recovery integration check — 2026-09-18
 
 Version 0.3.5 brings requirement-coverage ordering into automatic recovery.
-The production hook-function check passed with one live Jev request. The separate
-native Codex smoke stopped at an authentication error, before native compaction
-completed. This is an integration report, not a new quality comparison.
+The production hook-function check passed with one live Jev request. After fixing
+the isolated test profile's login, the native Codex smoke also passed with a real
+Jev request, completed compaction, and a model continuation confirming receipt of
+the recovery index. This is an integration report, not a new quality comparison.
 
 ## Changes
 
@@ -43,18 +44,51 @@ request state, questions, answers and implementation hashes. Credentials, native
 transcripts and opaque reasoning are excluded. Provider token counts are not a
 verified dollar bill. Requirement omissions in this fixture are reported, not hidden.
 
-## Native host smoke
+## Native host smoke — authenticated retry passed
 
-Codex CLI 0.155.0 recognized both existing reviewed user hooks as trusted. It
-dispatched PreCompact with a persistent transcript; the evaluation bridge ran
-the current production hook using deterministic offline scores. No live Jev call
-was made in this smoke. Runtime hashes remained unchanged.
+The first attempt returned HTTP 401 because the isolated profile had no login.
+That attempt used offline equal scores and stopped before recovery delivery. Its
+result remains in the JSON under `priorNativeChecks`.
 
-Native compaction then returned HTTP 401 because the isolated profile lacked
-authentication. SessionStart recovery and the model continuation were not reached.
-Consequently native host acceptance of the new recovery context remains unverified
-in this run. This reviewed user-hook bridge also does not establish acceptance of
-the bundled plugin installation. The failed attempt is retained in the local logs.
+The test profile then completed the standard `codex login` browser flow. Both
+the CLI login-status command and the app-server account check confirmed ChatGPT
+authentication. No existing credential file was copied. The scratch runner now
+checks authentication before starting a test and saves each run separately.
+This follows the [official Codex sign-in flow](https://learn.chatgpt.com/docs/auth).
+
+The retry used Codex CLI 0.155.0, `gpt-5.6-luna`, medium reasoning, and unchanged
+v0.3.5 production code at commit `43a878aea92e9c6f394c6aea63d15d8973ea0f4e`.
+The native host dispatched both trusted, reviewed user hooks through the existing
+evaluation bridge. PreCompact made a real Jev request; native compaction completed;
+SessionStart restored the index before the next model turn.
+
+| Measurement | Result |
+| --- | --- |
+| Native compaction / continuation | Both completed |
+| Live Jev requests / fallback | 1 / none |
+| Jev model | jev-1.13.0 |
+| Candidates / extracted requirement units | 3 / 6; 4 units omitted |
+| Serialized request characters | 9,901 |
+| Selection elapsed time, including local preparation | 722 ms |
+| Jev input / output tokens | 4,000 / 454 |
+| Hook-emitted references / characters | 3 / 1,883 |
+| Compaction elapsed time, including PreCompact | 6,648 ms |
+| Model continuation elapsed time | 3,327 ms |
+| Matching hook session and context hash | Pass |
+| Runtime hashes unchanged | Pass |
+
+The continuation returned `checkpointMarker: HOOK-SMOKE-CANARY-731` and
+`recoverySelection: jev`. The continuation prompt supplied neither expected value.
+The marker was also in the original checkpoint, so preserving it alone would not
+prove hook delivery. The `Selection: jev` line appeared only in the hook context;
+the model's reflection supports receipt of that index after native compaction.
+All 12 recorded assertions passed.
+
+This was a small injected-checkpoint smoke, not a long coding task. It verifies
+native delivery through reviewed user hooks, not bundled plugin installation,
+use of every evidence excerpt, or better task outcomes. No archive-retrieval tool
+was used. Native transcripts, credentials, and opaque reasoning are not published.
+Provider token counts are not a verified dollar bill.
 
 ## Verification and next step
 

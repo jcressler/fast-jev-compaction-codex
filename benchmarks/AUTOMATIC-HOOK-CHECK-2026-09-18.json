@@ -2482,62 +2482,162 @@
     ]
   },
   "nativeCheck": {
-    "status": "blocked-authentication",
+    "status": "passed",
+    "runtimeVersion": "0.155.0",
+    "model": "gpt-5.6-luna",
+    "effort": "medium",
+    "implementationCommit": "43a878aea92e9c6f394c6aea63d15d8973ea0f4e",
+    "authentication": "Isolated profile authenticated with the standard codex login browser flow; no credential copy.",
     "trustedReviewedUserHooks": true,
     "bundledPluginAcceptanceVerified": false,
-    "actualJevRequests": 0,
-    "nativeCompactionCompleted": false,
-    "continuationCompleted": false,
-    "hostContextAcceptanceVerified": false,
-    "failure": "401 Unauthorized: missing bearer or basic authentication in isolated Codex profile",
+    "actualJevRequests": 1,
+    "noFallback": true,
+    "nativeCompactionCompleted": true,
+    "continuationCompleted": true,
+    "hostContextAcceptanceVerified": true,
+    "contextAcceptanceEvidence": "The continuation identified Selection: jev, which appeared only in the hook context, and preserved the synthetic checkpoint marker. This checks receipt of the index, not use of every excerpt.",
+    "runtimeHashesBefore": {
+      "hooks": "af501b03917a1900a5197a0bbf0d25ad82e16d41e6596482403447dc4c6fec89",
+      "selection": "b1b4239408208000ef865e222a191a2c2f1e34d50d8b2d452ef154b59992d636"
+    },
+    "runtimeHashesAfter": {
+      "hooks": "af501b03917a1900a5197a0bbf0d25ad82e16d41e6596482403447dc4c6fec89",
+      "selection": "b1b4239408208000ef865e222a191a2c2f1e34d50d8b2d452ef154b59992d636"
+    },
     "runtimeHashesUnchanged": true,
+    "compactionLatencyMs": 6648,
+    "continuationLatencyMs": 3327,
+    "continuation": {
+      "checkpointMarker": "HOOK-SMOKE-CANARY-731",
+      "recoverySelection": "jev"
+    },
+    "assertions": {
+      "trustedHooksBeforeTurn": true,
+      "nativeCompaction": true,
+      "continuationCompleted": true,
+      "exactHookSession": true,
+      "onePreCompact": true,
+      "oneSessionStart": true,
+      "expectedSelectionMode": true,
+      "expectedJevRequests": true,
+      "contextHashVerified": true,
+      "nativeContextSeen": true,
+      "recoverySelectionSeen": true,
+      "runtimeUnchanged": true
+    },
     "events": [
       {
         "event": "PreCompact",
-        "mode": "candidate-order",
+        "mode": "jev",
         "transcriptPresent": true,
-        "actualJevRequests": 0,
+        "actualJevRequests": 1,
+        "latencyMs": 742,
         "contextChars": 0,
+        "contextHash": null,
         "selection": {
           "version": 1,
-          "generation": "a129d4c2-b93e-4509-ab03-651657dd1fe5",
-          "mode": "candidate-order",
+          "generation": "cd841942-7a08-4551-a13e-84eae96c59a0",
+          "mode": "jev",
           "selectedIds": [
-            "3237712b9bc0031f58833ca790f52ba251c5211b8eed52e29049ca6d08aece0e",
-            "84388ad271978f0facc1a130e2523fe0783ab1003a9b58a1947e4744662f6a57",
-            "c23b56af4562aff3b49a5a7ed90c06c9bbe76d98c9c1c467f5b3f25d12f2f943"
+            "ddfe658b67cc7ed612191946b7f461b466bf1ef7bd0a796c5423ca7746b2fb99",
+            "d7d5147f83b7ad2fd112474493912fb45b306b0954da68593ca80d2cf87c53da",
+            "33928f917cd0fbe0efb139a93c67309292d3f3471e98597f0aee7478b36b2ee3"
           ],
-          "requests": 0,
-          "latencyMs": 9,
+          "requests": 1,
+          "latencyMs": 722,
           "candidateCount": 3,
           "requestChars": 9901,
           "requirements": {
             "ids": [
-              "3237712b9bc0031f58833ca790f52ba251c5211b8eed52e29049ca6d08aece0e:r3",
-              "3237712b9bc0031f58833ca790f52ba251c5211b8eed52e29049ca6d08aece0e:r1",
-              "3237712b9bc0031f58833ca790f52ba251c5211b8eed52e29049ca6d08aece0e:r2",
-              "84388ad271978f0facc1a130e2523fe0783ab1003a9b58a1947e4744662f6a57:r7",
-              "84388ad271978f0facc1a130e2523fe0783ab1003a9b58a1947e4744662f6a57:r5",
-              "84388ad271978f0facc1a130e2523fe0783ab1003a9b58a1947e4744662f6a57:r4"
+              "ddfe658b67cc7ed612191946b7f461b466bf1ef7bd0a796c5423ca7746b2fb99:r3",
+              "ddfe658b67cc7ed612191946b7f461b466bf1ef7bd0a796c5423ca7746b2fb99:r1",
+              "ddfe658b67cc7ed612191946b7f461b466bf1ef7bd0a796c5423ca7746b2fb99:r2",
+              "33928f917cd0fbe0efb139a93c67309292d3f3471e98597f0aee7478b36b2ee3:r7",
+              "33928f917cd0fbe0efb139a93c67309292d3f3471e98597f0aee7478b36b2ee3:r5",
+              "33928f917cd0fbe0efb139a93c67309292d3f3471e98597f0aee7478b36b2ee3:r4"
             ],
             "sourceIds": [
-              "3237712b9bc0031f58833ca790f52ba251c5211b8eed52e29049ca6d08aece0e",
-              "3237712b9bc0031f58833ca790f52ba251c5211b8eed52e29049ca6d08aece0e",
-              "3237712b9bc0031f58833ca790f52ba251c5211b8eed52e29049ca6d08aece0e",
-              "84388ad271978f0facc1a130e2523fe0783ab1003a9b58a1947e4744662f6a57",
-              "84388ad271978f0facc1a130e2523fe0783ab1003a9b58a1947e4744662f6a57",
-              "84388ad271978f0facc1a130e2523fe0783ab1003a9b58a1947e4744662f6a57"
+              "ddfe658b67cc7ed612191946b7f461b466bf1ef7bd0a796c5423ca7746b2fb99",
+              "ddfe658b67cc7ed612191946b7f461b466bf1ef7bd0a796c5423ca7746b2fb99",
+              "ddfe658b67cc7ed612191946b7f461b466bf1ef7bd0a796c5423ca7746b2fb99",
+              "33928f917cd0fbe0efb139a93c67309292d3f3471e98597f0aee7478b36b2ee3",
+              "33928f917cd0fbe0efb139a93c67309292d3f3471e98597f0aee7478b36b2ee3",
+              "33928f917cd0fbe0efb139a93c67309292d3f3471e98597f0aee7478b36b2ee3"
             ],
             "included": 6,
             "omitted": 4,
             "omittedSourceIds": [
-              "84388ad271978f0facc1a130e2523fe0783ab1003a9b58a1947e4744662f6a57"
+              "33928f917cd0fbe0efb139a93c67309292d3f3471e98597f0aee7478b36b2ee3"
             ]
           },
-          "model": null
+          "model": "jev-1.13.0",
+          "usage": {
+            "input_tokens": 4000,
+            "output_tokens": 454
+          }
+        }
+      },
+      {
+        "event": "SessionStart",
+        "source": "compact",
+        "mode": "jev",
+        "transcriptPresent": true,
+        "actualJevRequests": 0,
+        "latencyMs": 13,
+        "contextChars": 1883,
+        "contextHash": "6d13a6639648104169d50014451b1dae514727d97852b6d3f0c8d3fe42fec21b",
+        "selection": {
+          "version": 1,
+          "generation": "cd841942-7a08-4551-a13e-84eae96c59a0",
+          "mode": "jev",
+          "selectedIds": [
+            "ddfe658b67cc7ed612191946b7f461b466bf1ef7bd0a796c5423ca7746b2fb99",
+            "d7d5147f83b7ad2fd112474493912fb45b306b0954da68593ca80d2cf87c53da",
+            "33928f917cd0fbe0efb139a93c67309292d3f3471e98597f0aee7478b36b2ee3"
+          ],
+          "requests": 1,
+          "latencyMs": 722,
+          "candidateCount": 3,
+          "requestChars": 9901,
+          "requirements": {
+            "ids": [
+              "ddfe658b67cc7ed612191946b7f461b466bf1ef7bd0a796c5423ca7746b2fb99:r3",
+              "ddfe658b67cc7ed612191946b7f461b466bf1ef7bd0a796c5423ca7746b2fb99:r1",
+              "ddfe658b67cc7ed612191946b7f461b466bf1ef7bd0a796c5423ca7746b2fb99:r2",
+              "33928f917cd0fbe0efb139a93c67309292d3f3471e98597f0aee7478b36b2ee3:r7",
+              "33928f917cd0fbe0efb139a93c67309292d3f3471e98597f0aee7478b36b2ee3:r5",
+              "33928f917cd0fbe0efb139a93c67309292d3f3471e98597f0aee7478b36b2ee3:r4"
+            ],
+            "sourceIds": [
+              "ddfe658b67cc7ed612191946b7f461b466bf1ef7bd0a796c5423ca7746b2fb99",
+              "ddfe658b67cc7ed612191946b7f461b466bf1ef7bd0a796c5423ca7746b2fb99",
+              "ddfe658b67cc7ed612191946b7f461b466bf1ef7bd0a796c5423ca7746b2fb99",
+              "33928f917cd0fbe0efb139a93c67309292d3f3471e98597f0aee7478b36b2ee3",
+              "33928f917cd0fbe0efb139a93c67309292d3f3471e98597f0aee7478b36b2ee3",
+              "33928f917cd0fbe0efb139a93c67309292d3f3471e98597f0aee7478b36b2ee3"
+            ],
+            "included": 6,
+            "omitted": 4,
+            "omittedSourceIds": [
+              "33928f917cd0fbe0efb139a93c67309292d3f3471e98597f0aee7478b36b2ee3"
+            ]
+          },
+          "emittedIds": [
+            "ddfe658b67cc7ed612191946b7f461b466bf1ef7bd0a796c5423ca7746b2fb99",
+            "33928f917cd0fbe0efb139a93c67309292d3f3471e98597f0aee7478b36b2ee3",
+            "d7d5147f83b7ad2fd112474493912fb45b306b0954da68593ca80d2cf87c53da"
+          ],
+          "emittedContextChars": 1883,
+          "emittedContextSha256": "6d13a6639648104169d50014451b1dae514727d97852b6d3f0c8d3fe42fec21b",
+          "model": "jev-1.13.0",
+          "usage": {
+            "input_tokens": 4000,
+            "output_tokens": 454
+          }
         }
       }
-    ]
+    ],
+    "qualityComparisonRun": false
   },
   "verification": {
     "unitTests": 115,
@@ -2547,5 +2647,65 @@
     "demo": true,
     "pluginValidation": true
   },
-  "qualityComparisonRun": false
+  "qualityComparisonRun": false,
+  "priorNativeChecks": [
+    {
+      "status": "blocked-authentication",
+      "trustedReviewedUserHooks": true,
+      "bundledPluginAcceptanceVerified": false,
+      "actualJevRequests": 0,
+      "nativeCompactionCompleted": false,
+      "continuationCompleted": false,
+      "hostContextAcceptanceVerified": false,
+      "failure": "401 Unauthorized: missing bearer or basic authentication in isolated Codex profile",
+      "runtimeHashesUnchanged": true,
+      "events": [
+        {
+          "event": "PreCompact",
+          "mode": "candidate-order",
+          "transcriptPresent": true,
+          "actualJevRequests": 0,
+          "contextChars": 0,
+          "selection": {
+            "version": 1,
+            "generation": "a129d4c2-b93e-4509-ab03-651657dd1fe5",
+            "mode": "candidate-order",
+            "selectedIds": [
+              "3237712b9bc0031f58833ca790f52ba251c5211b8eed52e29049ca6d08aece0e",
+              "84388ad271978f0facc1a130e2523fe0783ab1003a9b58a1947e4744662f6a57",
+              "c23b56af4562aff3b49a5a7ed90c06c9bbe76d98c9c1c467f5b3f25d12f2f943"
+            ],
+            "requests": 0,
+            "latencyMs": 9,
+            "candidateCount": 3,
+            "requestChars": 9901,
+            "requirements": {
+              "ids": [
+                "3237712b9bc0031f58833ca790f52ba251c5211b8eed52e29049ca6d08aece0e:r3",
+                "3237712b9bc0031f58833ca790f52ba251c5211b8eed52e29049ca6d08aece0e:r1",
+                "3237712b9bc0031f58833ca790f52ba251c5211b8eed52e29049ca6d08aece0e:r2",
+                "84388ad271978f0facc1a130e2523fe0783ab1003a9b58a1947e4744662f6a57:r7",
+                "84388ad271978f0facc1a130e2523fe0783ab1003a9b58a1947e4744662f6a57:r5",
+                "84388ad271978f0facc1a130e2523fe0783ab1003a9b58a1947e4744662f6a57:r4"
+              ],
+              "sourceIds": [
+                "3237712b9bc0031f58833ca790f52ba251c5211b8eed52e29049ca6d08aece0e",
+                "3237712b9bc0031f58833ca790f52ba251c5211b8eed52e29049ca6d08aece0e",
+                "3237712b9bc0031f58833ca790f52ba251c5211b8eed52e29049ca6d08aece0e",
+                "84388ad271978f0facc1a130e2523fe0783ab1003a9b58a1947e4744662f6a57",
+                "84388ad271978f0facc1a130e2523fe0783ab1003a9b58a1947e4744662f6a57",
+                "84388ad271978f0facc1a130e2523fe0783ab1003a9b58a1947e4744662f6a57"
+              ],
+              "included": 6,
+              "omitted": 4,
+              "omittedSourceIds": [
+                "84388ad271978f0facc1a130e2523fe0783ab1003a9b58a1947e4744662f6a57"
+              ]
+            },
+            "model": null
+          }
+        }
+      ]
+    }
+  ]
 }

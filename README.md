@@ -14,9 +14,10 @@ compaction and local retrieval remain the defaults.
 
 Version 0.3.5 extends coverage selection to the automatic hook path and records
 which references the hook actually emits. Its [integration check](benchmarks/AUTOMATIC-HOOK-CHECK-2026-09-18.md)
-passed one live Jev request and the local handoff checks. The native host smoke
-stopped at an isolated-profile authentication error before recovery delivery;
-the new version has not completed the planned repository quality comparison.
+passed the hook-function check and, after authenticating the isolated test
+profile, a real native Codex compaction with one live Jev request and model
+confirmation of the delivered recovery index. This used reviewed user hooks;
+bundled installation and the planned repository quality comparison remain untested.
 
 Fast Jev Compaction adds task-aware Jev evidence selection around Codex's native
 compaction. It records stable, immutable content-addressed objects
