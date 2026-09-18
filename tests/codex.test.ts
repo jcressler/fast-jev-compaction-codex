@@ -136,6 +136,38 @@ describe('Codex compaction adapter', () => {
     expect(compacted.decisions).toEqual([]);
   });
 
+  it('pairs persisted custom tool text arrays while keeping malformed arrays opaque', async () => {
+    const seen: string[] = [];
+    const customCall = {
+      type: 'custom_tool_call', call_id: 'custom-text', name: 'workspace_read', input: '{"path":"a"}',
+    } as CodexItem;
+    const customOutput = {
+      type: 'custom_tool_call_output', call_id: 'custom-text',
+      output: [{ type: 'input_text', text: 'workspace contents' }],
+    } as CodexItem;
+    const malformedCall = {
+      type: 'custom_tool_call', call_id: 'custom-image', name: 'workspace_read', input: '{"path":"b"}',
+    } as CodexItem;
+    const malformedOutput = {
+      type: 'custom_tool_call_output', call_id: 'custom-image',
+      output: [{ type: 'input_image', image_url: 'https://example.invalid/image' }],
+    } as CodexItem;
+    const compacted = await compactCodexItems([
+      { type: 'message', role: 'user', content: 'inspect the workspace' } as CodexItem,
+      customCall,
+      customOutput,
+      malformedCall,
+      malformedOutput,
+    ], asker(0, seen), { preserveRecentMessages: 0 });
+
+    expect(seen).toEqual(['call_t1', 'result_t1']);
+    expect(compacted.items).toEqual([
+      { type: 'message', role: 'user', content: 'inspect the workspace' },
+      malformedCall,
+      malformedOutput,
+    ]);
+  });
+
   it('protects a reversed output/call pair from deletion', async () => {
     const seen: string[] = [];
     const items: CodexItem[] = [

@@ -62,3 +62,67 @@ improvement; the deterministic replay alone cannot establish either.
 
 The scorer's grouped unknown handling can be checked offline with
 `node benchmarks/score-self-test.mjs`.
+
+## Longer live coding task
+
+`long-task.mjs` runs four stages of a synthetic receipt-reconciliation coding
+task with three real native Codex compactions. The four arms are native only,
+local heuristic recovery, an offline equal-score control using Jev's candidate
+generation algorithm, and live Jev selection. Each arm starts from the same
+files and prompts. A saved protocol and fixture hash precede any model call.
+Hidden final checks assess code behavior, a factual audit artifact, corrected
+requirements, and the action log. Simulated writes cannot affect a real system.
+The arms generate separate transcripts, so their actual candidate records can
+differ; this is not a paired replay of one identical candidate set.
+
+The runner needs Node 22.12+, a built checkout, an authenticated compatible
+Codex CLI, and an explicitly supplied Jev key for the Jev arm. It makes real
+model/API requests only with both `--live` and `--allow-network`.
+
+```sh
+node benchmarks/long-task.mjs --live --allow-network \
+  --codex /absolute/path/to/codex --run-dir /new/results/directory \
+  --modes native
+```
+
+For recovery arms, prepare a separate Codex profile and authenticate it using
+Codex's supported login flow. Configure its `hooks.json` with the repository's
+PreCompact/SessionStart matchers and limits, replacing each hook command with:
+
+```text
+node "/absolute/path/to/checkout/benchmarks/long-task-hook.mjs" "../hook-profile.json"
+```
+
+Use the same command for `commandWindows` on Windows. Launch the CLI in that
+profile with `--enable plugin_hooks`, review these two exact commands in
+`/hooks`, and trust them. Do not bypass trust or hand-edit trust hashes. Set
+`LONG_TASK_CODEX_HOME` to that profile and `TYPESAFE_API_KEY` through your local
+secret mechanism, then run:
+
+```sh
+node benchmarks/long-task.mjs --live --allow-network \
+  --codex /absolute/path/to/codex --run-dir /new/recovery/results \
+  --modes local,candidate-order,jev \
+  --hook-setup benchmarks/long-task-hook-setup.mjs
+```
+
+The setup helper only selects the supplied profile. The runner requires exactly
+two trusted hooks. The hook bridge calls the production archive/recovery code;
+the app-server itself dispatches it. It records capture, selection, and actual
+context restoration, and rejects incomplete integration as a valid result.
+The equal-score arm uses an in-process scorer and makes zero Jev requests.
+Generated module checks run in a child process without inherited credentials.
+The evaluator uses syntax checks during the task and hidden behavioral checks
+afterward; it does not reveal hidden expected outputs to the model.
+
+Results include per-stage time, cumulative native usage, repeated read counts,
+side-effect attempts, Jev usage, and hook telemetry. Re-reading a changed file
+can be useful: repeated reads are descriptive, not automatically mistakes.
+Dollar cost remains unknown. Raw local archives may include opaque native
+records; publish only reviewed aggregate reports, never those archives or any
+profile authentication files.
+
+This is a bounded, exploratory task. Compactions are forced at stage boundaries,
+not caused by exhausting the context window. One run per arm cannot establish
+a causal speed/cost improvement or general coding-quality advantage. User-hook
+dispatch also does not, by itself, prove bundled-plugin hook discovery works.

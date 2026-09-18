@@ -1,6 +1,6 @@
 {
   "name": "fast-jev-compaction-codex",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Task-aware Jev evidence selection and exact local recovery around native Codex compaction.",
   "type": "module",
   "license": "MIT",
@@ -25,7 +25,6 @@
     "hooks",
     "skills",
     ".codex-plugin",
-    "plugin.json",
     "README.md",
     "NOTICE",
     "LICENSE"
@@ -35,10 +34,11 @@
     "typecheck": "tsc --noEmit && tsc -p tsconfig.tests.json",
     "test": "vitest run",
     "demo": "node examples/demo.mjs",
-    "benchmark": "node benchmarks/replay.mjs && node benchmarks/score-self-test.mjs && node benchmarks/jev-trial-self-test.mjs",
+    "benchmark": "node benchmarks/replay.mjs && node benchmarks/score-self-test.mjs && node benchmarks/jev-trial-self-test.mjs && node benchmarks/long-task-fixture.test.mjs",
     "check": "npm run typecheck && npm test && npm run build",
     "prepack": "npm run build",
-    "trial:jev": "node benchmarks/jev-trial.mjs --live --allow-network"
+    "trial:jev": "node benchmarks/jev-trial.mjs --live --allow-network",
+    "trial:long": "node benchmarks/long-task.mjs"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",

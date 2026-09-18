@@ -180,6 +180,17 @@ function outputKind(type) {
         return 'custom';
     return undefined;
 }
+function toolResultText(record) {
+    if (typeof record.output === 'string')
+        return record.output;
+    if (record.type !== 'custom_tool_call_output' || !Array.isArray(record.output))
+        return undefined;
+    if (!record.output.every((part) => isRecord(part) &&
+        (part.type === 'input_text' || part.type === 'inputText') && typeof part.text === 'string')) {
+        return undefined;
+    }
+    return record.output.map((part) => part.text).join('\n');
+}
 function visibleMessageText(record) {
     if (typeof record.content === 'string')
         return record.content;
@@ -240,7 +251,7 @@ function normalizedTranscript(items) {
         const output = outputList[0];
         if (call.kind !== output.kind ||
             call.index >= output.index ||
-            typeof output.record.output !== 'string')
+            toolResultText(output.record) === undefined)
             continue;
         pairs.push({
             id,
@@ -270,14 +281,15 @@ function normalizedTranscript(items) {
             };
         }
         const outputPair = pairByResult.get(index);
-        if (outputPair) {
+        const outputText = toolResultText(record);
+        if (outputPair && outputText !== undefined) {
             return {
                 role: 'user',
                 text: '',
                 toolUses: [],
                 toolResults: [{
                         tool_use_id: outputPair.id,
-                        text: record.output,
+                        text: outputText,
                     }],
             };
         }

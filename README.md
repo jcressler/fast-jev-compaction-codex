@@ -1,7 +1,7 @@
 # Fast Jev Compaction for Codex
 
 Fast Jev Compaction adds task-aware Jev evidence selection around Codex's native
-compaction. Version 0.3.0 records stable, immutable content-addressed objects
+compaction. Version 0.3.1 records stable, immutable content-addressed objects
 and a cumulative index that survives compaction. It helps you find and inspect
 earlier tool evidence after native compaction; it does not rewrite a live
 transcript, replace native compaction, or claim live token reduction.
@@ -27,6 +27,12 @@ constraint, and decision. These flags are routing hints, not an exhaustive
 semantic guarantee. Raw records remain retrievable by full content ID when a
 flag is insufficient. Recovery reads historical evidence only; it does not
 authorize repeating a recorded action.
+
+Current limitation: search uses short index summaries and outcomes. A large
+batched `exec` result can hide later receipt/error details from those snippets
+even though the raw object is preserved. Jev also sees bounded excerpts, so
+ranking cannot reliably recover facts that those excerpts omit. An empty
+search result does not mean the evidence never existed.
 
 Hooks are disabled with `FAST_JEV_ENABLED=0`. `FAST_JEV_ALLOW_NETWORK=1` enables
 network use only together with `FAST_JEV_MODE=jev` and a key. It does not gate
@@ -55,6 +61,13 @@ codex plugin add fast-jev-compaction-codex@fast-jev-compaction-codex
 
 Start a new Codex session and use `/hooks` to review and trust the hooks.
 Installing a plugin does not automatically trust its hooks.
+
+This package uses `.codex-plugin/plugin.json` and the default `hooks/hooks.json` path.
+CLI 0.155.0 recognizes these bundled hooks, but skips hook loading when a root
+portable `plugin.json` takes precedence. Version 0.3.1 removes that conflicting
+manifest. After updating, verify that `/hooks` lists both `PreCompact` and
+`SessionStart`; enable `plugin_hooks` on builds that gate hook support behind
+that feature. Hook discovery and trust are separate from a successful Jev API call.
 
 ## Test Jev
 
@@ -190,6 +203,14 @@ offline checks. It is not an end-to-end native-vs-local-vs-Jev Codex benchmark
 and does not establish better coding accuracy or lower total cost.
 The [initial live results](benchmarks/RESULTS-2026-09-18.md) include a local
 control using the same candidate pool, which matched Jev on the tested targets.
+
+A separate [longer native coding trial](benchmarks/LONG-TASK-2026-09-18.md)
+completed four stages and three native compactions per arm. Native Codex and
+Jev-assisted recovery both scored 100/100; local recovery and the candidate-order
+control scored 84/100 after losing receipt facts in their final audits. All three
+automatic Jev calls and restorations succeeded. This single task demonstrates
+integration, not an advantage over native defaults, and exposed a batched-output
+search weakness that should be addressed before stronger claims.
 
 The original MIT-licensed scoring engine is retained with attribution in
 [NOTICE](NOTICE). This is an independent community project.

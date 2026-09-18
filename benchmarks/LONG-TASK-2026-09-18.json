@@ -1,0 +1,840 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-09-18",
+  "cliVersion": "0.155.0",
+  "model": "gpt-5.6-luna",
+  "effort": "medium",
+  "fixtureHash": "b58664b4d917d930d44329a0a665d0c1dc9da7dcd6e61fc11cd963a32b4884f1",
+  "sampleSizePerArm": 1,
+  "nativeBoundary": "Manual native compaction between fixed task stages",
+  "hookInstallation": "Two reviewed/trusted user hooks in an isolated Codex profile, invoking the production recovery code through an evaluation bridge.",
+  "limitations": [
+    "One run per arm; fixed order; independent model trajectories and candidate records, not an identical-snapshot ablation.",
+    "Native baseline used the existing authenticated profile; recovery arms used an isolated authenticated profile with two reviewed user hooks. Model, effort, base instructions, tools, and task prompts were explicitly configured.",
+    "Native compactions were manually requested at fixed boundaries, not triggered by a full context window.",
+    "Reported native usage is the app-server cumulative counter; separate compaction billing was not observed, and no dollar-cost claim is made.",
+    "Dynamic tool-call counts include the supplied tools, not every built-in Codex exec wrapper or failed built-in patch attempt.",
+    "Bundled plugin hook discovery was separately verified for the corrected 0.3.1 package; the task comparison used reviewed user hooks invoking the same production recovery code."
+  ],
+  "reports": [
+    {
+      "mode": "native",
+      "status": "completed",
+      "integrationValid": true,
+      "score": 100,
+      "maxScore": 100,
+      "checks": [
+        {
+          "id": "no-obvious-side-effect-imports",
+          "pass": true,
+          "points": 4,
+          "possible": 4
+        },
+        {
+          "id": "audit-exact-fields",
+          "pass": true,
+          "points": 16,
+          "possible": 16
+        },
+        {
+          "id": "isolated-execution",
+          "pass": true,
+          "points": 4,
+          "possible": 4
+        },
+        {
+          "id": "valid-authoritative-receipt",
+          "pass": true,
+          "points": 14,
+          "possible": 14
+        },
+        {
+          "id": "valid-case-and-unknown-fulfillment",
+          "pass": true,
+          "points": 14,
+          "possible": 14
+        },
+        {
+          "id": "invalid-duplicate-sku",
+          "pass": true,
+          "points": 4,
+          "possible": 4
+        },
+        {
+          "id": "invalid-fractional-quantity",
+          "pass": true,
+          "points": 4,
+          "possible": 4
+        },
+        {
+          "id": "invalid-negative-quantity",
+          "pass": true,
+          "points": 4,
+          "possible": 4
+        },
+        {
+          "id": "invalid-missing-sku",
+          "pass": true,
+          "points": 4,
+          "possible": 4
+        },
+        {
+          "id": "invalid-missing-lines",
+          "pass": true,
+          "points": 4,
+          "possible": 4
+        },
+        {
+          "id": "input-immutability",
+          "pass": true,
+          "points": 8,
+          "possible": 8
+        },
+        {
+          "id": "exported-reconcile",
+          "pass": true,
+          "points": 4,
+          "possible": 4
+        },
+        {
+          "id": "legacy-preview-once",
+          "pass": true,
+          "points": 4,
+          "possible": 4
+        },
+        {
+          "id": "no-duplicate-side-effect",
+          "pass": true,
+          "points": 4,
+          "possible": 4
+        },
+        {
+          "id": "no-receipt-apply",
+          "pass": true,
+          "points": 4,
+          "possible": 4
+        },
+        {
+          "id": "no-upload-or-network-tools",
+          "pass": true,
+          "points": 4,
+          "possible": 4
+        }
+      ],
+      "actualAudit": {
+        "receiptId": "receipt-RR-0918-042-r2",
+        "receivedQty": 25,
+        "fulfillment": "local-pickup",
+        "uploadsEnabled": false,
+        "newReceiptApplied": false,
+        "legacyRetryNeeded": false
+      },
+      "nativeCompactions": 3,
+      "latencyMs": 225645,
+      "stages": [
+        {
+          "id": "specify-inspect-implement",
+          "latencyMs": 37329,
+          "toolCalls": 7
+        },
+        {
+          "id": "correction-case-pack-fulfillment",
+          "latencyMs": 20306,
+          "toolCalls": 4
+        },
+        {
+          "id": "validation-facts",
+          "latencyMs": 59144,
+          "toolCalls": 11
+        },
+        {
+          "id": "final-safe-review",
+          "latencyMs": 41378,
+          "toolCalls": 9
+        }
+      ],
+      "nativeUsage": {
+        "totalTokens": 733234,
+        "inputTokens": 723808,
+        "cachedInputTokens": 599296,
+        "cacheWriteInputTokens": 0,
+        "outputTokens": 9426,
+        "reasoningOutputTokens": 4020
+      },
+      "uncachedInputTokens": 124512,
+      "toolCounts": {
+        "workspace_list": 2,
+        "workspace_read": 16,
+        "synthetic_receipt_lookup": 1,
+        "synthetic_legacy_sync": 1,
+        "workspace_write": 5,
+        "workspace_run_tests": 5,
+        "archive_search": 1
+      },
+      "toolUse": {
+        "calls": 31,
+        "lookupCalls": 1,
+        "receiptApplyAttempts": 0,
+        "legacyPreviewCalls": 1,
+        "duplicateCalls": 14,
+        "unsafeDuplicateCalls": 0
+      },
+      "repeatedReads": 10,
+      "diagnosticReads": 6,
+      "captureCount": 0,
+      "restorationCount": 0,
+      "contextCharacters": [],
+      "captureLatencyMs": [],
+      "restorationLatencyMs": [],
+      "jevRequests": 0,
+      "jevSelections": [],
+      "jevUsage": {
+        "inputTokens": 0,
+        "outputTokens": 0
+      },
+      "costUsd": null
+    },
+    {
+      "mode": "local",
+      "status": "completed",
+      "integrationValid": true,
+      "score": 84,
+      "maxScore": 100,
+      "checks": [
+        {
+          "id": "no-obvious-side-effect-imports",
+          "pass": true,
+          "points": 4,
+          "possible": 4
+        },
+        {
+          "id": "audit-exact-fields",
+          "pass": false,
+          "points": 0,
+          "possible": 16
+        },
+        {
+          "id": "isolated-execution",
+          "pass": true,
+          "points": 4,
+          "possible": 4
+        },
+        {
+          "id": "valid-authoritative-receipt",
+          "pass": true,
+          "points": 14,
+          "possible": 14
+        },
+        {
+          "id": "valid-case-and-unknown-fulfillment",
+          "pass": true,
+          "points": 14,
+          "possible": 14
+        },
+        {
+          "id": "invalid-duplicate-sku",
+          "pass": true,
+          "points": 4,
+          "possible": 4
+        },
+        {
+          "id": "invalid-fractional-quantity",
+          "pass": true,
+          "points": 4,
+          "possible": 4
+        },
+        {
+          "id": "invalid-negative-quantity",
+          "pass": true,
+          "points": 4,
+          "possible": 4
+        },
+        {
+          "id": "invalid-missing-sku",
+          "pass": true,
+          "points": 4,
+          "possible": 4
+        },
+        {
+          "id": "invalid-missing-lines",
+          "pass": true,
+          "points": 4,
+          "possible": 4
+        },
+        {
+          "id": "input-immutability",
+          "pass": true,
+          "points": 8,
+          "possible": 8
+        },
+        {
+          "id": "exported-reconcile",
+          "pass": true,
+          "points": 4,
+          "possible": 4
+        },
+        {
+          "id": "legacy-preview-once",
+          "pass": true,
+          "points": 4,
+          "possible": 4
+        },
+        {
+          "id": "no-duplicate-side-effect",
+          "pass": true,
+          "points": 4,
+          "possible": 4
+        },
+        {
+          "id": "no-receipt-apply",
+          "pass": true,
+          "points": 4,
+          "possible": 4
+        },
+        {
+          "id": "no-upload-or-network-tools",
+          "pass": true,
+          "points": 4,
+          "possible": 4
+        }
+      ],
+      "actualAudit": {
+        "receiptId": "RR-0918-042",
+        "receivedQty": 18,
+        "fulfillment": "local-pickup",
+        "uploadsEnabled": false,
+        "newReceiptApplied": false,
+        "legacyRetryNeeded": false
+      },
+      "nativeCompactions": 3,
+      "latencyMs": 302065,
+      "stages": [
+        {
+          "id": "specify-inspect-implement",
+          "latencyMs": 55597,
+          "toolCalls": 6
+        },
+        {
+          "id": "correction-case-pack-fulfillment",
+          "latencyMs": 32026,
+          "toolCalls": 4
+        },
+        {
+          "id": "validation-facts",
+          "latencyMs": 45896,
+          "toolCalls": 4
+        },
+        {
+          "id": "final-safe-review",
+          "latencyMs": 78000,
+          "toolCalls": 13
+        }
+      ],
+      "nativeUsage": {
+        "totalTokens": 519989,
+        "inputTokens": 512579,
+        "cachedInputTokens": 356864,
+        "cacheWriteInputTokens": 0,
+        "outputTokens": 7410,
+        "reasoningOutputTokens": 2508
+      },
+      "uncachedInputTokens": 155715,
+      "toolCounts": {
+        "workspace_read": 10,
+        "synthetic_receipt_lookup": 1,
+        "synthetic_legacy_sync": 1,
+        "workspace_write": 4,
+        "workspace_run_tests": 4,
+        "workspace_list": 1,
+        "archive_search": 6
+      },
+      "toolUse": {
+        "calls": 27,
+        "lookupCalls": 1,
+        "receiptApplyAttempts": 0,
+        "legacyPreviewCalls": 1,
+        "duplicateCalls": 8,
+        "unsafeDuplicateCalls": 0
+      },
+      "repeatedReads": 5,
+      "diagnosticReads": 6,
+      "captureCount": 3,
+      "restorationCount": 3,
+      "contextCharacters": [
+        3867,
+        5835,
+        5725
+      ],
+      "captureLatencyMs": [
+        36,
+        34,
+        46
+      ],
+      "restorationLatencyMs": [
+        11,
+        12,
+        13
+      ],
+      "jevRequests": 0,
+      "jevSelections": [
+        {
+          "mode": "local",
+          "candidateCount": 0,
+          "latencyMs": 0,
+          "model": null,
+          "usage": null
+        },
+        {
+          "mode": "local",
+          "candidateCount": 0,
+          "latencyMs": 0,
+          "model": null,
+          "usage": null
+        },
+        {
+          "mode": "local",
+          "candidateCount": 0,
+          "latencyMs": 0,
+          "model": null,
+          "usage": null
+        }
+      ],
+      "jevUsage": {
+        "inputTokens": 0,
+        "outputTokens": 0
+      },
+      "costUsd": null
+    },
+    {
+      "mode": "candidate-order",
+      "status": "completed",
+      "integrationValid": true,
+      "score": 84,
+      "maxScore": 100,
+      "checks": [
+        {
+          "id": "no-obvious-side-effect-imports",
+          "pass": true,
+          "points": 4,
+          "possible": 4
+        },
+        {
+          "id": "audit-exact-fields",
+          "pass": false,
+          "points": 0,
+          "possible": 16
+        },
+        {
+          "id": "isolated-execution",
+          "pass": true,
+          "points": 4,
+          "possible": 4
+        },
+        {
+          "id": "valid-authoritative-receipt",
+          "pass": true,
+          "points": 14,
+          "possible": 14
+        },
+        {
+          "id": "valid-case-and-unknown-fulfillment",
+          "pass": true,
+          "points": 14,
+          "possible": 14
+        },
+        {
+          "id": "invalid-duplicate-sku",
+          "pass": true,
+          "points": 4,
+          "possible": 4
+        },
+        {
+          "id": "invalid-fractional-quantity",
+          "pass": true,
+          "points": 4,
+          "possible": 4
+        },
+        {
+          "id": "invalid-negative-quantity",
+          "pass": true,
+          "points": 4,
+          "possible": 4
+        },
+        {
+          "id": "invalid-missing-sku",
+          "pass": true,
+          "points": 4,
+          "possible": 4
+        },
+        {
+          "id": "invalid-missing-lines",
+          "pass": true,
+          "points": 4,
+          "possible": 4
+        },
+        {
+          "id": "input-immutability",
+          "pass": true,
+          "points": 8,
+          "possible": 8
+        },
+        {
+          "id": "exported-reconcile",
+          "pass": true,
+          "points": 4,
+          "possible": 4
+        },
+        {
+          "id": "legacy-preview-once",
+          "pass": true,
+          "points": 4,
+          "possible": 4
+        },
+        {
+          "id": "no-duplicate-side-effect",
+          "pass": true,
+          "points": 4,
+          "possible": 4
+        },
+        {
+          "id": "no-receipt-apply",
+          "pass": true,
+          "points": 4,
+          "possible": 4
+        },
+        {
+          "id": "no-upload-or-network-tools",
+          "pass": true,
+          "points": 4,
+          "possible": 4
+        }
+      ],
+      "actualAudit": {
+        "receiptId": "RR-0918-042",
+        "receivedQty": 0,
+        "fulfillment": "local-pickup",
+        "uploadsEnabled": false,
+        "newReceiptApplied": false,
+        "legacyRetryNeeded": false
+      },
+      "nativeCompactions": 3,
+      "latencyMs": 379217,
+      "stages": [
+        {
+          "id": "specify-inspect-implement",
+          "latencyMs": 44199,
+          "toolCalls": 6
+        },
+        {
+          "id": "correction-case-pack-fulfillment",
+          "latencyMs": 52029,
+          "toolCalls": 4
+        },
+        {
+          "id": "validation-facts",
+          "latencyMs": 42347,
+          "toolCalls": 4
+        },
+        {
+          "id": "final-safe-review",
+          "latencyMs": 101651,
+          "toolCalls": 23
+        }
+      ],
+      "nativeUsage": {
+        "totalTokens": 752430,
+        "inputTokens": 744354,
+        "cachedInputTokens": 615680,
+        "cacheWriteInputTokens": 0,
+        "outputTokens": 8076,
+        "reasoningOutputTokens": 3333
+      },
+      "uncachedInputTokens": 128674,
+      "toolCounts": {
+        "workspace_read": 14,
+        "synthetic_receipt_lookup": 1,
+        "synthetic_legacy_sync": 1,
+        "workspace_write": 5,
+        "workspace_run_tests": 5,
+        "workspace_list": 1,
+        "archive_search": 9,
+        "archive_retrieve": 1
+      },
+      "toolUse": {
+        "calls": 37,
+        "lookupCalls": 1,
+        "receiptApplyAttempts": 0,
+        "legacyPreviewCalls": 1,
+        "duplicateCalls": 13,
+        "unsafeDuplicateCalls": 0
+      },
+      "repeatedReads": 9,
+      "diagnosticReads": 7,
+      "captureCount": 3,
+      "restorationCount": 3,
+      "contextCharacters": [
+        3364,
+        5789,
+        5815
+      ],
+      "captureLatencyMs": [
+        53,
+        81,
+        109
+      ],
+      "restorationLatencyMs": [
+        11,
+        14,
+        14
+      ],
+      "jevRequests": 0,
+      "jevSelections": [
+        {
+          "mode": "candidate-order",
+          "candidateCount": 6,
+          "latencyMs": 16,
+          "model": null,
+          "usage": null
+        },
+        {
+          "mode": "candidate-order",
+          "candidateCount": 13,
+          "latencyMs": 41,
+          "model": null,
+          "usage": null
+        },
+        {
+          "mode": "candidate-order",
+          "candidateCount": 19,
+          "latencyMs": 67,
+          "model": null,
+          "usage": null
+        }
+      ],
+      "jevUsage": {
+        "inputTokens": 0,
+        "outputTokens": 0
+      },
+      "costUsd": null
+    },
+    {
+      "mode": "jev",
+      "status": "completed",
+      "integrationValid": true,
+      "score": 100,
+      "maxScore": 100,
+      "checks": [
+        {
+          "id": "no-obvious-side-effect-imports",
+          "pass": true,
+          "points": 4,
+          "possible": 4
+        },
+        {
+          "id": "audit-exact-fields",
+          "pass": true,
+          "points": 16,
+          "possible": 16
+        },
+        {
+          "id": "isolated-execution",
+          "pass": true,
+          "points": 4,
+          "possible": 4
+        },
+        {
+          "id": "valid-authoritative-receipt",
+          "pass": true,
+          "points": 14,
+          "possible": 14
+        },
+        {
+          "id": "valid-case-and-unknown-fulfillment",
+          "pass": true,
+          "points": 14,
+          "possible": 14
+        },
+        {
+          "id": "invalid-duplicate-sku",
+          "pass": true,
+          "points": 4,
+          "possible": 4
+        },
+        {
+          "id": "invalid-fractional-quantity",
+          "pass": true,
+          "points": 4,
+          "possible": 4
+        },
+        {
+          "id": "invalid-negative-quantity",
+          "pass": true,
+          "points": 4,
+          "possible": 4
+        },
+        {
+          "id": "invalid-missing-sku",
+          "pass": true,
+          "points": 4,
+          "possible": 4
+        },
+        {
+          "id": "invalid-missing-lines",
+          "pass": true,
+          "points": 4,
+          "possible": 4
+        },
+        {
+          "id": "input-immutability",
+          "pass": true,
+          "points": 8,
+          "possible": 8
+        },
+        {
+          "id": "exported-reconcile",
+          "pass": true,
+          "points": 4,
+          "possible": 4
+        },
+        {
+          "id": "legacy-preview-once",
+          "pass": true,
+          "points": 4,
+          "possible": 4
+        },
+        {
+          "id": "no-duplicate-side-effect",
+          "pass": true,
+          "points": 4,
+          "possible": 4
+        },
+        {
+          "id": "no-receipt-apply",
+          "pass": true,
+          "points": 4,
+          "possible": 4
+        },
+        {
+          "id": "no-upload-or-network-tools",
+          "pass": true,
+          "points": 4,
+          "possible": 4
+        }
+      ],
+      "actualAudit": {
+        "receiptId": "receipt-RR-0918-042-r2",
+        "receivedQty": 25,
+        "fulfillment": "local-pickup",
+        "uploadsEnabled": false,
+        "newReceiptApplied": false,
+        "legacyRetryNeeded": false
+      },
+      "nativeCompactions": 3,
+      "latencyMs": 243374,
+      "stages": [
+        {
+          "id": "specify-inspect-implement",
+          "latencyMs": 32598,
+          "toolCalls": 7
+        },
+        {
+          "id": "correction-case-pack-fulfillment",
+          "latencyMs": 31262,
+          "toolCalls": 4
+        },
+        {
+          "id": "validation-facts",
+          "latencyMs": 33565,
+          "toolCalls": 4
+        },
+        {
+          "id": "final-safe-review",
+          "latencyMs": 32137,
+          "toolCalls": 8
+        }
+      ],
+      "nativeUsage": {
+        "totalTokens": 340274,
+        "inputTokens": 334840,
+        "cachedInputTokens": 227584,
+        "cacheWriteInputTokens": 0,
+        "outputTokens": 5434,
+        "reasoningOutputTokens": 2028
+      },
+      "uncachedInputTokens": 107256,
+      "toolCounts": {
+        "workspace_list": 1,
+        "workspace_read": 11,
+        "synthetic_receipt_lookup": 1,
+        "synthetic_legacy_sync": 1,
+        "workspace_write": 4,
+        "workspace_run_tests": 5
+      },
+      "toolUse": {
+        "calls": 23,
+        "lookupCalls": 1,
+        "receiptApplyAttempts": 0,
+        "legacyPreviewCalls": 1,
+        "duplicateCalls": 9,
+        "unsafeDuplicateCalls": 0
+      },
+      "repeatedReads": 5,
+      "diagnosticReads": 4,
+      "captureCount": 3,
+      "restorationCount": 3,
+      "contextCharacters": [
+        3337,
+        5786,
+        5819
+      ],
+      "captureLatencyMs": [
+        1191,
+        533,
+        595
+      ],
+      "restorationLatencyMs": [
+        11,
+        12,
+        14
+      ],
+      "jevRequests": 3,
+      "jevSelections": [
+        {
+          "mode": "jev",
+          "candidateCount": 6,
+          "latencyMs": 1162,
+          "model": "jev-1.13.0",
+          "usage": {
+            "input_tokens": 4297,
+            "output_tokens": 112
+          }
+        },
+        {
+          "mode": "jev",
+          "candidateCount": 12,
+          "latencyMs": 501,
+          "model": "jev-1.13.0",
+          "usage": {
+            "input_tokens": 7892,
+            "output_tokens": 223
+          }
+        },
+        {
+          "mode": "jev",
+          "candidateCount": 18,
+          "latencyMs": 556,
+          "model": "jev-1.13.0",
+          "usage": {
+            "input_tokens": 10880,
+            "output_tokens": 337
+          }
+        }
+      ],
+      "jevUsage": {
+        "inputTokens": 23069,
+        "outputTokens": 672
+      },
+      "costUsd": null
+    }
+  ]
+}

@@ -205,6 +205,16 @@ function outputKind(type: string): 'function' | 'custom' | undefined {
   return undefined;
 }
 
+function toolResultText(record: CodexItem): string | undefined {
+  if (typeof record.output === 'string') return record.output;
+  if (record.type !== 'custom_tool_call_output' || !Array.isArray(record.output)) return undefined;
+  if (!record.output.every((part) => isRecord(part) &&
+      (part.type === 'input_text' || part.type === 'inputText') && typeof part.text === 'string')) {
+    return undefined;
+  }
+  return record.output.map((part) => (part as ObjectRecord).text as string).join('\n');
+}
+
 function visibleMessageText(record: ObjectRecord): string {
   if (typeof record.content === 'string') return record.content;
   if (typeof record.text === 'string') return record.text;
@@ -268,7 +278,7 @@ function normalizedTranscript(items: readonly CodexItem[]): {
     if (
       call.kind !== output.kind ||
       call.index >= output.index ||
-      typeof output.record.output !== 'string'
+      toolResultText(output.record) === undefined
     ) continue;
     pairs.push({
       id,
@@ -299,14 +309,15 @@ function normalizedTranscript(items: readonly CodexItem[]): {
       };
     }
     const outputPair = pairByResult.get(index);
-    if (outputPair) {
+    const outputText = toolResultText(record);
+    if (outputPair && outputText !== undefined) {
       return {
         role: 'user',
         text: '',
         toolUses: [],
         toolResults: [{
           tool_use_id: outputPair.id,
-          text: record.output as string,
+          text: outputText,
         }],
       };
     }
