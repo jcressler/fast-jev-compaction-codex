@@ -1,0 +1,46 @@
+{
+  "name": "fast-jev-compaction-codex",
+  "version": "0.1.0",
+  "description": "Jev-powered verbatim transcript pruning and context recovery for Codex.",
+  "type": "module",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.12"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jcressler/fast-jev-compaction-codex.git"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "bin": {
+    "fast-jev-codex": "./dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "hooks",
+    "skills",
+    ".codex-plugin",
+    "plugin.json",
+    "README.md",
+    "NOTICE",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit && tsc -p tsconfig.tests.json",
+    "test": "vitest run",
+    "demo": "node examples/demo.mjs",
+    "check": "npm run typecheck && npm test && npm run build",
+    "prepack": "npm run build"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "typescript": "^5.7.2",
+    "vitest": "^5.0.1"
+  }
+}

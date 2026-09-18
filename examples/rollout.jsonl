@@ -1,0 +1,10 @@
+{"type":"session_meta","payload":{"id":"synthetic-demo","cwd":"/example/project"}}
+{"type":"response_item","payload":{"type":"message","role":"user","content":[{"type":"input_text","text":"Fix the parser test. Preserve src/generated. Do not deploy."}]}}
+{"type":"response_item","payload":{"type":"function_call","name":"exec_command","call_id":"read-old","arguments":"{\"cmd\":\"cat src/old.ts\"}"}}
+{"type":"response_item","payload":{"type":"function_call_output","call_id":"read-old","output":"An obsolete implementation that is no longer relevant to the parser task."}}
+{"type":"response_item","payload":{"type":"message","role":"assistant","content":[{"type":"output_text","text":"The current parser lives in src/parser.ts."}]}}
+{"type":"response_item","payload":{"type":"custom_tool_call","name":"apply_patch","call_id":"edit-parser","input":"*** Begin Patch\n*** Update File: src/parser.ts\n@@\n-return null;\n+return value;\n*** End Patch"}}
+{"type":"response_item","payload":{"type":"custom_tool_call_output","call_id":"edit-parser","output":"Patch applied to src/parser.ts."}}
+{"type":"response_item","payload":{"type":"function_call","name":"exec_command","call_id":"test-parser","arguments":"{\"cmd\":\"npm test\"}"}}
+{"type":"response_item","payload":{"type":"function_call_output","call_id":"test-parser","output":"PASS parser.test.ts: 12 tests passed."}}
+{"type":"response_item","payload":{"type":"message","role":"assistant","content":[{"type":"output_text","text":"The parser tests pass. The change has not been deployed."}]}}

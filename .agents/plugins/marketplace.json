@@ -1,0 +1,10 @@
+{
+  "name": "fast-jev-compaction-codex",
+  "interface": { "displayName": "Fast Jev Compaction for Codex" },
+  "plugins": [{
+    "name": "fast-jev-compaction-codex",
+    "source": { "source": "local", "path": "./" },
+    "policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" },
+    "category": "Productivity"
+  }]
+}

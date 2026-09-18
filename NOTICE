@@ -1,0 +1,10 @@
+This project adapts fast-jev-compaction by tamaratran:
+https://github.com/tamaratran/fast-jev-compaction
+Upstream revision: e3f262a7f4d42bd8dd32ced30d26176f7cb545b0
+
+The original compaction engine (src/client.ts, compact.ts, messages.ts,
+request.ts, state.ts, types.ts, and original tests) is distributed under
+the MIT License. Its original copyright notice is retained in LICENSE.
+
+Codex adaptation copyright (c) 2026 James Cressler, also under the MIT License.
+Independent community project; not affiliated with OpenAI or TypeSafe.

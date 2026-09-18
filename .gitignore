@@ -1,0 +1,11 @@
+node_modules/
+work/
+coverage/
+.env
+.env.*
+!.env.example
+*.tgz
+*.log
+.fast-jev/
+checkpoint*.json
+# dist is committed so Git-installed hooks need no npm install at runtime.

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Fast Jev Compaction"
+  short_description: "Recover exact evidence around Codex compaction"
+  default_prompt: "Use $fast-jev-compaction to inspect or recover a Codex compaction archive."

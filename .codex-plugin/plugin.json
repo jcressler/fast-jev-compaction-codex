@@ -1,0 +1,21 @@
+{
+  "name": "fast-jev-compaction-codex",
+  "version": "0.1.0",
+  "description": "Jev-selected verbatim evidence recovery around Codex compaction.",
+  "author": {
+    "name": "James Cressler",
+    "url": "https://github.com/jcressler"
+  },
+  "repository": "https://github.com/jcressler/fast-jev-compaction-codex",
+  "license": "MIT",
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Fast Jev Compaction for Codex",
+    "shortDescription": "Preserve exact evidence across Codex compaction",
+    "longDescription": "Uses Jev to prune stale tool history into a local archive and restore bounded evidence after native Codex compaction. Requires a TypeSafe API key and explicit network opt-in.",
+    "developerName": "James Cressler",
+    "category": "Productivity",
+    "capabilities": [],
+    "defaultPrompt": ["Inspect my Codex compaction setup."]
+  }
+}
