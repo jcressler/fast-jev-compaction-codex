@@ -1,5 +1,12 @@
 # Recovery replay benchmark
 
+For the controlled same-candidate comparison and repeated native continuations,
+see [the paired evaluation protocol](PAIRED-EVAL.md). It compares enhanced local
+search, the production equal-score ordering control, live Jev, and native-only
+answers from forks of a common compacted history.
+The [first paired results](PAIRED-RESULTS-2026-09-18.md) found no benefit from the
+current Jev search reranker over enhanced local recovery.
+
 `node benchmarks/batched-search.mjs` compares summary search with bounded raw
 archive search on the same generated records, entirely offline. It checks
 parent IDs, query-centered match fields, exact retrieval, and unchanged objects

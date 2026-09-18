@@ -234,5 +234,14 @@ trial has not been rerun with the fix. See the
 [offline search evaluation](benchmarks/BATCHED-SEARCH-2026-09-18.md) for the
 same-record comparison. Neither evaluation establishes that Jev improves Codex.
 
+A subsequent [paired reranking evaluation](benchmarks/PAIRED-RESULTS-2026-09-18.md)
+used six real native compactions, identical candidate sets, equal recovery
+character caps, and 48 continuations from confirmed common-base forks. Native
+and enhanced local recovery each answered 12/12 correctly; Jev and the
+equal-score production-order control each answered 8/12. This tests explicit
+search reranking with a custom evidence packet, not automatic PreCompact
+selection. It provides no basis to recommend the current Jev reranker by
+default; Jev remains experimental.
+
 The original MIT-licensed scoring engine is retained with attribution in
 [NOTICE](NOTICE). This is an independent community project.

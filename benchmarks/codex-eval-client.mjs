@@ -85,14 +85,15 @@ export class CodexEvalClient {
     throw new Error(`Timed out waiting for ${method}`);
   }
 
-  async turn(threadId, text) {
+  async turn(threadId, text, { outputSchema, effort, timeoutMs = 180000 } = {}) {
     const after = this.events.length;
     const started = Date.now();
     const response = await this.request('turn/start', { threadId,
-      input: [{ type: 'text', text, text_elements: [] }] });
+      input: [{ type: 'text', text, text_elements: [] }],
+      ...(outputSchema ? { outputSchema } : {}), ...(effort ? { effort } : {}) });
     const completion = await this.waitFor('turn/completed', after,
-      p => p.threadId === threadId && (!response.turn?.id || p.turn?.id === response.turn.id));
-    const items = this.events.slice(after).filter(e => e.method === 'item/completed').map(e => e.params.item);
+      p => p.threadId === threadId && (!response.turn?.id || p.turn?.id === response.turn.id), timeoutMs);
+    const items = this.events.slice(after).filter(e => e.method === 'item/completed' && e.params.threadId === threadId).map(e => e.params.item);
     if (completion.turn?.status !== 'completed') throw new Error(completion.turn?.error?.message ?? 'Codex turn failed');
     return { latencyMs: Date.now() - started,
       answer: items.filter(i => i.type === 'agentMessage').map(i => i.text).join('\n'),
