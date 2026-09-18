@@ -836,5 +836,40 @@
       },
       "costUsd": null
     }
-  ]
+  ],
+  "sameArchiveOfflineOrderingCheck": {
+    "actualNetworkRequests": 0,
+    "candidateCounts": [
+      6,
+      12,
+      18
+    ],
+    "requestCharacters": [
+      13827,
+      25770,
+      35537
+    ],
+    "sameSelectedIdSets": [
+      true,
+      true,
+      true
+    ],
+    "changedRanking": [
+      true,
+      true,
+      true
+    ],
+    "visibleCounts": [
+      6,
+      12,
+      12
+    ],
+    "visibleSetSymmetricDifference": [
+      0,
+      0,
+      8
+    ],
+    "thirdBoundarySubstitutedRecords": 4,
+    "conclusion": "Jev changed ranking and third-boundary context exposure. Outcome causality was not tested with paired continuations."
+  }
 }
