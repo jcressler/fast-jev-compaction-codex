@@ -34,14 +34,15 @@
     "typecheck": "tsc --noEmit && tsc -p tsconfig.tests.json",
     "test": "vitest run",
     "demo": "node examples/demo.mjs",
-    "benchmark": "node benchmarks/replay.mjs && node benchmarks/score-self-test.mjs && node benchmarks/jev-trial-self-test.mjs && node benchmarks/long-task-fixture.test.mjs && node benchmarks/batched-search.mjs && node benchmarks/paired-fixtures.test.mjs && node benchmarks/paired-eval-self-test.mjs && node benchmarks/heldout-fixtures.test.mjs && node benchmarks/heldout-eval-self-test.mjs && node benchmarks/corrected-fixtures.test.mjs && node benchmarks/corrected-eval-self-test.mjs && node benchmarks/automatic-hook-check.mjs",
+    "benchmark": "node benchmarks/replay.mjs && node benchmarks/score-self-test.mjs && node benchmarks/jev-trial-self-test.mjs && node benchmarks/long-task-fixture.test.mjs && node benchmarks/batched-search.mjs && node benchmarks/paired-fixtures.test.mjs && node benchmarks/paired-eval-self-test.mjs && node benchmarks/heldout-fixtures.test.mjs && node benchmarks/heldout-eval-self-test.mjs && node benchmarks/corrected-fixtures.test.mjs && node benchmarks/corrected-eval-self-test.mjs && node benchmarks/automatic-hook-check.mjs && node benchmarks/automatic-fixtures.test.mjs && node benchmarks/automatic-eval.test.mjs && node benchmarks/automatic-results.test.mjs",
     "check": "npm run typecheck && npm test && npm run build",
     "prepack": "npm run build",
     "trial:jev": "node benchmarks/jev-trial.mjs --live --allow-network",
     "trial:long": "node benchmarks/long-task.mjs",
     "trial:paired": "node benchmarks/paired-eval.mjs",
     "trial:heldout": "node benchmarks/heldout-eval.mjs",
-    "trial:corrected": "node benchmarks/corrected-eval.mjs"
+    "trial:corrected": "node benchmarks/corrected-eval.mjs",
+    "trial:automatic": "node benchmarks/automatic-eval.mjs"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",
