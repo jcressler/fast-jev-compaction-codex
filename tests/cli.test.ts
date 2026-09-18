@@ -93,7 +93,7 @@ describe('fast-jev-codex CLI', () => {
     expect(result.code).toBe(0);
     expect(result.stdout).toMatch(/repeatable --requirement/);
     expect(result.stdout).toMatch(/1\.\.240/);
-  });
+  }, 15_000); // Allow first-process startup on slower Windows CI workers.
 
   it('inspects a transcript offline without an API key or source mutation', async () => {
     const value = await transcriptFixture();
