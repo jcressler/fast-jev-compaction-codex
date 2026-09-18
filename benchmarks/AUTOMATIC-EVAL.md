@@ -1,9 +1,10 @@
-# Automatic hook evaluation — prepared protocol
+# Automatic hook evaluation — frozen protocol
 
-**Status: DRAFT/PREPARED — not executed.** This is a proposed protocol; the
-execution manifest, task hashes, and go/no-go rule become frozen immediately
-before the first live call. No Codex runs, Jev requests, paid provider calls,
-fixture creation, or source changes were performed for it.
+**Status: FROZEN BEFORE EXECUTION — quality comparison not yet executed.** The execution manifest,
+task hashes, and go/no-go rule become frozen before the first scored run.
+The task suite and runner passed offline validation. Separate disposable
+wiring smokes may make native Codex and Jev calls; they are excluded from quality
+scores. No task, prompt, budget, or grader may change after scored execution starts.
 
 ## Purpose and prior boundary
 
@@ -31,7 +32,7 @@ of a memory gain or loss.
 
 The only configuration difference is the recovery installation and mode. All
 arms use the same pinned Codex CLI, model, reasoning effort, base instructions,
-dynamic task tools, approval policy, sandbox, task prompts, stage boundaries,
+ordinary native tools, approval policy, sandbox, task prompts, stage boundaries,
 turn/tool/time budgets, and repository snapshot.
 
 | ID | Profile and recovery path | Additional plugin capability |
@@ -44,9 +45,19 @@ Every arm receives the same ordinary Codex workspace and shell tools, with the
 same approval, sandbox, and network policy. No arm receives plugin archive
 tools as dynamic tools; plugin-arm calls to the documented CLI search/retrieve
 commands are allowed and counted. The stock arm must be checked for both
-absence of plugin hooks and absence of plugin archive data; a shared
-`CODEX_HOME`, config file, workspace, transcript, or data directory invalidates
-the comparison.
+absence of plugin hooks and absence of plugin archive data. The three approaches
+must have distinct `CODEX_HOME` profiles and configs; every individual run must
+have a fresh workspace, native thread/transcript, and recovery data directory.
+
+Before freezing the manifest, the profile-isolation plan was clarified: each
+approach reuses its own authenticated profile for its twelve runs. Each profile
+was authenticated separately through the normal browser login; no credentials
+were copied. Profiles are never shared between approaches. Cross-thread memories,
+agents, apps, and unrelated skills are disabled; previous threads are archived
+and cannot be resumed by the runner. Prior task workspaces and evaluator files
+are outside the model's authorized task scope. Native action records are audited
+for cross-run access. This is thread/workspace isolation with reused login state,
+not 36 separately authenticated OS containers.
 
 ## Sampling and task shape
 
@@ -68,6 +79,22 @@ that evidence while editing more than one file. Include explicit constraints
 such as no upload/network, no duplicate write, preserve identifiers, or
 preserve a migration invariant. Make visible contracts sufficient for the
 hidden checks; do not repeat the earlier fact-ceiling design.
+
+The implemented suite uses six small synthetic repositories with a public
+facade, domain implementation, validation helper, history, configuration, and
+tests. Each has three staged instructions and two manually requested native
+compactions. The same task is repeated from a fresh state. Diagnostic logs are
+about 22–24 KB each; this is not a claim to simulate a million-token conversation
+or a large production repository. A negative result supports keeping the default
+for this tested workflow; it cannot rule out every future Jev design or workload.
+
+The hidden grader runs candidate code in a separate, credential-free Node
+process. This is process isolation, not a claim of an OS sandbox around that
+grader. The model's own commands run under native Windows workspace-write
+sandboxing. Report missing action logs as unknown, not zero side effects; use
+native command records for observable failures and repeated commands. Business
+idempotency and immutable-file constraints are checked behaviorally. Do not infer
+memory failure from an ordinary implementation error.
 
 The evaluator must score behavior from isolated tests and an action log, not a
 free-text recollection field. It must separately record code/test failures,
@@ -135,11 +162,24 @@ do not interpret downstream results as retrieval evidence; this is a no-go for
 the quality comparison. Reconstructing `recoveryContext()` afterward is not
 proof of host acceptance.
 
-After completion, compare delivered IDs with evaluator-only target IDs and
-constraint IDs. Report archive capture coverage, selected-ID coverage,
+After completion, compare delivered IDs with IDs of the exact earlier stage-1
+and stage-2 user instructions, identified in the archived records. These are
+bounded instruction-coverage targets, not a claim to identify every relevant
+tool result. Report archive capture coverage, selected-ID coverage,
 delivered-ID coverage, omitted records, and the reason for each omission when
 observable. These are coverage measures; a delivered record is not proof that
 the model read or used every field in it.
+
+Implementation bounds fixed before execution: each run has three model turns
+and two manual compactions. Native command/file-change events supply operation,
+failure, duplicate-command and write-operation counts. Identical repeated
+commands are not automatically errors; duplicate external effects remain
+unknown without an action log. No common trajectory is forked in this version:
+each arm starts fresh from the identical repository and staged prompts. Stage
+latencies measure continuations after compaction. Coverage omission causes are
+reported as unknown where not observable. Native hook durations are recorded
+separately from Jev request latency. The raw native session records remain local
+for access auditing; only aggregates and hashes are published.
 
 ## Measurements and report
 

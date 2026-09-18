@@ -1,0 +1,235 @@
+{
+  "schemaVersion": 1,
+  "status": "prepared",
+  "protocol": {
+    "model": "gpt-5.6-luna",
+    "effort": "medium",
+    "stages": 3,
+    "maxCompactions": 2,
+    "maxTurnsPerStage": 8,
+    "maxToolCalls": 120,
+    "maxWallTimeMs": 900000,
+    "maxJevRequestsPerBoundary": 1,
+    "maxContextChars": 6000,
+    "successfulJevModes": [
+      "jev"
+    ]
+  },
+  "taskCount": 6,
+  "repetitionCount": 2,
+  "armNames": [
+    "stockCodex",
+    "pluginLocal",
+    "pluginJev"
+  ],
+  "tasks": [
+    {
+      "taskIndex": 0,
+      "repetition": 0,
+      "id": "ledger-idempotency-r1",
+      "hash": "50369a860d886eec4c204d91d4a6c22d889b6a99db107a67b10d6b9506bed014"
+    },
+    {
+      "taskIndex": 0,
+      "repetition": 1,
+      "id": "ledger-idempotency-r2",
+      "hash": "92d1cfff12f1302799765e4ec885998316a35380fa77e70f418d3c976f327dba"
+    },
+    {
+      "taskIndex": 1,
+      "repetition": 0,
+      "id": "config-migration-r1",
+      "hash": "2dbce5eb40dc6c09bcf51f1f69ce8bf0432b94d4460a948be611c722f321421a"
+    },
+    {
+      "taskIndex": 1,
+      "repetition": 1,
+      "id": "config-migration-r2",
+      "hash": "689129c545be25cdee94c1f026d09281e0c8a5066a69ebc57cbf4c4d2ddf115d"
+    },
+    {
+      "taskIndex": 2,
+      "repetition": 0,
+      "id": "sku-index-r1",
+      "hash": "6ce58e5985085fcf88d55f8e62506190a3f21d0be2013cdf1c43a5be8b827ad8"
+    },
+    {
+      "taskIndex": 2,
+      "repetition": 1,
+      "id": "sku-index-r2",
+      "hash": "dc2dabd5496b69515f9ac24f7afcb9f0ed32cd7d2ade2280d2eb0e407e78fb8b"
+    },
+    {
+      "taskIndex": 3,
+      "repetition": 0,
+      "id": "config-precedence-r1",
+      "hash": "c60ab166f67354506a9a5d572ddc34a49e41beadb4b9b684679331a9cf4f0035"
+    },
+    {
+      "taskIndex": 3,
+      "repetition": 1,
+      "id": "config-precedence-r2",
+      "hash": "734be17532981d20ec3f663883065f7d600a285fe4675802fabffe3cfc49c0ea"
+    },
+    {
+      "taskIndex": 4,
+      "repetition": 0,
+      "id": "correction-ledger-r1",
+      "hash": "7b78618e8798916e9cef5a2cb35d1c4c363967ddf0ecf52d4bb213270e5cb364"
+    },
+    {
+      "taskIndex": 4,
+      "repetition": 1,
+      "id": "correction-ledger-r2",
+      "hash": "fd108c450f14ccd63151481d49bef9f4bfd7ba9522329c343014a913d351a4c2"
+    },
+    {
+      "taskIndex": 5,
+      "repetition": 0,
+      "id": "receipt-reconciliation-r1",
+      "hash": "5793bbac7982023cde595329886ebcfde4b4f93f4c7044f87c1a501debd7b34d"
+    },
+    {
+      "taskIndex": 5,
+      "repetition": 1,
+      "id": "receipt-reconciliation-r2",
+      "hash": "62005e5f3b4c43716e1d47bad75de85b55943605e415920c75b3ce404a9377a5"
+    }
+  ],
+  "evaluatorHash": "37bdaedc1d9cf6629fa15674162d681670c95ba5216541e4080b61537ead9e92",
+  "runtime": {
+    "node": "v24.12.0",
+    "platform": "win32",
+    "arch": "x64"
+  },
+  "runnerHash": "45476040843e3fb36997c5dd4924ff11583277927cd361041565938232fb670b",
+  "codex": {
+    "pathHash": "4e5734363669f0a9b284dd8c084d101232c55a6820c3ed307fe4c8b82718f7ba",
+    "binaryHash": "e4c11374bd9de8ad5c3b7617fd4654bb7839901edb0863f9930666863c7a021b",
+    "version": "codex-cli 0.155.0"
+  },
+  "distHash": "6ee740274fdcbb2aa972fcba07cf07c5a247e6b14987a3e02ed040b2daab613e",
+  "bundledHookConfigHash": "ca3cbb6104eb60fa5fcffde853ea1b55f36de91f219246bb98fd12c7c89c3fa3",
+  "bundledSmokeHash": "7854f5613c0fcff7c84df36adc31d24de5342d4fec077d0da01ec54f0ec62f8e",
+  "profileConfigHashes": {
+    "stockCodex": "c1eec281b2b211fbb1feaab2b7235650527f2a32e6a14b33dd749d5eedfc5ecc",
+    "pluginLocal": "ee86528596dc891096d7ac2b330381d82c09da0924e3b6f080b6fccf778bda5e",
+    "pluginJev": "ee86528596dc891096d7ac2b330381d82c09da0924e3b6f080b6fccf778bda5e"
+  },
+  "sourceHashes": {
+    "src": "c071d21dfa5424530a67ea7156d9006cbd839e9f3c90a00cd70d3423892038f5"
+  },
+  "profiles": {
+    "stockCodex": {
+      "pathHash": "e14ff25f6fbeee0b2a59aa81da3f22ef00f498ab6cf394e835a07d2f7d92e789",
+      "exists": true
+    },
+    "pluginLocal": {
+      "pathHash": "ca56247ccb497566fc561278e0b0242a0c96c4c5a5f07dfc4146bce7fc0e189b",
+      "exists": true
+    },
+    "pluginJev": {
+      "pathHash": "6b6d0c933509a76f5f0d76ca30dc8d2874053dbe05af4a1cf3f7293c0b4dd0ec",
+      "exists": true
+    }
+  },
+  "armOrder": [
+    [
+      "stockCodex",
+      "pluginLocal",
+      "pluginJev"
+    ],
+    [
+      "pluginLocal",
+      "pluginJev",
+      "stockCodex"
+    ],
+    [
+      "pluginJev",
+      "stockCodex",
+      "pluginLocal"
+    ],
+    [
+      "stockCodex",
+      "pluginLocal",
+      "pluginJev"
+    ],
+    [
+      "pluginLocal",
+      "pluginJev",
+      "stockCodex"
+    ],
+    [
+      "pluginJev",
+      "stockCodex",
+      "pluginLocal"
+    ],
+    [
+      "stockCodex",
+      "pluginLocal",
+      "pluginJev"
+    ],
+    [
+      "pluginLocal",
+      "pluginJev",
+      "stockCodex"
+    ],
+    [
+      "pluginJev",
+      "stockCodex",
+      "pluginLocal"
+    ],
+    [
+      "stockCodex",
+      "pluginLocal",
+      "pluginJev"
+    ],
+    [
+      "pluginLocal",
+      "pluginJev",
+      "stockCodex"
+    ],
+    [
+      "pluginJev",
+      "stockCodex",
+      "pluginLocal"
+    ]
+  ],
+  "noGo": [
+    "native host acceptance unavailable",
+    "stock contamination",
+    "untrusted or disabled bundled hooks",
+    "untrusted or disabled bundled hooks",
+    "unverified key/shell isolation",
+    "fallback counted as Jev success",
+    "post-fork archive or trajectory reuse"
+  ],
+  "protocolHash": "97ed487cfdcc5c019468fa080fdfef5afe3304cf4254c714c4bcb340e01f6a56",
+  "clientHash": "a33293ac150504a0ac83304ef30e2aa7c174715b4b27e4f5ddc1d26ec2ee451d",
+  "installedHashes": {
+    "stockCodex": null,
+    "pluginLocal": "c751a60b30d6cf5436dccc30c53d14eaacd55fe24382a7506604acb9d929d4fb",
+    "pluginJev": "c751a60b30d6cf5436dccc30c53d14eaacd55fe24382a7506604acb9d929d4fb"
+  },
+  "thresholds": {
+    "localVsStock": {
+      "netWins": 3,
+      "distinctTasks": 2
+    },
+    "jevVsStock": {
+      "netWins": 2,
+      "distinctTasks": 2,
+      "medianLatencyRatio": 1.2
+    },
+    "jevVsLocal": {
+      "netWins": 2,
+      "distinctTasks": 2
+    },
+    "repeatedLossAllowed": false,
+    "hardConstraintRegressionAllowed": false
+  },
+  "baseInstructions": "Work in the provided disposable workspace. You may retrieve only session history explicitly referenced by the recovery index. Preserve user constraints and corrections across compactions. Do not inspect evaluator files, other workspaces, or credentials.",
+  "dynamicTools": [],
+  "sandbox": "workspace-write",
+  "approvalPolicy": "never"
+}

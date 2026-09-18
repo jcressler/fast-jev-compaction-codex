@@ -1,0 +1,191 @@
+{
+  "schema": 1,
+  "scope": "Installed bundled-plugin native compaction and key isolation; not task quality",
+  "codexVersion": "0.155.0",
+  "pluginVersion": "0.3.5",
+  "model": "gpt-5.6-luna",
+  "effort": "medium",
+  "sourceReportSha256": "95dd813b44c6b7f3063c6f7d7efc95b807b00400edc8c558176fd9961063f16f",
+  "arms": [
+    {
+      "arm": "stockCodex",
+      "status": "passed",
+      "hooks": [],
+      "effectiveSandboxType": "workspaceWrite",
+      "keyPresentInModelShell": false,
+      "compaction": {
+        "latencyMs": 7514,
+        "completed": true
+      },
+      "reflection": {
+        "checkpointMarker": "BUNDLED-CHECK-921",
+        "recoverySelection": null
+      },
+      "assertions": {
+        "nativeCompaction": true,
+        "keyExcluded": true,
+        "markerSeen": true,
+        "expectedSelection": true,
+        "expectedArchive": true,
+        "nativeContext": true,
+        "expectedMode": true,
+        "liveJev": true
+      },
+      "nativeContexts": [],
+      "selections": [],
+      "nativeEmissionHashesMatch": true
+    },
+    {
+      "arm": "pluginLocal",
+      "status": "passed",
+      "hooks": [
+        {
+          "eventName": "preCompact",
+          "source": "plugin",
+          "trustStatus": "trusted",
+          "pluginId": "fast-jev-compaction-codex@fast-jev-compaction-codex"
+        },
+        {
+          "eventName": "sessionStart",
+          "source": "plugin",
+          "trustStatus": "trusted",
+          "pluginId": "fast-jev-compaction-codex@fast-jev-compaction-codex"
+        }
+      ],
+      "effectiveSandboxType": "workspaceWrite",
+      "keyPresentInModelShell": false,
+      "compaction": {
+        "latencyMs": 7708,
+        "completed": true
+      },
+      "reflection": {
+        "checkpointMarker": "BUNDLED-CHECK-921",
+        "recoverySelection": "local"
+      },
+      "assertions": {
+        "nativeCompaction": true,
+        "keyExcluded": true,
+        "markerSeen": true,
+        "expectedSelection": true,
+        "expectedArchive": true,
+        "nativeContext": true,
+        "expectedMode": true,
+        "liveJev": true
+      },
+      "nativeContexts": [
+        {
+          "chars": 2357,
+          "sha256": "2da4aa11b59c617ac0aafd33eb4921e10f40f6faec5207ca0024d8a8bfb9997a",
+          "recovery": true,
+          "ids": [
+            "13cb2dd76f3c8f435439f2bab3a8f091775e12cbb278b0d6c215930945eb0801",
+            "26584e71d55c545208daafb55573d7791810ac863b8f99e0a088b0b8f2173c18",
+            "3752d3a1e665b40b2763aa003b3141076e9eee97111c78816af6e409f9add4ab",
+            "583c6e115edf5066f2b338ab7e850026cbe7f6a2d33621c1b4d1e05ddbb725ea"
+          ]
+        }
+      ],
+      "selections": [
+        {
+          "mode": "local",
+          "generation": "ff266ba3-2ffd-4131-b1ab-863042aa6429",
+          "requests": 0,
+          "latencyMs": 0,
+          "candidateCount": 0,
+          "requestChars": 0,
+          "emittedIds": [
+            "13cb2dd76f3c8f435439f2bab3a8f091775e12cbb278b0d6c215930945eb0801",
+            "26584e71d55c545208daafb55573d7791810ac863b8f99e0a088b0b8f2173c18",
+            "3752d3a1e665b40b2763aa003b3141076e9eee97111c78816af6e409f9add4ab",
+            "583c6e115edf5066f2b338ab7e850026cbe7f6a2d33621c1b4d1e05ddbb725ea"
+          ],
+          "emittedContextChars": 2357,
+          "emittedContextSha256": "2da4aa11b59c617ac0aafd33eb4921e10f40f6faec5207ca0024d8a8bfb9997a"
+        }
+      ],
+      "nativeEmissionHashesMatch": true
+    },
+    {
+      "arm": "pluginJev",
+      "status": "passed",
+      "hooks": [
+        {
+          "eventName": "preCompact",
+          "source": "plugin",
+          "trustStatus": "trusted",
+          "pluginId": "fast-jev-compaction-codex@fast-jev-compaction-codex"
+        },
+        {
+          "eventName": "sessionStart",
+          "source": "plugin",
+          "trustStatus": "trusted",
+          "pluginId": "fast-jev-compaction-codex@fast-jev-compaction-codex"
+        }
+      ],
+      "effectiveSandboxType": "workspaceWrite",
+      "keyPresentInModelShell": false,
+      "compaction": {
+        "latencyMs": 10061,
+        "completed": true
+      },
+      "reflection": {
+        "checkpointMarker": "BUNDLED-CHECK-921",
+        "recoverySelection": "jev"
+      },
+      "assertions": {
+        "nativeCompaction": true,
+        "keyExcluded": true,
+        "markerSeen": true,
+        "expectedSelection": true,
+        "expectedArchive": true,
+        "nativeContext": true,
+        "expectedMode": true,
+        "liveJev": true
+      },
+      "nativeContexts": [
+        {
+          "chars": 2351,
+          "sha256": "277a44f4f2342be1e8e370870629c88471fd7392f6dfdea209209cda2b45432c",
+          "recovery": true,
+          "ids": [
+            "bcd65c372f55d11ea1d3bf50f574fe3493b6cf924a8c806abb958fdd0d8dd3d2",
+            "b770df8357d23d711afcd5bb3efbb4aecb9d626d72e7b2dfc0620335f2196701",
+            "cf4b2697e39de93bf73e73c935db08475b3b13bde5949de16505a02a0a33aac4",
+            "f94925d84cb609d8ed6f1e42a29caf2efc31e4693b8676cb5c137502ecdb03d4"
+          ]
+        }
+      ],
+      "selections": [
+        {
+          "mode": "jev",
+          "generation": "1c5ffd4a-a512-43b2-bd63-3bad559acab8",
+          "requests": 1,
+          "model": "jev-1.13.0",
+          "usage": {
+            "input_tokens": 5808,
+            "output_tokens": 604
+          },
+          "latencyMs": 621,
+          "candidateCount": 4,
+          "requestChars": 14993,
+          "emittedIds": [
+            "bcd65c372f55d11ea1d3bf50f574fe3493b6cf924a8c806abb958fdd0d8dd3d2",
+            "b770df8357d23d711afcd5bb3efbb4aecb9d626d72e7b2dfc0620335f2196701",
+            "cf4b2697e39de93bf73e73c935db08475b3b13bde5949de16505a02a0a33aac4",
+            "f94925d84cb609d8ed6f1e42a29caf2efc31e4693b8676cb5c137502ecdb03d4"
+          ],
+          "emittedContextChars": 2351,
+          "emittedContextSha256": "277a44f4f2342be1e8e370870629c88471fd7392f6dfdea209209cda2b45432c"
+        }
+      ],
+      "nativeEmissionHashesMatch": true
+    }
+  ],
+  "qualityComparison": false,
+  "costUsd": null,
+  "limitations": [
+    "One short synthetic smoke per approach, excluded from the quality comparison.",
+    "A prior stock smoke stopped before compaction because its fresh Windows sandbox was not configured; normal unelevated sandbox setup repaired it.",
+    "These smoke profiles had no prior task memory; memories and host skill discovery were disabled explicitly before the quality run."
+  ]
+}
