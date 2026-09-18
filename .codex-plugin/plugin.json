@@ -1,7 +1,7 @@
 {
   "name": "fast-jev-compaction-codex",
-  "version": "0.1.0",
-  "description": "Jev-selected verbatim evidence recovery around Codex compaction.",
+  "version": "0.2.0",
+  "description": "Local exact evidence recovery around Codex native compaction, with optional Jev retrieval ranking.",
   "author": {
     "name": "James Cressler",
     "url": "https://github.com/jcressler"
@@ -11,11 +11,11 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "Fast Jev Compaction for Codex",
-    "shortDescription": "Preserve exact evidence across Codex compaction",
-    "longDescription": "Uses Jev to prune stale tool history into a local archive and restore bounded evidence after native Codex compaction. Requires a TypeSafe API key and explicit network opt-in.",
+    "shortDescription": "Recover local evidence after native compaction",
+    "longDescription": "Stores immutable local evidence and a cumulative index around native Codex compaction. Search and exact retrieval work offline; Jev is optional retrieval ranking and requires explicit network opt-in plus a TypeSafe API key.",
     "developerName": "James Cressler",
     "category": "Productivity",
     "capabilities": [],
-    "defaultPrompt": ["Inspect my Codex compaction setup."]
+    "defaultPrompt": ["Search my authorized local Codex recovery archive."]
   }
 }

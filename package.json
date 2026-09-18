@@ -1,7 +1,7 @@
 {
   "name": "fast-jev-compaction-codex",
-  "version": "0.1.0",
-  "description": "Jev-powered verbatim transcript pruning and context recovery for Codex.",
+  "version": "0.2.0",
+  "description": "Local evidence recovery around native Codex compaction, with optional Jev retrieval ranking.",
   "type": "module",
   "license": "MIT",
   "engines": {
@@ -35,6 +35,7 @@
     "typecheck": "tsc --noEmit && tsc -p tsconfig.tests.json",
     "test": "vitest run",
     "demo": "node examples/demo.mjs",
+    "benchmark": "node benchmarks/replay.mjs && node benchmarks/score-self-test.mjs",
     "check": "npm run typecheck && npm test && npm run build",
     "prepack": "npm run build"
   },

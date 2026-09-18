@@ -45,6 +45,23 @@ async function transcriptFixture() {
   return { directory, input, output, transcript };
 }
 
+async function archiveFixture(label = 'first') {
+  const value = await transcriptFixture();
+  const lines = [
+    { type: 'session_meta', payload: { id: 'cli-test' } },
+    { type: 'response_item', payload: { type: 'message', role: 'user', content: `request-${label}` } },
+    { type: 'response_item', payload: {
+      type: 'function_call', call_id: `call-${label}`, name: 'read_file', arguments: '{"path":"evidence.txt"}',
+    } },
+    { type: 'response_item', payload: {
+      type: 'function_call_output', call_id: `call-${label}`, output: `tool evidence for ${label}`,
+    } },
+  ];
+  await writeFile(value.input, lines.map((line) => JSON.stringify(line)).join('\n') + '\n', 'utf8');
+  value.transcript = await readFile(value.input, 'utf8');
+  return value;
+}
+
 function environment(directory: string): NodeJS.ProcessEnv {
   const env: NodeJS.ProcessEnv = { ...process.env, FAST_JEV_DATA_DIR: join(directory, 'data') };
   delete env.FAST_JEV_ALLOW_NETWORK;
@@ -78,6 +95,81 @@ describe('fast-jev-codex CLI', () => {
     expect(result.code).toBe(0);
     expect(JSON.parse(result.stdout)).toEqual({ items: 2, byType: { message: 2 } });
     expect(await readFile(value.input)).toEqual(before);
+  });
+
+  it('archives offline with a configured key but no network opt-in', async () => {
+    const value = await archiveFixture();
+    const archive = join(value.directory, 'evidence-archive');
+    const before = await readFile(value.input);
+    const result = await invoke(['archive', '--input', value.input, '--output', archive], {
+      env: { ...environment(value.directory), TYPESAFE_API_KEY: 'must-not-be-used' },
+    });
+    expect(result.code).toBe(0);
+    const output = JSON.parse(result.stdout) as { archive: string; entries: number };
+    expect(output.archive).toContain('index.json');
+    expect(output.entries).toBeGreaterThan(0);
+    expect(await readFile(value.input)).toEqual(before);
+  });
+
+  it('searches and retrieves archive evidence through the CLI', async () => {
+    const value = await archiveFixture();
+    const archive = join(value.directory, 'evidence-archive');
+    const created = await invoke(['archive', '--input', value.input, '--output', archive], {
+      env: environment(value.directory),
+    });
+    expect(created.code).toBe(0);
+    const indexPath = join(archive, 'index.json');
+
+    const search = await invoke(['search', '--archive', indexPath, '--query', 'call-first', '--limit', '1'], {
+      env: environment(value.directory),
+    });
+    expect(search.code).toBe(0);
+    const matches = JSON.parse(search.stdout) as { entries: unknown[] };
+    expect(matches.entries.length).toBeLessThanOrEqual(1);
+    expect(JSON.stringify(matches.entries)).toContain('call-first');
+
+    const catalog = JSON.parse(await readFile(indexPath, 'utf8')) as { entries: Array<{ id: string }> };
+    const evidenceId = (matches.entries[0] as { id: string }).id || catalog.entries[0].id;
+    const retrieved = await invoke(['retrieve', '--archive', indexPath, '--id', evidenceId], {
+      env: environment(value.directory),
+    });
+    expect(retrieved.code).toBe(0);
+    const result = JSON.parse(retrieved.stdout) as { records: Array<Record<string, unknown>> };
+    expect(result.records.length).toBeGreaterThan(0);
+    expect(JSON.stringify(result.records)).toContain('tool evidence for first');
+  });
+
+  it('allows an existing archive directory to accumulate one transcript and rejects collisions', async () => {
+    const value = await archiveFixture('first');
+    const archive = join(value.directory, 'evidence-archive');
+    const env = environment(value.directory);
+    expect((await invoke(['archive', '--input', value.input, '--output', archive], { env })).code).toBe(0);
+
+    await writeFile(value.input, value.transcript.replaceAll('first', 'second'), 'utf8');
+    const cumulative = await invoke(['archive', '--input', value.input, '--output', archive], { env });
+    expect(cumulative.code).toBe(0);
+
+    const otherInput = join(value.directory, 'other-rollout.jsonl');
+    await writeFile(otherInput, value.transcript, 'utf8');
+    const collision = await invoke(['archive', '--input', otherInput, '--output', archive], { env });
+    expect(collision.code).toBe(1);
+    expect(collision.stderr).toMatch(/identity|transcript|different session/i);
+  });
+
+  it('requires explicit network opt-in and a key for optional Jev search', async () => {
+    const value = await archiveFixture();
+    const archive = join(value.directory, 'evidence-archive');
+    const env = environment(value.directory);
+    expect((await invoke(['archive', '--input', value.input, '--output', archive], { env })).code).toBe(0);
+    const indexPath = join(archive, 'index.json');
+
+    const noOptIn = await invoke(['search', '--archive', indexPath, '--query', 'call-first', '--jev'], { env });
+    expect(noOptIn.code).toBe(1);
+    expect(noOptIn.stderr).toContain('--allow-network');
+
+    const noKey = await invoke(['search', '--archive', indexPath, '--query', 'call-first', '--jev', '--allow-network'], { env });
+    expect(noKey.code).toBe(1);
+    expect(noKey.stderr).toContain('TYPESAFE_API_KEY');
   });
 
   it('handles malformed hook JSON as a successful empty response', async () => {

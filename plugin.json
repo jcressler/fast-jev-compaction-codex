@@ -1,8 +1,8 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "fast-jev-compaction-codex",
-  "version": "0.1.0",
-  "description": "Jev-selected verbatim evidence recovery around Codex compaction.",
+  "version": "0.2.0",
+  "description": "Local exact evidence recovery around Codex native compaction, with optional Jev retrieval ranking.",
   "author": { "name": "James Cressler", "url": "https://github.com/jcressler" },
   "repository": "https://github.com/jcressler/fast-jev-compaction-codex",
   "license": "MIT"
