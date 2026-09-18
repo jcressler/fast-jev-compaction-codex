@@ -1,14 +1,15 @@
 # Fast Jev Compaction for Codex
 
-Fast Jev Compaction is a local evidence-recovery sidecar for Codex's native
-compaction. Version 0.2.0 records stable, immutable content-addressed objects
+Fast Jev Compaction adds task-aware Jev evidence selection around Codex's native
+compaction. Version 0.3.0 records stable, immutable content-addressed objects
 and a cumulative index that survives compaction. It helps you find and inspect
 earlier tool evidence after native compaction; it does not rewrite a live
 transcript, replace native compaction, or claim live token reduction.
 
-The default path is offline and requires no API key. Jev is an optional,
-explicit retrieval-ranking aid. It is never required for recording, indexing,
-search, or exact retrieval, and it never deletes records.
+Enable Jev mode with a TypeSafe key to automatically rank recovery evidence at
+compaction time. Jev sees a bounded task context plus paired tool inputs and
+results; its ordering shapes the next recovery index. The default local mode
+requires no key. Both modes preserve all archived records for exact retrieval.
 
 ## What the plugin does
 
@@ -27,8 +28,9 @@ semantic guarantee. Raw records remain retrievable by full content ID when a
 flag is insufficient. Recovery reads historical evidence only; it does not
 authorize repeating a recorded action.
 
-Hooks are disabled with `FAST_JEV_ENABLED=0`; the older
-`FAST_JEV_ALLOW_NETWORK` variable no longer gates hooks. The data directory is
+Hooks are disabled with `FAST_JEV_ENABLED=0`. `FAST_JEV_ALLOW_NETWORK=1` enables
+network use only together with `FAST_JEV_MODE=jev` and a key. It does not gate
+local capture. The data directory is
 selected exactly from `FAST_JEV_DATA_DIR`, then `PLUGIN_DATA`, then
 `CODEX_HOME/fast-jev-compaction-codex`, with a `homedir/.codex` fallback.
 Pending recovery is single-use and valid for ten minutes. Objects have no
@@ -54,9 +56,66 @@ codex plugin add fast-jev-compaction-codex@fast-jev-compaction-codex
 Start a new Codex session and use `/hooks` to review and trust the hooks.
 Installing a plugin does not automatically trust its hooks.
 
-No key is needed for the default local recovery path. Optional Jev ranking
-requires both `--jev --allow-network` on `search` and `TYPESAFE_API_KEY` in the
-process environment. Keep keys out of files and Git.
+## Test Jev
+
+Start with synthetic data from a checkout. On Windows, this script prompts for
+the key with hidden input, runs the live comparison, and removes the temporary
+process environment setting when it finishes:
+
+```powershell
+.\scripts\test-jev.ps1
+# If you have already copied the key, use .\scripts\test-jev.ps1 -FromClipboard
+```
+
+On other platforms, provide `TYPESAFE_API_KEY` through your shell's secret input
+or secret manager, then run `node benchmarks/jev-trial.mjs --live --allow-network`.
+Running `node benchmarks/jev-trial.mjs` alone is the offline smoke test.
+See [the trial protocol](benchmarks/JEV-TRIAL.md). The test sends only generated
+synthetic data, never your existing Codex sessions.
+
+## Use Jev automatically in Codex
+
+After installing and trusting the hooks, start Codex with these environment
+variables in the **Codex process**, not just a separate terminal:
+
+| Variable | Value |
+| --- | --- |
+| `TYPESAFE_API_KEY` | Your TypeSafe key, provided securely |
+| `FAST_JEV_MODE` | `jev` |
+| `FAST_JEV_ALLOW_NETWORK` | `1` |
+| `FAST_JEV_TIMEOUT_MS` | Optional, default `8000`, clamped to `100..15000` |
+
+For example, after setting the key with hidden input in PowerShell:
+
+```powershell
+$env:FAST_JEV_MODE = 'jev'
+$env:FAST_JEV_ALLOW_NETWORK = '1'
+codex
+```
+
+At `PreCompact`, the hook saves all evidence, then makes at most one bounded Jev
+request. `SessionStart` with source `compact` reads the saved ordering and
+restores a small index before continuation; it makes no network call. Recent
+user instructions remain prioritized independently of Jev's scores. Native
+compaction, its reasoning state, and the live transcript are unchanged.
+Missing authorization/key, network errors, invalid scores, and timeouts use
+local recovery instead. Inspect what actually ran using the archive path shown
+in the recovery context:
+
+```sh
+node dist/cli.js status --archive DIRECTORY/index.json
+```
+
+The plugin caps its index at 6,000 characters. Codex's separate
+`additionalContextLimit: 4000` setting is an approximate token threshold,
+as described in the [official hook documentation](https://developers.openai.com/codex/hooks).
+
+The local `selection-<generation>.json` report records `mode`, selected IDs,
+request count, latency, request character count, and available model/token usage.
+Mode `local-fallback` means Jev selection did not complete successfully; it is
+not a successful Jev experiment. Reports contain no API key or raw task text.
+Set `FAST_JEV_MODE=local` to turn off automatic Jev requests. Explicit CLI
+search ranking still requires `--jev --allow-network` and a key.
 
 ## CLI
 
@@ -95,10 +154,11 @@ incompatible with guaranteed live replay and is not the recommended workflow.
 
 ## Jev boundary
 
-Jev ranking is opt-in and requires `TYPESAFE_API_KEY` only when explicitly
-requested. It sends the query and bounded tool outcome snippets to TypeSafe;
-the snippets are not a redactor and may contain sensitive text. Use it only
-when that transfer is authorized. The local archive is complete for the
+Jev hooks send bounded user objectives, recent user/assistant discussion, and
+candidate tool input/output excerpts to TypeSafe. Explicit Jev search sends the
+query and bounded tool outcome snippets. These excerpts are not a redactor and
+may contain sensitive text; configure Jev only for tasks whose transfer is
+authorized. Opaque reasoning and system/developer records are excluded. The local archive is complete for the
 records it received and is the source of truth for retrieval. Jev may influence
 result ordering; it does not decide whether records exist, does not rewrite the
 transcript, and does not delete objects. Missing keys, network errors, or
@@ -124,9 +184,12 @@ npm run check
 boundaries, including large outputs and irrelevant tool results. It also checks
 the scorer for separately recorded real-model runs. Optional Jev ranking needs
 an explicit network flag. See [the evaluation protocol](benchmarks/README.md).
-Real native-vs-local-vs-Jev benchmark outcomes have not yet been verified, so
-this project makes no superiority claim. Synthetic checks do not imply a live
-Codex compaction or live Jev result.
+The live Jev trial checks evidence selection against the local heuristic with
+the same recovery character budget. It reports real API calls separately from
+offline checks. It is not an end-to-end native-vs-local-vs-Jev Codex benchmark
+and does not establish better coding accuracy or lower total cost.
+The [initial live results](benchmarks/RESULTS-2026-09-18.md) include a local
+control using the same candidate pool, which matched Jev on the tested targets.
 
 The original MIT-licensed scoring engine is retained with attribution in
 [NOTICE](NOTICE). This is an independent community project.

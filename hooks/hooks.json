@@ -1,5 +1,5 @@
 {
-  "description": "Save exact local evidence and restore a small retrieval index around native Codex compaction. No network or API key required.",
+  "description": "Save exact evidence around native Codex compaction. In configured Jev mode, rank task-relevant evidence before restoring the index; otherwise recover locally.",
   "hooks": {
     "PreCompact": [{
       "matcher": "^(manual|auto)$",
@@ -8,7 +8,7 @@
         "command": "node \"${PLUGIN_ROOT}/dist/cli.js\" hook",
         "commandWindows": "node \"${PLUGIN_ROOT}/dist/cli.js\" hook",
         "timeout": 25,
-        "statusMessage": "Saving local compaction evidence"
+        "statusMessage": "Saving evidence and selecting compaction recovery context"
       }]
     }],
     "SessionStart": [{
@@ -19,7 +19,7 @@
         "commandWindows": "node \"${PLUGIN_ROOT}/dist/cli.js\" hook",
         "timeout": 5,
         "additionalContextLimit": 4000,
-        "statusMessage": "Restoring local evidence index"
+        "statusMessage": "Restoring selected evidence index"
       }]
     }]
   }

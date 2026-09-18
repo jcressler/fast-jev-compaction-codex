@@ -4,7 +4,7 @@ import { join, resolve } from 'node:path';
 import { parseArgs } from 'node:util';
 import { JevClient } from './client.js';
 import { compactCodexItems, parseCodexTranscript } from './codex.js';
-import { runHook, writeNewArchive } from './hooks.js';
+import { readRecoveryRun, runHook, writeNewArchive } from './hooks.js';
 import { captureArchive, readBounded, readCatalog, retrieveEvidence } from './archive.js';
 import { rankEvidence, searchEvidence } from './evidence.js';
 const HELP = `fast-jev-codex — local evidence recovery around native Codex compaction
@@ -13,12 +13,14 @@ const HELP = `fast-jev-codex — local evidence recovery around native Codex com
   fast-jev-codex archive --input rollout.jsonl --output evidence-directory
   fast-jev-codex search --archive evidence-directory/index.json --query "migration failure"
   fast-jev-codex retrieve --archive evidence-directory/index.json --id <full-id>
+  fast-jev-codex status --archive evidence-directory/index.json
   fast-jev-codex search --archive index.json --query "question" --jev --allow-network
-  fast-jev-codex hook       (Codex hook JSON on stdin, always offline)
+  fast-jev-codex hook       (Codex hook JSON on stdin; local or configured Jev mode)
 
 search accepts --limit 1..100 (default 10); Jev ranks at most 20 candidates.
 retrieve accepts --offset and --max-chars 1..64000 (default 12000) for large records.
-Hooks and local commands need no key. Jev search requires TYPESAFE_API_KEY and
+Local commands need no key. Jev hooks require FAST_JEV_MODE=jev,
+FAST_JEV_ALLOW_NETWORK=1 and TYPESAFE_API_KEY. Jev search requires TYPESAFE_API_KEY and
 explicit --allow-network; sends query and bounded evidence/outcome excerpts to TypeSafe.
 
 Legacy experiment: compact --input rollout.jsonl --output pruned.json --allow-network
@@ -52,7 +54,7 @@ async function main() {
         }
         return;
     }
-    if (!['inspect', 'archive', 'search', 'retrieve', 'compact'].includes(command))
+    if (!['inspect', 'archive', 'search', 'retrieve', 'status', 'compact'].includes(command))
         throw new Error('Unknown command; use --help');
     const { values } = parseArgs({ args: process.argv.slice(3), options: {
             input: { type: 'string' }, output: { type: 'string' }, archive: { type: 'string' },
@@ -60,9 +62,16 @@ async function main() {
             offset: { type: 'string' }, 'max-chars': { type: 'string' },
             jev: { type: 'boolean' }, 'allow-network': { type: 'boolean' },
         } });
-    if (command === 'search' || command === 'retrieve') {
+    if (command === 'search' || command === 'retrieve' || command === 'status') {
         if (!values.archive)
             throw new Error('--archive is required');
+        if (command === 'status') {
+            const catalog = await readCatalog(values.archive);
+            const selection = await readRecoveryRun(catalog, values.archive);
+            console.log(JSON.stringify({ archive: resolve(values.archive), generation: catalog.generation,
+                selection: selection ?? null }, null, 2));
+            return;
+        }
         if (command === 'search') {
             if (!values.query?.trim())
                 throw new Error('--query is required');

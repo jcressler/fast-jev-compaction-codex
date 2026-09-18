@@ -137,6 +137,10 @@ describe('fast-jev-codex CLI', () => {
     const result = JSON.parse(retrieved.stdout) as { records: Array<Record<string, unknown>> };
     expect(result.records.length).toBeGreaterThan(0);
     expect(JSON.stringify(result.records)).toContain('tool evidence for first');
+
+    const status = await invoke(['status', '--archive', indexPath], { env: environment(value.directory) });
+    expect(status.code).toBe(0);
+    expect(JSON.parse(status.stdout)).toMatchObject({ archive: indexPath, selection: null });
   });
 
   it('allows an existing archive directory to accumulate one transcript and rejects collisions', async () => {

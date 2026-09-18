@@ -1,6 +1,6 @@
 ---
 name: fast-jev-compaction
-description: Recover exact local evidence around Codex native compaction, or inspect and search a user-authorized Fast Jev archive without guessing across private sessions.
+description: Configure or test Jev-assisted evidence selection around native Codex compaction, and recover exact evidence from an authorized Fast Jev archive.
 ---
 
 # Fast Jev Compaction
@@ -30,14 +30,25 @@ context or scored. Index flags for intent, outcome, failure, write, constraint,
 and decision are heuristics and are not exhaustive; retrieve the raw object
 when a flag does not answer the question.
 
-The default archive and search path is network-free and needs no key. Jev is
-optional retrieval ranking only. Use `--jev --allow-network` only when the
+The default archive and search path is network-free and needs no key. Automatic
+Jev recovery selection runs at PreCompact only when `FAST_JEV_MODE=jev`,
+`FAST_JEV_ALLOW_NETWORK=1`, and `TYPESAFE_API_KEY` are in Codex's environment.
+It sends bounded task context and tool input/output excerpts to TypeSafe, saves
+the selected ordering, and supplies it at the following compact SessionStart.
+Existing session authorization for that transfer is sufficient; do not ask
+again at every compaction. Use `status --archive <path>` to inspect the actual
+mode, request count, model, latency, and token usage; `local-fallback` is not
+evidence that Jev worked. The README links a synthetic trial to test a key
+without sending private task history. Never print keys or put them in chat,
+tracked files, or command-line arguments.
+
+Use explicit search `--jev --allow-network` only when the
 user has authorized sending the query and bounded tool outcome snippets to
 TypeSafe; those snippets are not a redactor and may contain sensitive text.
 Then require `TYPESAFE_API_KEY` from the process environment without printing
-or storing it. Jev is not a hook dependency and must not be used to delete or
-rewrite records. `FAST_JEV_ENABLED=0` disables hooks;
-`FAST_JEV_ALLOW_NETWORK` no longer gates hooks. Data path precedence is exactly
+or storing it. Jev must not be used to delete or rewrite records.
+`FAST_JEV_ENABLED=0` disables hooks; `FAST_JEV_MODE=local` disables automatic Jev
+selection. No network flag is required for local capture. Data path precedence is exactly
 `FAST_JEV_DATA_DIR`, `PLUGIN_DATA`, then `CODEX_HOME/fast-jev-compaction-codex`,
 then the `homedir/.codex` fallback.
 

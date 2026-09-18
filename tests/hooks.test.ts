@@ -3,7 +3,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
 import { readCatalog, retrieveEvidence } from '../src/archive.js';
-import { checkpointPaths, runHook } from '../src/hooks.js';
+import { checkpointPaths, readRecoveryRun, recoveryContext, runHook } from '../src/hooks.js';
 
 const temporaryDirectories: string[] = [];
 
@@ -38,13 +38,13 @@ function transcriptText(label: string, count = 0): string {
   return records(label, count).map((record) => JSON.stringify(record)).join('\n') + '\n';
 }
 
-async function fixture(label = 'first') {
+async function fixture(label = 'first', count = 0) {
   const root = await mkdtemp(join(tmpdir(), 'fast-jev-hooks-'));
   temporaryDirectories.push(root);
   const data = join(root, 'data');
   const transcript = join(root, 'rollout.jsonl');
   const cwd = join(root, 'project');
-  await writeFile(transcript, transcriptText(label), 'utf8');
+  await writeFile(transcript, transcriptText(label, count), 'utf8');
   const env: NodeJS.ProcessEnv = { FAST_JEV_DATA_DIR: data };
   return { root, data, transcript, cwd, env };
 }
@@ -69,6 +69,91 @@ function compactStart(value: Awaited<ReturnType<typeof fixture>>, session = 'ses
 }
 
 describe('Codex hook handoff', () => {
+  it('uses configured Jev before compaction and delivers its selection exactly once', async () => {
+    const value = await fixture('jev', 15);
+    const env = { ...value.env, FAST_JEV_MODE: 'jev', FAST_JEV_ALLOW_NETWORK: '1', TYPESAFE_API_KEY: 'test-only-secret' };
+    let calls = 0;
+    const asker = { ask: async (_state: unknown, questions: Record<string, unknown>) => {
+      calls++;
+      return { model: 'jev-test', usage: { input_tokens: 100, output_tokens: 20 },
+        answers: Object.fromEntries(Object.keys(questions).map(key => [key, { noul: 0.9 }])) };
+    } };
+    const before = await readFile(value.transcript);
+    await runHook(preInput(value), { env, asker, now: () => 1_000 });
+    expect(calls).toBe(1);
+    const { archive } = checkpointPaths(preInput(value), env);
+    const catalog = await readCatalog(archive);
+    const run = await readRecoveryRun(catalog, archive);
+    expect(run).toMatchObject({ mode: 'jev', requests: 1, model: 'jev-test', usage: { input_tokens: 100 } });
+    expect(run!.selectedIds.length).toBeGreaterThan(0);
+    expect(JSON.stringify(run)).not.toContain('test-only-secret');
+    const restored = await runHook(compactStart(value), { env, asker, now: () => 1_001 });
+    expect(JSON.stringify(restored)).toContain('Selection: jev');
+    expect(calls).toBe(1);
+    expect(await readFile(value.transcript)).toEqual(before);
+    expect(await runHook(compactStart(value), { env, asker, now: () => 1_002 })).toEqual({});
+  });
+
+  it('does not call Jev without mode, network opt-in, and a key', async () => {
+    const value = await fixture('gates');
+    let calls = 0;
+    const asker = { ask: async () => { calls++; throw new Error('must never call'); } };
+    for (const extras of [
+      { TYPESAFE_API_KEY: 'test-key', FAST_JEV_ALLOW_NETWORK: '1' },
+      { TYPESAFE_API_KEY: 'test-key', FAST_JEV_MODE: 'jev' },
+      { FAST_JEV_ALLOW_NETWORK: '1', FAST_JEV_MODE: 'jev' },
+    ]) {
+      const env = { ...value.env, ...extras };
+      await runHook(preInput(value), { env, asker, now: () => 1_000 });
+      const { archive } = checkpointPaths(preInput(value), env);
+      expect((await readRecoveryRun(await readCatalog(archive), archive))?.requests).toBe(0);
+    }
+    expect(calls).toBe(0);
+  });
+
+  it('keeps local recovery when Jev fails without exposing the error', async () => {
+    const value = await fixture('fallback');
+    const env = { ...value.env, FAST_JEV_MODE: 'jev', FAST_JEV_ALLOW_NETWORK: '1', TYPESAFE_API_KEY: 'test-key' };
+    const asker = { ask: async () => { throw new Error('secret provider text'); } };
+    await runHook(preInput(value), { env, asker, now: () => 1_000 });
+    const { archive } = checkpointPaths(preInput(value), env);
+    const run = await readRecoveryRun(await readCatalog(archive), archive);
+    expect(run).toMatchObject({ mode: 'local-fallback', requests: 1 });
+    expect(JSON.stringify(run)).not.toContain('secret provider text');
+    const restored = await runHook(compactStart(value), { env, now: () => 1_001 });
+    expect(JSON.stringify(restored)).toContain('tool evidence for fallback');
+    expect(JSON.stringify(restored)).toContain('Selection: local-fallback');
+  });
+
+  it('uses Jev order while pinning current user instructions ahead of it', async () => {
+    const value = await fixture('order', 12);
+    await runHook(preInput(value), { env: value.env, now: () => 1_000 });
+    const { archive } = checkpointPaths(preInput(value), value.env);
+    const catalog = await readCatalog(archive);
+    const selected = catalog.entries.find(e => e.summary.includes('order-tail-0'))!;
+    const context = recoveryContext(catalog, archive, 3_000, { mode: 'jev', selectedIds: [selected.id] });
+    expect(context).toContain(selected.id);
+    expect(context.indexOf('request-order')).toBeLessThan(context.indexOf(selected.id));
+    expect(context.length).toBeLessThanOrEqual(3_000);
+    expect(recoveryContext(catalog, archive, 20).length).toBeLessThanOrEqual(20);
+    expect(recoveryContext(catalog, archive, 0)).toBe('');
+  });
+
+  it('rejects corrupt selection metadata and omits unexpected fields from status', async () => {
+    const value = await fixture('metadata');
+    await runHook(preInput(value), { env: value.env, now: () => 1_000 });
+    const paths = checkpointPaths(preInput(value), value.env);
+    const catalog = await readCatalog(paths.archive);
+    const path = join(paths.directory, `selection-${catalog.generation}.json`);
+    const run = JSON.parse(await readFile(path, 'utf8'));
+    await writeFile(path, JSON.stringify({ ...run, credential: 'unexpected-sensitive-field' }));
+    expect(JSON.stringify(await readRecoveryRun(catalog, paths.archive))).not.toContain('unexpected-sensitive-field');
+    await writeFile(path, JSON.stringify({ ...run, mode: 'jev', selectedIds: ['a'.repeat(64)] }));
+    expect(await readRecoveryRun(catalog, paths.archive)).toBeUndefined();
+    expect(JSON.stringify(await runHook(compactStart(value), { env: value.env, now: () => 1_001 })))
+      .toContain('Selection: local');
+  });
+
   it('captures locally by default, leaves the rollout untouched, and restores once', async () => {
     const value = await fixture();
     const before = await readFile(value.transcript);

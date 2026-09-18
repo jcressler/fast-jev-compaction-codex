@@ -1,7 +1,7 @@
 {
   "name": "fast-jev-compaction-codex",
-  "version": "0.2.0",
-  "description": "Local evidence recovery around native Codex compaction, with optional Jev retrieval ranking.",
+  "version": "0.3.0",
+  "description": "Task-aware Jev evidence selection and exact local recovery around native Codex compaction.",
   "type": "module",
   "license": "MIT",
   "engines": {
@@ -35,9 +35,10 @@
     "typecheck": "tsc --noEmit && tsc -p tsconfig.tests.json",
     "test": "vitest run",
     "demo": "node examples/demo.mjs",
-    "benchmark": "node benchmarks/replay.mjs && node benchmarks/score-self-test.mjs",
+    "benchmark": "node benchmarks/replay.mjs && node benchmarks/score-self-test.mjs && node benchmarks/jev-trial-self-test.mjs",
     "check": "npm run typecheck && npm test && npm run build",
-    "prepack": "npm run build"
+    "prepack": "npm run build",
+    "trial:jev": "node benchmarks/jev-trial.mjs --live --allow-network"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",

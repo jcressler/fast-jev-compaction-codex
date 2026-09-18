@@ -1,4 +1,4 @@
 interface:
   display_name: "Fast Jev Compaction"
-  short_description: "Recover local evidence after native compaction"
-  default_prompt: "Use $fast-jev-compaction to search or retrieve a user-authorized local Codex recovery archive."
+  short_description: "Test Jev-assisted recovery around native compaction"
+  default_prompt: "Use $fast-jev-compaction to test Jev-assisted recovery or retrieve evidence from an authorized Codex archive."

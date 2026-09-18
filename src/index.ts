@@ -8,3 +8,4 @@ export * from './codex.js';
 export * from './evidence.js';
 export * from './archive.js';
 export * from './hooks.js';
+export * from './recovery.js';
