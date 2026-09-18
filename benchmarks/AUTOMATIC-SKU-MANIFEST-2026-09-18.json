@@ -1,0 +1,130 @@
+{
+  "schemaVersion": 1,
+  "status": "prepared",
+  "protocol": {
+    "model": "gpt-5.6-luna",
+    "effort": "medium",
+    "stages": 3,
+    "maxCompactions": 2,
+    "maxTurnsPerStage": 8,
+    "maxToolCalls": 120,
+    "maxWallTimeMs": 900000,
+    "maxJevRequestsPerBoundary": 1,
+    "maxContextChars": 6000,
+    "successfulJevModes": [
+      "jev"
+    ]
+  },
+  "taskCount": 1,
+  "repetitionCount": 2,
+  "armNames": [
+    "stockCodex",
+    "pluginLocal",
+    "pluginJev"
+  ],
+  "tasks": [
+    {
+      "taskIndex": 2,
+      "repetition": 0,
+      "id": "sku-index-r1",
+      "hash": "64c5680e03b8f95eaac8bee917058bdfe51de8da5cb02ee5c6b86d59009d1959"
+    },
+    {
+      "taskIndex": 2,
+      "repetition": 1,
+      "id": "sku-index-r2",
+      "hash": "4936a2c749149dbc5f8f31de202fd7e07845133909f111c03623886eb582b66f"
+    }
+  ],
+  "evaluatorHash": "ba67b98824ad05d51ce34f68ffec00bc56d9b7152eef0989e401e2f5a926d04b",
+  "runtime": {
+    "node": "v24.12.0",
+    "platform": "win32",
+    "arch": "x64"
+  },
+  "runnerHash": "26e9bb9f5ee1572fc3007ac3e8f865022f6ee4859f02c67d9427732007e7ad1d",
+  "codex": {
+    "pathHash": "4e5734363669f0a9b284dd8c084d101232c55a6820c3ed307fe4c8b82718f7ba",
+    "binaryHash": "e4c11374bd9de8ad5c3b7617fd4654bb7839901edb0863f9930666863c7a021b",
+    "version": "codex-cli 0.155.0"
+  },
+  "distHash": "6ee740274fdcbb2aa972fcba07cf07c5a247e6b14987a3e02ed040b2daab613e",
+  "bundledHookConfigHash": "ca3cbb6104eb60fa5fcffde853ea1b55f36de91f219246bb98fd12c7c89c3fa3",
+  "bundledSmokeHash": "7854f5613c0fcff7c84df36adc31d24de5342d4fec077d0da01ec54f0ec62f8e",
+  "profileConfigHashes": {
+    "stockCodex": "c1eec281b2b211fbb1feaab2b7235650527f2a32e6a14b33dd749d5eedfc5ecc",
+    "pluginLocal": "ee86528596dc891096d7ac2b330381d82c09da0924e3b6f080b6fccf778bda5e",
+    "pluginJev": "ee86528596dc891096d7ac2b330381d82c09da0924e3b6f080b6fccf778bda5e"
+  },
+  "sourceHashes": {
+    "src": "c071d21dfa5424530a67ea7156d9006cbd839e9f3c90a00cd70d3423892038f5"
+  },
+  "profiles": {
+    "stockCodex": {
+      "pathHash": "e14ff25f6fbeee0b2a59aa81da3f22ef00f498ab6cf394e835a07d2f7d92e789",
+      "exists": true
+    },
+    "pluginLocal": {
+      "pathHash": "ca56247ccb497566fc561278e0b0242a0c96c4c5a5f07dfc4146bce7fc0e189b",
+      "exists": true
+    },
+    "pluginJev": {
+      "pathHash": "6b6d0c933509a76f5f0d76ca30dc8d2874053dbe05af4a1cf3f7293c0b4dd0ec",
+      "exists": true
+    }
+  },
+  "armOrder": [
+    [
+      "pluginLocal",
+      "pluginJev",
+      "stockCodex"
+    ],
+    [
+      "pluginJev",
+      "stockCodex",
+      "pluginLocal"
+    ]
+  ],
+  "noGo": [
+    "native host acceptance unavailable",
+    "stock contamination",
+    "untrusted or disabled bundled hooks",
+    "untrusted or disabled bundled hooks",
+    "unverified key/shell isolation",
+    "fallback counted as Jev success",
+    "post-fork archive or trajectory reuse"
+  ],
+  "protocolHash": "97ed487cfdcc5c019468fa080fdfef5afe3304cf4254c714c4bcb340e01f6a56",
+  "clientHash": "a33293ac150504a0ac83304ef30e2aa7c174715b4b27e4f5ddc1d26ec2ee451d",
+  "installedHashes": {
+    "stockCodex": null,
+    "pluginLocal": "c751a60b30d6cf5436dccc30c53d14eaacd55fe24382a7506604acb9d929d4fb",
+    "pluginJev": "c751a60b30d6cf5436dccc30c53d14eaacd55fe24382a7506604acb9d929d4fb"
+  },
+  "thresholds": {
+    "localVsStock": {
+      "netWins": 3,
+      "distinctTasks": 2
+    },
+    "jevVsStock": {
+      "netWins": 2,
+      "distinctTasks": 2,
+      "medianLatencyRatio": 1.2
+    },
+    "jevVsLocal": {
+      "netWins": 2,
+      "distinctTasks": 2
+    },
+    "repeatedLossAllowed": false,
+    "hardConstraintRegressionAllowed": false
+  },
+  "baseInstructions": "Work in the provided disposable workspace. You may retrieve only session history explicitly referenced by the recovery index. Preserve user constraints and corrections across compactions. Do not inspect evaluator files, other workspaces, or credentials.",
+  "dynamicTools": [],
+  "sandbox": "workspace-write",
+  "approvalPolicy": "never",
+  "amendmentHash": "bcc45dca2dd6ecf37cffb0ab05b27fdba2626813f66358085e48864f29609d2a",
+  "taskIndices": [
+    2
+  ],
+  "scope": "Six fresh clarified SKU runs; unchanged grader and settings"
+}
