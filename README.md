@@ -6,8 +6,11 @@ question treated a yes/no probability as an ordinal utility rating and omitted
 the requested fact fields from the reranker's task. The earlier data is retained,
 but its recommendation to shelve the overall idea was too broad. Version 0.3.4
 corrects those issues and adds selection across explicit requirements. The
-[corrected experiment protocol](benchmarks/CORRECTED-EVAL.md) specifies a fresh
-comparison. Native compaction and local retrieval remain the defaults.
+[corrected comparison](benchmarks/CORRECTED-RESULTS-2026-09-18.md) completed four
+fresh tasks and 24 continuations: Jev and local retrieval each passed all checks
+in 7/8 runs, versus 6/8 for the native reference. All three recovered 24/24 facts.
+The trial does not demonstrate added value over local retrieval. Native
+compaction and local retrieval remain the defaults.
 
 Fast Jev Compaction adds task-aware Jev evidence selection around Codex's native
 compaction. Version 0.3.4 records stable, immutable content-addressed objects
@@ -272,7 +275,7 @@ search reranking with a custom evidence packet, not automatic PreCompact
 selection. It provides no basis to recommend the tested v0.3.2 Jev reranker by
 default; Jev remains experimental.
 
-The [final bounded protocol](benchmarks/HELDOUT-EVAL.md) tested the revised
+The [earlier bounded protocol](benchmarks/HELDOUT-EVAL.md) tested the revised
 reranker on four new coding-maintenance cases with three native compactions
 per case and shared exact recovery tools. Its stopping rule is fixed before
 live execution; improved excerpt fidelity alone is not evidence of better
@@ -283,6 +286,20 @@ separate post-hoc semantic audit distinguishes those from missing facts.
 An initial two-case pilot was invalidated because its visible
 task contracts omitted details expected by hidden tests; the corrected protocol
 discloses that repair and excludes those outcomes.
+
+The subsequent implementation audit found an additional limitation: the Noul
+question requested an ordinal utility rating, and the ranker lacked the exact
+fact fields requested from Codex. Version 0.3.4 corrects those issues. The
+[fresh comparison protocol](benchmarks/CORRECTED-EVAL.md) gives every approach
+the same explicit requirements and evaluates complementary evidence selection
+on four new tasks. [Completed results](benchmarks/CORRECTED-RESULTS-2026-09-18.md)
+show 7/8 fully correct runs for Jev and local retrieval, 6/8 for the native
+reference, and 24/24 factual answers for every approach. Coding differences
+were regex-escaping errors on one task. No approach needed a recovery call;
+Jev did not meet the preregistered added-value threshold. The report records
+actual synthetic Jev requests and probabilities for inspection.
+Old results remain available; the earlier recommendation to
+shelve the overall idea should not be treated as a verdict on every Jev design.
 
 The original MIT-licensed scoring engine is retained with attribution in
 [NOTICE](NOTICE). This is an independent community project.
