@@ -1,5 +1,13 @@
 # Fast Jev Compaction for Codex
 
+**Experimental; further Jev feature development is shelved.** The
+[final bounded comparison](benchmarks/HELDOUT-RESULTS-2026-09-18.md) did not
+meet the predeclared continuation threshold. All approaches passed the coding
+checks; Jev improved some historical fact exposure and worsened others without
+a reliable advantage over the native reference. Native compaction and local
+retrieval remain the defaults. The optional integration is retained for
+reproduction and experimentation.
+
 Fast Jev Compaction adds task-aware Jev evidence selection around Codex's native
 compaction. Version 0.3.3 records stable, immutable content-addressed objects
 and a cumulative index that survives compaction. It helps you find and inspect
@@ -252,11 +260,15 @@ search reranking with a custom evidence packet, not automatic PreCompact
 selection. It provides no basis to recommend the tested v0.3.2 Jev reranker by
 default; Jev remains experimental.
 
-The [final bounded protocol](benchmarks/HELDOUT-EVAL.md) tests the revised
+The [final bounded protocol](benchmarks/HELDOUT-EVAL.md) tested the revised
 reranker on four new coding-maintenance cases with three native compactions
 per case and shared exact recovery tools. Its stopping rule is fixed before
 live execution; improved excerpt fidelity alone is not evidence of better
-Codex outcomes. An initial two-case pilot was invalidated because its visible
+Codex outcomes. [The completed comparison](benchmarks/HELDOUT-RESULTS-2026-09-18.md)
+passed all 64 code checks per approach but found no reliable Jev advantage over
+the native reference. Literal fact scores include wording differences; a
+separate post-hoc semantic audit distinguishes those from missing facts.
+An initial two-case pilot was invalidated because its visible
 task contracts omitted details expected by hidden tests; the corrected protocol
 discloses that repair and excludes those outcomes.
 

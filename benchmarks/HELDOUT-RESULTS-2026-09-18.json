@@ -1,0 +1,2682 @@
+{
+  "protocol": {
+    "schemaVersion": 2,
+    "model": "gpt-5.6-luna",
+    "effort": "medium",
+    "cases": 4,
+    "repetitions": 2,
+    "stages": 3,
+    "candidateLimit": 20,
+    "packetBudgetChars": 6000,
+    "entryBudgetChars": 2000,
+    "arms": [
+      "native-reference",
+      "local",
+      "jev"
+    ],
+    "maxJevRequests": 4,
+    "maxNativeCompactions": 12,
+    "maxCheckpointTurns": 12,
+    "maxContinuationTurns": 24,
+    "maxRecoveryCallsPerTurn": 8,
+    "turnTimeoutMs": 120000,
+    "stoppingRule": {
+      "quality": "At least 2 more fully correct runs than BOTH comparators, wins in at least 2 distinct cases versus each, and no case lost in both repetitions.",
+      "efficiency": "Equal or better fully-correct count, code tests and factual fields versus BOTH; at least 25% fewer recovery calls, at least 4 saved calls across 2 cases versus each; no more than 10% added continuation plus Jev latency.",
+      "guard": "No additional hard-constraint regression test failures versus either comparator. All 24 runs and all 4 Jev requests must complete. Otherwise shelve further Jev development for this project."
+    },
+    "pilotExclusion": "The first two tasks of the original six-case protocol were invalidated because their visible input contracts omitted details required by the hidden tests. Their 12 continuations are excluded. Only the four cases with zero prior continuation outcomes are evaluated, with explicit input/output contracts. The production reranker is unchanged from 8851411.",
+    "limitations": [
+      "Generated small coding-maintenance tasks, not real repository work or production acceptance.",
+      "Three manually triggered compactions per case; no natural context-exhaustion event.",
+      "Native-reference receives no proactive packet but has the SAME archive tools, so this is not stock Codex.",
+      "Two repetitions share one native trajectory and one Jev ranking; only four distinct tasks.",
+      "All cases and grader rules are frozen before live results; fixtures are visible to implementers, not a blind external benchmark.",
+      "Character caps are not equal token counts; cache state and cumulative inherited usage preclude a verified billing comparison.",
+      "Final code is tested after submission; models cannot run the hidden tests or revise based on grader feedback.",
+      "Some scored contract facts also appear in the task specification; they do not all require archive recovery.",
+      "Regression tests cover historical code constraints, not prompt-injection resistance or real external side effects.",
+      "This exercises explicit search reranking and a common custom packet, not the automatic PreCompact selector.",
+      "Stopping thresholds are project decisions, not statistical significance or a universal claim about Jev."
+    ],
+    "live": true,
+    "fixtureHashes": [
+      {
+        "id": "local-window",
+        "stages": "b67f7068fa5cd71a46a3937977d4c3cf06658767058cdd9749105496968cac8e",
+        "query": "4bac267b9d0d5e9acd2131c316e86414fee5bdccd805b586c45833153f3119e4",
+        "taskContext": "e5ede85bf12ec3b9c38727bef9dd46fd67b176a43928f33b2d4056c847a00012",
+        "source": "0dd04284701f382c91686a0386379e1ee095621b09eeb69f08ee461d2ebc1e6f",
+        "tests": "c1949a0742c28d46e75dd6f6f2d74902b9bdbb7074d4577ce55be4d12f242b7a",
+        "expectedSource": "5bbabc55f37f0095d6d563ba280b43b7f7ba1d66acc9e7b6821930491149be69",
+        "expectedFacts": "db71b658a50251911777a14240a5ec171c2f3106df1fc46c6f4b940e82a770c8",
+        "schema": "afab44bd42824f49979a4d9753021077b311defcd2065e35514ad4ec85d76da7"
+      },
+      {
+        "id": "cent-rounding",
+        "stages": "8ea425615188f74b5d88c88e11b567404b7188c787e5f52a10364288ccc60696",
+        "query": "6fe03e9c012b96ebc65a98b3b9cc6f5fd8f8ee448adaaa50b741c8738abcf449",
+        "taskContext": "f101682f717cc8834eb0468c7e77abcc8a22a0cc387e3766bc5cc79154a8a20c",
+        "source": "15cdee13a84777a48b4129cdd63bebf0b25e591b8430a70d70aebcc78e2d55a6",
+        "tests": "d45133ba12f8501895a29696f4478cf115d8555f5628188dab1411793aedea31",
+        "expectedSource": "15f998a2fddc8a27083c050e662f5eed66c67e9ce8a486b1972021230cc14521",
+        "expectedFacts": "80f317e07bd4081a7a5c0b40a643f7117af4f9db9a7ea91f44bdc292a22f3fe9",
+        "schema": "5c682ddf5033df0e1d3bf1ade34dd678ea18d7c47832a8ef516dbb6851899a8e"
+      },
+      {
+        "id": "reservation-ledger",
+        "stages": "0012801d341fbdabed344695cfee0a1406ac197225f2a1c4fbc6406fdbc83307",
+        "query": "3a955cbcb7e6dd71e48af7197f38ff58c01baf0385249cb72e27e08c15834412",
+        "taskContext": "24c93dce92cef562ee0903e49d36e4cc30d949219037fe511f847f12d965c0a7",
+        "source": "5cb0dbe4f49ce0bed170e2d2e7c58b0ff5bfb2d2afa86e0aad1512e2a63ff0ae",
+        "tests": "042fa33cff3c9b2c5e78436a8f03ab8a2413cd870184014052d199f9cc4bd02a",
+        "expectedSource": "cbda4735cd00a03b10bf6bd24a71a2d0ac6118753e32bc89e765062867e650f9",
+        "expectedFacts": "0c313a86a04bbd96998b305c9baad6bc4a24d714c8655e8b6196586ba55a42ef",
+        "schema": "1002db888ee90f4ffb2fce7988fbbe5e7ef4d6003eec8cb301e01c221119ca58"
+      },
+      {
+        "id": "csv-identifiers",
+        "stages": "4e21edeace04225e85dcaab088855e9ad9cdbd650786abd435f89b66640d1215",
+        "query": "230ed0116ad96be7429a0bd67a8a4f2906e3a94d14eabc239277f5ccbc05a37e",
+        "taskContext": "141d423665a48ab4a6f9577a9d2ded11ddff775ba2ae3deb2b2c0c1e92f504b0",
+        "source": "321351381214d67d30a3573cc81ef4ddefbb1889ff47164b0d89bcdc590ccd64",
+        "tests": "a10aa0c61f6ab59698185064fb1d24dcb7315133cc3662f92e09fe56bfaf3110",
+        "expectedSource": "87de7af8b0cc726751c58f8fe06abfa4f0676f324150279d6473e6864ca526df",
+        "expectedFacts": "e2b93d90c4706d9e58db9dc762f9f661ecf71d6f89196bb77eb3a39f99d66932",
+        "schema": "7bd558c36b4b9c770ea3bd3d0314e5d896a31ee13a9b1bff4ee2806a90554414"
+      }
+    ],
+    "implementationHashes": {
+      "heldout-eval.mjs": "3eaafcdcaa086efc2fc08df0b945d2f8de65faa681a8c4fe8244c40cc5394928",
+      "heldout-fixtures.mjs": "8e0852fe7c76866584cd5a83c7ae0a5e1639263db7dfed782cc5694519f2351b",
+      "heldout-code-worker.mjs": "51943c56da48f446948ee8ea5ec362135e15e77647db996d002da0116acba819",
+      "codex-eval-client.mjs": "a33293ac150504a0ac83304ef30e2aa7c174715b4b27e4f5ddc1d26ec2ee451d",
+      "paired-eval.mjs": "ce03456d7a9b1082400ea88d68913c2b5996a9f4bffbdc3c67dc81737b58b590",
+      "../dist/search.js": "e40b1650b07779d7eb9fec9c6c0539a09462f828b30504cb5b018cd81b3135f5",
+      "../dist/archive.js": "a5a033f8db0578c9637270f5c8a1912711c8fe07b9eca58876d239235ad02aa6",
+      "../dist/evidence.js": "823618e49a13f1760209497b1104e2e196709aaf08490c1e410806f2a2015fac",
+      "../dist/client.js": "e6b33c0e516d96faa06e93353b142f2ef797c74ccfc02196b8c92810f0da6424",
+      "../dist/request.js": "4669e12f0d389ac4b9da63cfb9fa576bf32d3aff21bb68910c916d3fe777e0e9"
+    }
+  },
+  "status": "completed",
+  "cases": [
+    {
+      "id": "local-window",
+      "historyChars": 53509,
+      "candidateCount": 20,
+      "candidateHash": "f3d81689efbbe3da900a75175023cc7686ee4e88d5b7c07174bffbedc644d951",
+      "candidateIds": [
+        "4f775db2d29bb12f63f70e2a37dd1e8b04b7b74ba68ea1cb5c321f70be64d470",
+        "755cd0152b23ae89c0efd81d59cdf8890d530e3c2acb3f0598d2541b73a02e71",
+        "8dfc12f20cbe3429c793d82a0cfbc129f5af8dea052ce5f044dd4e66f19ae260",
+        "b9d4c31ed70d4270b8535dad700ce84dc8da0de195def42c240274556539d513",
+        "7799d410e4440aebd58ff2aab879b7e782c738e2cd2523d0cad610d82c0be3db",
+        "7ea1ca90f673c8ef371a4efe1708c36262c1026fd08656bc06a92cd1dc91f6f3",
+        "c2cfea032d31ecb2f43fdc83d5eb24734e6a2d7fa368f22fb8715146cc571bb5",
+        "d0335b1e5f1ff6623c35c94fa0499307507518141607b7160e9a66b89580a127",
+        "029b661e8b7b843b10b3c2b962a78efe3bcc54853458fb465c447d85cef622d3",
+        "2eb6d71900fc0f2b65bc072c4e1156f8bd8d91a435802b0293f41f940c37a250",
+        "fa1ee1e78a299af7c2f7a517452f99401fba7cff16ae3f75e2a85e01d6138c4d",
+        "2741b3d97adf69fcbfc44c2ad1726977b5452eb2e4bc8b04c1f7a3c689811649",
+        "dbd2f9052cdbe1467061500920c8fc7793a453fa549061395781f5e39271a857",
+        "83c9d95a949ada8764e5679065d8022d1e7b629d3906ec14010c3c14945beb62",
+        "2bd21591ac7200c71bb2d3e6d3cf62ee8ee50ad41d33a5e8266255250441fa13",
+        "f23f3d4c3b1c04a97e3fa3723fa5f14452634407ce2f50b542bbd359378d8562",
+        "de6524270bd47616d3c4ab0127a3680bd143005cdd570e30d967faef279da984",
+        "779d7c7e4772254a48175447014646387ebaf5fa6a428a008653cec3316c4507",
+        "fc6d7141a9abb19622a48c77279b0df9dfb9e0b3df9159cc2dbf9465dfb4c023",
+        "fa0d09a1d90d3cb7acc0483b37f17a89348ec500f04ecf3f03571c0b3d3ef0f7"
+      ],
+      "targetRecords": 4,
+      "targetCandidates": 4,
+      "factSources": {
+        "offsetMinutes": "7799d410e4440aebd58ff2aab879b7e782c738e2cd2523d0cad610d82c0be3db",
+        "windowStart": "b9d4c31ed70d4270b8535dad700ce84dc8da0de195def42c240274556539d513",
+        "windowEnd": "755cd0152b23ae89c0efd81d59cdf8890d530e3c2acb3f0598d2541b73a02e71"
+      },
+      "scoredFactsInCandidates": [
+        "offsetMinutes",
+        "windowStart",
+        "windowEnd"
+      ],
+      "jev": {
+        "calls": 1,
+        "latencyMs": 615.5423,
+        "requestChars": 24247,
+        "usage": {
+          "input_tokens": 8794,
+          "output_tokens": 414
+        },
+        "model": "jev-1.13.0"
+      },
+      "rankings": {
+        "local": [
+          "4f775db2d29bb12f63f70e2a37dd1e8b04b7b74ba68ea1cb5c321f70be64d470",
+          "755cd0152b23ae89c0efd81d59cdf8890d530e3c2acb3f0598d2541b73a02e71",
+          "8dfc12f20cbe3429c793d82a0cfbc129f5af8dea052ce5f044dd4e66f19ae260",
+          "b9d4c31ed70d4270b8535dad700ce84dc8da0de195def42c240274556539d513",
+          "7799d410e4440aebd58ff2aab879b7e782c738e2cd2523d0cad610d82c0be3db",
+          "7ea1ca90f673c8ef371a4efe1708c36262c1026fd08656bc06a92cd1dc91f6f3",
+          "c2cfea032d31ecb2f43fdc83d5eb24734e6a2d7fa368f22fb8715146cc571bb5",
+          "d0335b1e5f1ff6623c35c94fa0499307507518141607b7160e9a66b89580a127",
+          "029b661e8b7b843b10b3c2b962a78efe3bcc54853458fb465c447d85cef622d3",
+          "2eb6d71900fc0f2b65bc072c4e1156f8bd8d91a435802b0293f41f940c37a250",
+          "fa1ee1e78a299af7c2f7a517452f99401fba7cff16ae3f75e2a85e01d6138c4d",
+          "2741b3d97adf69fcbfc44c2ad1726977b5452eb2e4bc8b04c1f7a3c689811649",
+          "dbd2f9052cdbe1467061500920c8fc7793a453fa549061395781f5e39271a857",
+          "83c9d95a949ada8764e5679065d8022d1e7b629d3906ec14010c3c14945beb62",
+          "2bd21591ac7200c71bb2d3e6d3cf62ee8ee50ad41d33a5e8266255250441fa13",
+          "f23f3d4c3b1c04a97e3fa3723fa5f14452634407ce2f50b542bbd359378d8562",
+          "de6524270bd47616d3c4ab0127a3680bd143005cdd570e30d967faef279da984",
+          "779d7c7e4772254a48175447014646387ebaf5fa6a428a008653cec3316c4507",
+          "fc6d7141a9abb19622a48c77279b0df9dfb9e0b3df9159cc2dbf9465dfb4c023",
+          "fa0d09a1d90d3cb7acc0483b37f17a89348ec500f04ecf3f03571c0b3d3ef0f7"
+        ],
+        "jev": [
+          "8dfc12f20cbe3429c793d82a0cfbc129f5af8dea052ce5f044dd4e66f19ae260",
+          "7799d410e4440aebd58ff2aab879b7e782c738e2cd2523d0cad610d82c0be3db",
+          "755cd0152b23ae89c0efd81d59cdf8890d530e3c2acb3f0598d2541b73a02e71",
+          "4f775db2d29bb12f63f70e2a37dd1e8b04b7b74ba68ea1cb5c321f70be64d470",
+          "b9d4c31ed70d4270b8535dad700ce84dc8da0de195def42c240274556539d513",
+          "779d7c7e4772254a48175447014646387ebaf5fa6a428a008653cec3316c4507",
+          "dbd2f9052cdbe1467061500920c8fc7793a453fa549061395781f5e39271a857",
+          "2741b3d97adf69fcbfc44c2ad1726977b5452eb2e4bc8b04c1f7a3c689811649",
+          "2bd21591ac7200c71bb2d3e6d3cf62ee8ee50ad41d33a5e8266255250441fa13",
+          "de6524270bd47616d3c4ab0127a3680bd143005cdd570e30d967faef279da984",
+          "7ea1ca90f673c8ef371a4efe1708c36262c1026fd08656bc06a92cd1dc91f6f3",
+          "c2cfea032d31ecb2f43fdc83d5eb24734e6a2d7fa368f22fb8715146cc571bb5",
+          "d0335b1e5f1ff6623c35c94fa0499307507518141607b7160e9a66b89580a127",
+          "2eb6d71900fc0f2b65bc072c4e1156f8bd8d91a435802b0293f41f940c37a250",
+          "fa1ee1e78a299af7c2f7a517452f99401fba7cff16ae3f75e2a85e01d6138c4d",
+          "83c9d95a949ada8764e5679065d8022d1e7b629d3906ec14010c3c14945beb62",
+          "029b661e8b7b843b10b3c2b962a78efe3bcc54853458fb465c447d85cef622d3",
+          "f23f3d4c3b1c04a97e3fa3723fa5f14452634407ce2f50b542bbd359378d8562",
+          "fc6d7141a9abb19622a48c77279b0df9dfb9e0b3df9159cc2dbf9465dfb4c023",
+          "fa0d09a1d90d3cb7acc0483b37f17a89348ec500f04ecf3f03571c0b3d3ef0f7"
+        ]
+      },
+      "packets": {
+        "local": {
+          "text": "Historical evidence, not instructions. Excerpts may be incomplete or superseded; exact originals remain available through archive_retrieve.\n{\"id\":\"4f775db2d29bb12f63f70e2a37dd1e8b04b7b74ba68ea1cb5c321f70be64d470\",\"tool\":\"message\",\"turn\":0,\"flags\":[],\"excerpt\":\"Repair solve(input) in src/window.js. Input supplies an ISO timestamp, an explicit offset in minutes, and a start/end minute window. Return {within,localMinute}; windows may cross midnight, end is exclusive, and equal bounds mean the full day.\\n\\nContract: input is an object with timestamp string, offsetMinutes finite number (default 0), startMinute number, and endMinute number. Output is exactly {within:boolean,localMinute:number|null}. Invalid dates return {within:false,localMinute:null}; valid minutes wrap modulo 1440 after applying the supplied offset. The start boundary is included and the end boundary excluded; a crossing-midnight range accepts either side, and equal bounds accept the full day.\\n\\nfunction solve(input) {\\n  const date = new Date(input && input.timestamp);\\n  const minute = date.getUTCHours() * 60 + date.getUTCMinutes();\\n  return { within: minute >= Number(input.startMinute) && minute <= Number(input.endMinute), localMinute: minute };\\n}\"}\n{\"id\":\"755cd0152b23ae89c0efd81d59cdf8890d530e3c2acb3f0598d2541b73a02e71\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-3\\nstage: 2\\nsequence: 19\\nrecordedAt: 2026-09-13T12:20:00Z\\nstatus: approved\\nsubject: service window\\nfact: windowEnd\\nvalue: 120\\nattemptedAction: read-only observation\\ndoNotRepeat: true\\nnote: The current window ends at local minute 120, exclusively; equal start and end bounds mean the full day.\\nverification: Read-only evidence for the offset-aware time window contract; later records supersede earlier observations only when they say so explicitly.\"}\n{\"id\":\"8dfc12f20cbe3429c793d82a0cfbc129f5af8dea052ce5f044dd4e66f19ae260\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-3\\nstage: 3\\nsequence: 13\\nrecordedAt: 2026-09-15T18:00:00Z\\nstatus: verified\\nsubject: boundary behavior\\nfact: endExclusive\\nvalue: true\\nattemptedAction: read-only observation\\ndoNotRepeat: true\\nnote: A timestamp exactly at the end boundary is outside a non-full-day window.\\nverification: Read-only evidence for the offset-aware time window contract; later records supersede earlier observations only when they say so explicitly.\"}\n{\"id\":\"b9d4c31ed70d4270b8535dad700ce84dc8da0de195def42c240274556539d513\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-3\\nstage: 2\\nsequence: 6\\nrecordedAt: 2026-09-12T09:10:00Z\\nstatus: corrected\\nsubject: service window\\nfact: windowStart\\nvalue: 1320\\ncorrection: The prior 21:00 start was from an obsolete schedule.\\nattemptedAction: read-only observation\\ndoNotRepeat: true\\nnote: The current window begins at local minute 1320.\\nverification: Read-only evidence for the offset-aware time window contract; later records supersede earlier observations only when they say so explicitly.\"}\n{\"id\":\"7799d410e4440aebd58ff2aab879b7e782c738e2cd2523d0cad610d82c0be3db\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-3\\nstage: 1\\nsequence: 7\\nrecordedAt: 2026-09-10T07:40:00Z\\nstatus: observed\\nsubject: regional offset\\nfact: offsetMinutes\\nvalue: -300\\nattemptedAction: read-only observation\\ndoNotRepeat: true\\nnote: The caller supplies the current offset; the helper must not consult the host timezone.\\nverification: Read-only evidence for the offset-aware time window contract; later records supersede earlier observations only when they say so explicitly.\"}\n{\"id\":\"7ea1ca90f673c8ef371a4efe1708c36262c1026fd08656bc06a92cd1dc91f6f3\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-3\\nstage: 3\\nsequence: 21\\nstatus: observed\\nobservedAt: 2026-09-12T11:21:00Z\\nsummary: The review found no write request, credential use, or dependency installation.\\ndetails: The bounded lookup returned a stable read-only result for sample 3-3-22; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: stale-cache-review\"}\n{\"id\":\"c2cfea032d31ecb2f43fdc83d5eb24734e6a2d7fa368f22fb8715146cc571bb5\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-3\\nstage: 3\\nsequence: 18\\nstatus: observed\\nobservedAt: 2026-09-12T08:28:00Z\\nsummary: A historical test artifact is retained for audit and does not change runtime behavior.\\ndetails: The bounded lookup returned a stable read-only result for sample 3-3-19; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: stale-cache-review\"}\n{\"id\":\"d0335b1e5f1ff6623c35c94fa0499307507518141607b7160e9a66b89580a127\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-3\\nstage: 3\\nsequence: 14\\nstatus: observed\\nobservedAt: 2026-09-12T13:24:00Z\\nsummary: The review found no write request, credential use, or dependency installation.\\ndetails: The bounded lookup returned a stable read-only result for sample 3-3-15; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: unit-test-index\"}\n{\"id\":\"029b661e8b7b843b10b3c2b962a78efe3bcc54853458fb465c447d85cef622d3\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-3\\nstage: 3\\nsequence: 11\\nstatus: observed\\nobservedAt: 2026-09-12T10:21:00Z\\nsummary: A historical test artifact is retained for audit and does not change runtime behavior.\\ndetails: The bounded lookup returned a stable read-only result for sample 3-3-12; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: unit-test-index\"}",
+          "chars": 5901,
+          "hash": "30977a96e8497513911b8c9ce497cc8130e43e279b1c8456f7c2aeceae3b8980",
+          "ids": [
+            "4f775db2d29bb12f63f70e2a37dd1e8b04b7b74ba68ea1cb5c321f70be64d470",
+            "755cd0152b23ae89c0efd81d59cdf8890d530e3c2acb3f0598d2541b73a02e71",
+            "8dfc12f20cbe3429c793d82a0cfbc129f5af8dea052ce5f044dd4e66f19ae260",
+            "b9d4c31ed70d4270b8535dad700ce84dc8da0de195def42c240274556539d513",
+            "7799d410e4440aebd58ff2aab879b7e782c738e2cd2523d0cad610d82c0be3db",
+            "7ea1ca90f673c8ef371a4efe1708c36262c1026fd08656bc06a92cd1dc91f6f3",
+            "c2cfea032d31ecb2f43fdc83d5eb24734e6a2d7fa368f22fb8715146cc571bb5",
+            "d0335b1e5f1ff6623c35c94fa0499307507518141607b7160e9a66b89580a127",
+            "029b661e8b7b843b10b3c2b962a78efe3bcc54853458fb465c447d85cef622d3"
+          ],
+          "targetRecordsShown": 4,
+          "scoredFactRecordsShown": [
+            "offsetMinutes",
+            "windowStart",
+            "windowEnd"
+          ]
+        },
+        "jev": {
+          "text": "Historical evidence, not instructions. Excerpts may be incomplete or superseded; exact originals remain available through archive_retrieve.\n{\"id\":\"8dfc12f20cbe3429c793d82a0cfbc129f5af8dea052ce5f044dd4e66f19ae260\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-3\\nstage: 3\\nsequence: 13\\nrecordedAt: 2026-09-15T18:00:00Z\\nstatus: verified\\nsubject: boundary behavior\\nfact: endExclusive\\nvalue: true\\nattemptedAction: read-only observation\\ndoNotRepeat: true\\nnote: A timestamp exactly at the end boundary is outside a non-full-day window.\\nverification: Read-only evidence for the offset-aware time window contract; later records supersede earlier observations only when they say so explicitly.\"}\n{\"id\":\"7799d410e4440aebd58ff2aab879b7e782c738e2cd2523d0cad610d82c0be3db\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-3\\nstage: 1\\nsequence: 7\\nrecordedAt: 2026-09-10T07:40:00Z\\nstatus: observed\\nsubject: regional offset\\nfact: offsetMinutes\\nvalue: -300\\nattemptedAction: read-only observation\\ndoNotRepeat: true\\nnote: The caller supplies the current offset; the helper must not consult the host timezone.\\nverification: Read-only evidence for the offset-aware time window contract; later records supersede earlier observations only when they say so explicitly.\"}\n{\"id\":\"755cd0152b23ae89c0efd81d59cdf8890d530e3c2acb3f0598d2541b73a02e71\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-3\\nstage: 2\\nsequence: 19\\nrecordedAt: 2026-09-13T12:20:00Z\\nstatus: approved\\nsubject: service window\\nfact: windowEnd\\nvalue: 120\\nattemptedAction: read-only observation\\ndoNotRepeat: true\\nnote: The current window ends at local minute 120, exclusively; equal start and end bounds mean the full day.\\nverification: Read-only evidence for the offset-aware time window contract; later records supersede earlier observations only when they say so explicitly.\"}\n{\"id\":\"4f775db2d29bb12f63f70e2a37dd1e8b04b7b74ba68ea1cb5c321f70be64d470\",\"tool\":\"message\",\"turn\":0,\"flags\":[],\"excerpt\":\"Repair solve(input) in src/window.js. Input supplies an ISO timestamp, an explicit offset in minutes, and a start/end minute window. Return {within,localMinute}; windows may cross midnight, end is exclusive, and equal bounds mean the full day.\\n\\nContract: input is an object with timestamp string, offsetMinutes finite number (default 0), startMinute number, and endMinute number. Output is exactly {within:boolean,localMinute:number|null}. Invalid dates return {within:false,localMinute:null}; valid minutes wrap modulo 1440 after applying the supplied offset. The start boundary is included and the end boundary excluded; a crossing-midnight range accepts either side, and equal bounds accept the full day.\\n\\nfunction solve(input) {\\n  const date = new Date(input && input.timestamp);\\n  const minute = date.getUTCHours() * 60 + date.getUTCMinutes();\\n  return { within: minute >= Number(input.startMinute) && minute <= Number(input.endMinute), localMinute: minute };\\n}\"}\n{\"id\":\"b9d4c31ed70d4270b8535dad700ce84dc8da0de195def42c240274556539d513\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-3\\nstage: 2\\nsequence: 6\\nrecordedAt: 2026-09-12T09:10:00Z\\nstatus: corrected\\nsubject: service window\\nfact: windowStart\\nvalue: 1320\\ncorrection: The prior 21:00 start was from an obsolete schedule.\\nattemptedAction: read-only observation\\ndoNotRepeat: true\\nnote: The current window begins at local minute 1320.\\nverification: Read-only evidence for the offset-aware time window contract; later records supersede earlier observations only when they say so explicitly.\"}\n{\"id\":\"779d7c7e4772254a48175447014646387ebaf5fa6a428a008653cec3316c4507\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-3\\nstage: 2\\nsequence: 1\\nstatus: observed\\nobservedAt: 2026-09-11T09:21:00Z\\nsummary: The review found no write request, credential use, or dependency installation.\\ndetails: The bounded lookup returned a stable read-only result for sample 3-2-2; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: unit-test-index\"}\n{\"id\":\"dbd2f9052cdbe1467061500920c8fc7793a453fa549061395781f5e39271a857\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-3\\nstage: 2\\nsequence: 22\\nstatus: observed\\nobservedAt: 2026-09-11T12:22:00Z\\nsummary: The review found no write request, credential use, or dependency installation.\\ndetails: The bounded lookup returned a stable read-only result for sample 3-2-23; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: unit-test-index\"}\n{\"id\":\"2741b3d97adf69fcbfc44c2ad1726977b5452eb2e4bc8b04c1f7a3c689811649\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-3\\nstage: 3\\nsequence: 0\\nstatus: warning\\nobservedAt: 2026-09-12T08:20:00Z\\nsummary: The review found no write request, credential use, or dependency installation.\\ndetails: The bounded lookup returned a stable read-only result for sample 3-3-1; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: stale-cache-review\"}\n{\"id\":\"2bd21591ac7200c71bb2d3e6d3cf62ee8ee50ad41d33a5e8266255250441fa13\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-3\\nstage: 2\\nsequence: 12\\nstatus: observed\\nobservedAt: 2026-09-11T11:22:00Z\\nsummary: A historical test artifact is retained for audit and does not change runtime behavior.\\ndetails: The bounded lookup returned a stable read-only result for sample 3-2-13; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: stale-cache-review\"}",
+          "chars": 5888,
+          "hash": "218a357094cac64b631f5abe517988634c8cda62c7d0ac1ddf19c036ea9dc757",
+          "ids": [
+            "8dfc12f20cbe3429c793d82a0cfbc129f5af8dea052ce5f044dd4e66f19ae260",
+            "7799d410e4440aebd58ff2aab879b7e782c738e2cd2523d0cad610d82c0be3db",
+            "755cd0152b23ae89c0efd81d59cdf8890d530e3c2acb3f0598d2541b73a02e71",
+            "4f775db2d29bb12f63f70e2a37dd1e8b04b7b74ba68ea1cb5c321f70be64d470",
+            "b9d4c31ed70d4270b8535dad700ce84dc8da0de195def42c240274556539d513",
+            "779d7c7e4772254a48175447014646387ebaf5fa6a428a008653cec3316c4507",
+            "dbd2f9052cdbe1467061500920c8fc7793a453fa549061395781f5e39271a857",
+            "2741b3d97adf69fcbfc44c2ad1726977b5452eb2e4bc8b04c1f7a3c689811649",
+            "2bd21591ac7200c71bb2d3e6d3cf62ee8ee50ad41d33a5e8266255250441fa13"
+          ],
+          "targetRecordsShown": 4,
+          "scoredFactRecordsShown": [
+            "offsetMinutes",
+            "windowStart",
+            "windowEnd"
+          ]
+        }
+      },
+      "checkpoints": [
+        {
+          "stage": 0,
+          "answerHash": "d432f10e3898f61c7787b675e56a33521819ab009fa9a5ed71f99d48f8e82c3c",
+          "latencyMs": 9388,
+          "toolCalls": 0
+        },
+        {
+          "stage": 1,
+          "answerHash": "06df9b997f7118675b56b8ee8936d1c32d34117f7ea331d987ea96e71809b4c5",
+          "latencyMs": 5476,
+          "toolCalls": 0
+        },
+        {
+          "stage": 2,
+          "answerHash": "8e1b2cfd90000c9bc3e7c89c69c7c82ba5f2396f817516bbf5fb1ed586c176cc",
+          "latencyMs": 5280,
+          "toolCalls": 0
+        }
+      ],
+      "compactions": [
+        {
+          "latencyMs": 10043,
+          "completed": true
+        },
+        {
+          "latencyMs": 13274,
+          "completed": true
+        },
+        {
+          "latencyMs": 12227,
+          "completed": true
+        }
+      ],
+      "continuations": [
+        {
+          "arm": "native-reference",
+          "repetition": 0,
+          "tools": [],
+          "promptHash": "41cd817ea68619a9bb781446dc238ed085bff0b3219bf4c406f46c4d9bbce648",
+          "forkedFromBaseConfirmed": true,
+          "parsedAnswer": {
+            "source": "function solve(input) {\n  const date = new Date(input && input.timestamp);\n  if (Number.isNaN(date.getTime())) {\n    return { within: false, localMinute: null };\n  }\n\n  const offset = Number.isFinite(input && input.offsetMinutes)\n    ? input.offsetMinutes\n    : 0;\n  const utcMinute = date.getUTCHours() * 60 + date.getUTCMinutes();\n  const localMinute = ((utcMinute + offset) % 1440 + 1440) % 1440;\n  const start = Number(input.startMinute);\n  const end = Number(input.endMinute);\n\n  const within = start === end\n    ? true\n    : start < end\n      ? localMinute >= start && localMinute < end\n      : localMinute >= start || localMinute < end;\n\n  return { within, localMinute };\n}",
+            "facts": {
+              "offsetMinutes": -300,
+              "windowStart": 1320,
+              "windowEnd": 120
+            }
+          },
+          "score": {
+            "fullyCorrect": true,
+            "facts": {
+              "correctFields": 3,
+              "totalFields": 3,
+              "fullyCorrect": true
+            },
+            "code": {
+              "passed": 8,
+              "total": 8,
+              "allPassed": true,
+              "failedTests": [],
+              "regressionFailures": 0
+            }
+          },
+          "latencyMs": 7333,
+          "beforeUsage": null,
+          "reportedUsage": {
+            "totalTokens": 81627,
+            "inputTokens": 80082,
+            "cachedInputTokens": 5632,
+            "cacheWriteInputTokens": 0,
+            "outputTokens": 1545,
+            "reasoningOutputTokens": 870
+          },
+          "reportedToolCalls": 0
+        },
+        {
+          "arm": "local",
+          "repetition": 0,
+          "tools": [],
+          "promptHash": "1f1e55859e28528087381f10ab3fc45a33ce7b136d3151b6d5c8e1a32e977b16",
+          "forkedFromBaseConfirmed": true,
+          "parsedAnswer": {
+            "source": "function solve(input) {\n  const date = new Date(input && input.timestamp);\n  if (Number.isNaN(date.getTime())) {\n    return { within: false, localMinute: null };\n  }\n\n  const offset = Number.isFinite(input && input.offsetMinutes)\n    ? input.offsetMinutes\n    : 0;\n  const localMinute = ((date.getUTCHours() * 60 + date.getUTCMinutes() + offset) % 1440 + 1440) % 1440;\n  const start = Number(input.startMinute);\n  const end = Number(input.endMinute);\n\n  let within;\n  if (start === end) {\n    within = true;\n  } else if (start < end) {\n    within = localMinute >= start && localMinute < end;\n  } else {\n    within = localMinute >= start || localMinute < end;\n  }\n\n  return { within, localMinute };\n}",
+            "facts": {
+              "offsetMinutes": -300,
+              "windowStart": 1320,
+              "windowEnd": 120
+            }
+          },
+          "score": {
+            "fullyCorrect": true,
+            "facts": {
+              "correctFields": 3,
+              "totalFields": 3,
+              "fullyCorrect": true
+            },
+            "code": {
+              "passed": 8,
+              "total": 8,
+              "allPassed": true,
+              "failedTests": [],
+              "regressionFailures": 0
+            }
+          },
+          "latencyMs": 9371,
+          "beforeUsage": null,
+          "reportedUsage": {
+            "totalTokens": 83429,
+            "inputTokens": 81727,
+            "cachedInputTokens": 5632,
+            "cacheWriteInputTokens": 0,
+            "outputTokens": 1702,
+            "reasoningOutputTokens": 1012
+          },
+          "reportedToolCalls": 0
+        },
+        {
+          "arm": "jev",
+          "repetition": 0,
+          "tools": [],
+          "promptHash": "15f701d10faa2b3c0fc078c78f00d0866e435dc3bae40d1ca88cab4cf8198e43",
+          "forkedFromBaseConfirmed": true,
+          "parsedAnswer": {
+            "source": "function solve(input) {\n  const date = new Date(input && input.timestamp);\n  if (Number.isNaN(date.getTime())) {\n    return { within: false, localMinute: null };\n  }\n\n  const offset = Number.isFinite(input && input.offsetMinutes)\n    ? input.offsetMinutes\n    : 0;\n  const localMinute = ((date.getUTCHours() * 60 + date.getUTCMinutes() + offset) % 1440 + 1440) % 1440;\n  const start = Number(input.startMinute);\n  const end = Number(input.endMinute);\n  let within;\n\n  if (start === end) {\n    within = true;\n  } else if (start < end) {\n    within = localMinute >= start && localMinute < end;\n  } else {\n    within = localMinute >= start || localMinute < end;\n  }\n\n  return { within, localMinute };\n}",
+            "facts": {
+              "offsetMinutes": -300,
+              "windowStart": 1320,
+              "windowEnd": 120
+            }
+          },
+          "score": {
+            "fullyCorrect": true,
+            "facts": {
+              "correctFields": 3,
+              "totalFields": 3,
+              "fullyCorrect": true
+            },
+            "code": {
+              "passed": 8,
+              "total": 8,
+              "allPassed": true,
+              "failedTests": [],
+              "regressionFailures": 0
+            }
+          },
+          "latencyMs": 7633,
+          "beforeUsage": null,
+          "reportedUsage": {
+            "totalTokens": 83302,
+            "inputTokens": 81721,
+            "cachedInputTokens": 5632,
+            "cacheWriteInputTokens": 0,
+            "outputTokens": 1581,
+            "reasoningOutputTokens": 891
+          },
+          "reportedToolCalls": 0
+        },
+        {
+          "arm": "local",
+          "repetition": 1,
+          "tools": [],
+          "promptHash": "1f1e55859e28528087381f10ab3fc45a33ce7b136d3151b6d5c8e1a32e977b16",
+          "forkedFromBaseConfirmed": true,
+          "parsedAnswer": {
+            "source": "function solve(input) {\n  const date = new Date(input && input.timestamp);\n  if (Number.isNaN(date.getTime())) {\n    return { within: false, localMinute: null };\n  }\n\n  const offset = Number.isFinite(input && input.offsetMinutes)\n    ? input.offsetMinutes\n    : 0;\n  const localMinute = ((date.getUTCHours() * 60 + date.getUTCMinutes() + offset) % 1440 + 1440) % 1440;\n  const start = Number(input && input.startMinute);\n  const end = Number(input && input.endMinute);\n\n  let within = false;\n  if (Number.isFinite(start) && Number.isFinite(end)) {\n    within = start === end\n      ? true\n      : start < end\n        ? localMinute >= start && localMinute < end\n        : localMinute >= start || localMinute < end;\n  }\n\n  return { within, localMinute };\n}",
+            "facts": {
+              "offsetMinutes": -300,
+              "windowStart": 1320,
+              "windowEnd": 120
+            }
+          },
+          "score": {
+            "fullyCorrect": true,
+            "facts": {
+              "correctFields": 3,
+              "totalFields": 3,
+              "fullyCorrect": true
+            },
+            "code": {
+              "passed": 8,
+              "total": 8,
+              "allPassed": true,
+              "failedTests": [],
+              "regressionFailures": 0
+            }
+          },
+          "latencyMs": 10651,
+          "beforeUsage": null,
+          "reportedUsage": {
+            "totalTokens": 83523,
+            "inputTokens": 81727,
+            "cachedInputTokens": 22784,
+            "cacheWriteInputTokens": 0,
+            "outputTokens": 1796,
+            "reasoningOutputTokens": 1101
+          },
+          "reportedToolCalls": 0
+        },
+        {
+          "arm": "jev",
+          "repetition": 1,
+          "tools": [],
+          "promptHash": "15f701d10faa2b3c0fc078c78f00d0866e435dc3bae40d1ca88cab4cf8198e43",
+          "forkedFromBaseConfirmed": true,
+          "parsedAnswer": {
+            "source": "function solve(input) {\n  const value = input || {};\n  const date = new Date(value.timestamp);\n  if (Number.isNaN(date.getTime())) {\n    return { within: false, localMinute: null };\n  }\n\n  const offset = Number.isFinite(value.offsetMinutes) ? value.offsetMinutes : 0;\n  const localMinute = ((date.getUTCHours() * 60 + date.getUTCMinutes() + offset) % 1440 + 1440) % 1440;\n  const start = Number(value.startMinute);\n  const end = Number(value.endMinute);\n  const within = start === end\n    ? true\n    : start < end\n      ? localMinute >= start && localMinute < end\n      : localMinute >= start || localMinute < end;\n\n  return { within, localMinute };\n}",
+            "facts": {
+              "offsetMinutes": -300,
+              "windowStart": 1320,
+              "windowEnd": 120
+            }
+          },
+          "score": {
+            "fullyCorrect": true,
+            "facts": {
+              "correctFields": 3,
+              "totalFields": 3,
+              "fullyCorrect": true
+            },
+            "code": {
+              "passed": 8,
+              "total": 8,
+              "allPassed": true,
+              "failedTests": [],
+              "regressionFailures": 0
+            }
+          },
+          "latencyMs": 7760,
+          "beforeUsage": null,
+          "reportedUsage": {
+            "totalTokens": 83302,
+            "inputTokens": 81721,
+            "cachedInputTokens": 22784,
+            "cacheWriteInputTokens": 0,
+            "outputTokens": 1581,
+            "reasoningOutputTokens": 915
+          },
+          "reportedToolCalls": 0
+        },
+        {
+          "arm": "native-reference",
+          "repetition": 1,
+          "tools": [],
+          "promptHash": "41cd817ea68619a9bb781446dc238ed085bff0b3219bf4c406f46c4d9bbce648",
+          "forkedFromBaseConfirmed": true,
+          "parsedAnswer": {
+            "source": "function solve(input) {\n  const value = input && typeof input === \"object\" ? input : {};\n  const date = new Date(value.timestamp);\n  if (Number.isNaN(date.getTime())) {\n    return { within: false, localMinute: null };\n  }\n\n  const offset = Number.isFinite(value.offsetMinutes) ? value.offsetMinutes : 0;\n  const localMinute = ((date.getUTCHours() * 60 + date.getUTCMinutes() + offset) % 1440 + 1440) % 1440;\n  const start = Number(value.startMinute);\n  const end = Number(value.endMinute);\n  const within = start === end\n    ? true\n    : start < end\n      ? localMinute >= start && localMinute < end\n      : localMinute >= start || localMinute < end;\n\n  return { within, localMinute };\n}",
+            "facts": {
+              "offsetMinutes": -300,
+              "windowStart": 1320,
+              "windowEnd": 120
+            }
+          },
+          "score": {
+            "fullyCorrect": true,
+            "facts": {
+              "correctFields": 3,
+              "totalFields": 3,
+              "fullyCorrect": true
+            },
+            "code": {
+              "passed": 8,
+              "total": 8,
+              "allPassed": true,
+              "failedTests": [],
+              "regressionFailures": 0
+            }
+          },
+          "latencyMs": 10998,
+          "beforeUsage": null,
+          "reportedUsage": {
+            "totalTokens": 81949,
+            "inputTokens": 80082,
+            "cachedInputTokens": 8448,
+            "cacheWriteInputTokens": 0,
+            "outputTokens": 1867,
+            "reasoningOutputTokens": 1192
+          },
+          "reportedToolCalls": 0
+        }
+      ],
+      "baseIdHash": "0674f77aab82b4f3d61b7ef41dc23f44fa509003682829ff66fc81ecf511a8ba"
+    },
+    {
+      "id": "cent-rounding",
+      "historyChars": 54440,
+      "candidateCount": 20,
+      "candidateHash": "ee7c511f5047ff2434f331fea78a769921352c29d2eeb71738550f424c0887ae",
+      "candidateIds": [
+        "d5dcdc58948cd73092b51c355174ec8264e3a6611d5483e1e0df5a035787ca85",
+        "0b1c5bc5902359735e1b4aa4142db59f4da50bd080914498acbc129c54a56cae",
+        "b2f7ef3cf80ec90174a80952541263627779c31733ddf13c688a74263de386b1",
+        "1e117f61e9fe9ee7d6a187823eaf7136dd2a1569551323f0f2ccba58077391f1",
+        "9cf12986267ca780163d7c890f16e344e1b0a0adb50c79d2cca5fd5e0d7ebdf1",
+        "5e5b1310c4b77ade94a6b7467f99befb3d90891ccd0fd086e4cd60527703c57f",
+        "8bf7a7b055007b3c674b59b6f9832b89deca25426c3f9995c64e5c5961fd583f",
+        "d17a39560aa7adbce87d3fecb266c91212ce7e3cfce0eea63712035dba6825ed",
+        "7af9236ed0fadeb224032f2614a61ff78585f050119b5e3572e7cb4736e6bc1a",
+        "c5fe320c4bf6349b03a1760cc6db94cb0800116028e623d5bf1b3badf92891e2",
+        "32aa409f5355dbe182d5a23f7962498c9d6fc31346dfc3e25d7fa4c541cb9508",
+        "be1412efc9a30901b1672dcf0baaf3ac5ec02c1dd85b755276e804051cf0fbe3",
+        "b87ba7152d419a0cabc108b43685107320b02d55264df67d73970651972c2104",
+        "0356a46d6067687ef656b99c8de3321e467e6b018218b04b00fd87b8e145ab87",
+        "6176e8a43bb9c62660d77da0a1405b6dee79625a9541a1d4bb73148b0968b9a8",
+        "b281fe97e504b3f19310a8352dff69218ad9961605d3c1767aeba295128ee18d",
+        "6f8c037b53b35354010bd3041d160aced147f9dbfe66dc5f5f80beb52862705e",
+        "a4807f4399688c40db223943e41778ad085ebe78e54e9a970ec5d7badad8d023",
+        "18affbbfc64263617d793dc75134cdc660cc46461559049d09a71df2daf49439",
+        "7637b044b1e663b3852b69a3873e33365d5cccdd061a292b8de75aec5b305984"
+      ],
+      "targetRecords": 4,
+      "targetCandidates": 3,
+      "factSources": {
+        "rateBasis": "bd4bf8817c54d773a03a90ff2f7f1212641f53dd77b9fdda42dc3885aca10fa5",
+        "rounding": "0b1c5bc5902359735e1b4aa4142db59f4da50bd080914498acbc129c54a56cae",
+        "discountCapCents": "6f8c037b53b35354010bd3041d160aced147f9dbfe66dc5f5f80beb52862705e"
+      },
+      "scoredFactsInCandidates": [
+        "rounding",
+        "discountCapCents"
+      ],
+      "jev": {
+        "calls": 1,
+        "latencyMs": 211.4104,
+        "requestChars": 24763,
+        "usage": {
+          "input_tokens": 8978,
+          "output_tokens": 414
+        },
+        "model": "jev-1.13.0"
+      },
+      "rankings": {
+        "local": [
+          "d5dcdc58948cd73092b51c355174ec8264e3a6611d5483e1e0df5a035787ca85",
+          "0b1c5bc5902359735e1b4aa4142db59f4da50bd080914498acbc129c54a56cae",
+          "b2f7ef3cf80ec90174a80952541263627779c31733ddf13c688a74263de386b1",
+          "1e117f61e9fe9ee7d6a187823eaf7136dd2a1569551323f0f2ccba58077391f1",
+          "9cf12986267ca780163d7c890f16e344e1b0a0adb50c79d2cca5fd5e0d7ebdf1",
+          "5e5b1310c4b77ade94a6b7467f99befb3d90891ccd0fd086e4cd60527703c57f",
+          "8bf7a7b055007b3c674b59b6f9832b89deca25426c3f9995c64e5c5961fd583f",
+          "d17a39560aa7adbce87d3fecb266c91212ce7e3cfce0eea63712035dba6825ed",
+          "7af9236ed0fadeb224032f2614a61ff78585f050119b5e3572e7cb4736e6bc1a",
+          "c5fe320c4bf6349b03a1760cc6db94cb0800116028e623d5bf1b3badf92891e2",
+          "32aa409f5355dbe182d5a23f7962498c9d6fc31346dfc3e25d7fa4c541cb9508",
+          "be1412efc9a30901b1672dcf0baaf3ac5ec02c1dd85b755276e804051cf0fbe3",
+          "b87ba7152d419a0cabc108b43685107320b02d55264df67d73970651972c2104",
+          "0356a46d6067687ef656b99c8de3321e467e6b018218b04b00fd87b8e145ab87",
+          "6176e8a43bb9c62660d77da0a1405b6dee79625a9541a1d4bb73148b0968b9a8",
+          "b281fe97e504b3f19310a8352dff69218ad9961605d3c1767aeba295128ee18d",
+          "6f8c037b53b35354010bd3041d160aced147f9dbfe66dc5f5f80beb52862705e",
+          "a4807f4399688c40db223943e41778ad085ebe78e54e9a970ec5d7badad8d023",
+          "18affbbfc64263617d793dc75134cdc660cc46461559049d09a71df2daf49439",
+          "7637b044b1e663b3852b69a3873e33365d5cccdd061a292b8de75aec5b305984"
+        ],
+        "jev": [
+          "6f8c037b53b35354010bd3041d160aced147f9dbfe66dc5f5f80beb52862705e",
+          "0b1c5bc5902359735e1b4aa4142db59f4da50bd080914498acbc129c54a56cae",
+          "d5dcdc58948cd73092b51c355174ec8264e3a6611d5483e1e0df5a035787ca85",
+          "d17a39560aa7adbce87d3fecb266c91212ce7e3cfce0eea63712035dba6825ed",
+          "be1412efc9a30901b1672dcf0baaf3ac5ec02c1dd85b755276e804051cf0fbe3",
+          "1e117f61e9fe9ee7d6a187823eaf7136dd2a1569551323f0f2ccba58077391f1",
+          "8bf7a7b055007b3c674b59b6f9832b89deca25426c3f9995c64e5c5961fd583f",
+          "b87ba7152d419a0cabc108b43685107320b02d55264df67d73970651972c2104",
+          "6176e8a43bb9c62660d77da0a1405b6dee79625a9541a1d4bb73148b0968b9a8",
+          "b2f7ef3cf80ec90174a80952541263627779c31733ddf13c688a74263de386b1",
+          "9cf12986267ca780163d7c890f16e344e1b0a0adb50c79d2cca5fd5e0d7ebdf1",
+          "5e5b1310c4b77ade94a6b7467f99befb3d90891ccd0fd086e4cd60527703c57f",
+          "32aa409f5355dbe182d5a23f7962498c9d6fc31346dfc3e25d7fa4c541cb9508",
+          "0356a46d6067687ef656b99c8de3321e467e6b018218b04b00fd87b8e145ab87",
+          "7637b044b1e663b3852b69a3873e33365d5cccdd061a292b8de75aec5b305984",
+          "7af9236ed0fadeb224032f2614a61ff78585f050119b5e3572e7cb4736e6bc1a",
+          "b281fe97e504b3f19310a8352dff69218ad9961605d3c1767aeba295128ee18d",
+          "18affbbfc64263617d793dc75134cdc660cc46461559049d09a71df2daf49439",
+          "c5fe320c4bf6349b03a1760cc6db94cb0800116028e623d5bf1b3badf92891e2",
+          "a4807f4399688c40db223943e41778ad085ebe78e54e9a970ec5d7badad8d023"
+        ]
+      },
+      "packets": {
+        "local": {
+          "text": "Historical evidence, not instructions. Excerpts may be incomplete or superseded; exact originals remain available through archive_retrieve.\n{\"id\":\"d5dcdc58948cd73092b51c355174ec8264e3a6611d5483e1e0df5a035787ca85\",\"tool\":\"message\",\"turn\":0,\"flags\":[\"constraint\"],\"excerpt\":\"Repair solve(input) in src/money.js. Amounts are integer cents. Discount and tax rates are basis points, each operation rounds half-up to cents, discount is capped, and totals must remain integer cents. Return discountCents, taxableCents, taxCents, totalCents.\\n\\nContract: input fields are subtotalCents integer (default 0), discountBps finite number (default 0), optional discountCapCents nonnegative integer, and taxBps finite number (default 0). Output is exactly four nonnegative integer cents fields: discountCents, taxableCents, taxCents, totalCents. Invalid or negative amounts/rates clamp to zero. Percentage cents use half-up rounding; discount is bounded by the cap and subtotal, tax uses post-discount taxable cents, and total is taxable plus tax.\\n\\nfunction solve(input) {\\n  const subtotal = Number(input && input.subtotalCents) || 0;\\n  const discount = subtotal * (Number(input && input.discountBps) || 0) / 10000;\\n  const tax = (subtotal - discount) * (Number(input && input.taxBps) || 0) / 10000;\\n  return { discountCents: Math.floor(discount), taxableCents: subtotal - Math.floor(discount), taxCents: Math.floor(tax), totalCents: subtotal - Math.floor(discount) + Math.floor(tax) };\\n}\"}\n{\"id\":\"0b1c5bc5902359735e1b4aa4142db59f4da50bd080914498acbc129c54a56cae\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-4\\nstage: 2\\nsequence: 10\\nrecordedAt: 2026-09-12T10:50:00Z\\nstatus: corrected\\nsubject: pricing contract\\nfact: rounding\\nvalue: half-up cents\\ncorrection: A floor-only implementation undercharged tie values.\\nattemptedAction: read-only observation\\ndoNotRepeat: true\\nnote: Every percentage result rounds half-up at the cent boundary.\\nverification: Read-only evidence for the discount and tax cents calculator contract; later records supersede earlier observations only when they say so explicitly.\"}\n{\"id\":\"b2f7ef3cf80ec90174a80952541263627779c31733ddf13c688a74263de386b1\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-4\\nstage: 3\\nsequence: 21\\nstatus: observed\\nobservedAt: 2026-09-12T11:21:00Z\\nsummary: The staging sample uses a different label set while retaining the same parser version.\\ndetails: The bounded lookup returned a stable read-only result for sample 4-3-22; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: stale-cache-review\"}\n{\"id\":\"1e117f61e9fe9ee7d6a187823eaf7136dd2a1569551323f0f2ccba58077391f1\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-4\\nstage: 3\\nsequence: 20\\nstatus: warning\\nobservedAt: 2026-09-12T10:20:00Z\\nsummary: The review found no write request, credential use, or dependency installation.\\ndetails: The bounded lookup returned a stable read-only result for sample 4-3-21; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: unit-test-index\"}\n{\"id\":\"9cf12986267ca780163d7c890f16e344e1b0a0adb50c79d2cca5fd5e0d7ebdf1\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-4\\nstage: 3\\nsequence: 17\\nstatus: observed\\nobservedAt: 2026-09-12T16:27:00Z\\nsummary: A historical test artifact is retained for audit and does not change runtime behavior.\\ndetails: The bounded lookup returned a stable read-only result for sample 4-3-18; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: unit-test-index\"}\n{\"id\":\"5e5b1310c4b77ade94a6b7467f99befb3d90891ccd0fd086e4cd60527703c57f\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-4\\nstage: 3\\nsequence: 14\\nstatus: observed\\nobservedAt: 2026-09-12T13:24:00Z\\nsummary: The staging sample uses a different label set while retaining the same parser version.\\ndetails: The bounded lookup returned a stable read-only result for sample 4-3-15; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: unit-test-index\"}\n{\"id\":\"8bf7a7b055007b3c674b59b6f9832b89deca25426c3f9995c64e5c5961fd583f\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-4\\nstage: 3\\nsequence: 13\\nstatus: observed\\nobservedAt: 2026-09-12T12:23:00Z\\nsummary: The review found no write request, credential use, or dependency installation.\\ndetails: The bounded lookup returned a stable read-only result for sample 4-3-14; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: unit-test-index\"}\n{\"id\":\"d17a39560aa7adbce87d3fecb266c91212ce7e3cfce0eea63712035dba6825ed\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[\"failure\"],\"excerpt\":\"workspace: maintenance-sandbox-4\\nstage: 3\\nsequence: 12\\nrecordedAt: 2026-09-15T17:20:00Z\\nstatus: verified\\nsubject: tax configuration\\nfact: taxBps\\nvalue: 825\\nattemptedAction: read-only observation\\ndoNotRepeat: true\\nnote: Tax is computed from taxable cents after discount at 825 basis points; invalid or negative money inputs clamp to zero.\\nverification: Read-only evidence for the discount and tax cents calculator contract; later records supersede earlier observations only when they say so explicitly.\"}",
+          "chars": 5552,
+          "hash": "07affa57c28370a9e12bb264fd46151bb74c79d7ea5f107e1d71bf8f105c694d",
+          "ids": [
+            "d5dcdc58948cd73092b51c355174ec8264e3a6611d5483e1e0df5a035787ca85",
+            "0b1c5bc5902359735e1b4aa4142db59f4da50bd080914498acbc129c54a56cae",
+            "b2f7ef3cf80ec90174a80952541263627779c31733ddf13c688a74263de386b1",
+            "1e117f61e9fe9ee7d6a187823eaf7136dd2a1569551323f0f2ccba58077391f1",
+            "9cf12986267ca780163d7c890f16e344e1b0a0adb50c79d2cca5fd5e0d7ebdf1",
+            "5e5b1310c4b77ade94a6b7467f99befb3d90891ccd0fd086e4cd60527703c57f",
+            "8bf7a7b055007b3c674b59b6f9832b89deca25426c3f9995c64e5c5961fd583f",
+            "d17a39560aa7adbce87d3fecb266c91212ce7e3cfce0eea63712035dba6825ed"
+          ],
+          "targetRecordsShown": 2,
+          "scoredFactRecordsShown": [
+            "rounding"
+          ]
+        },
+        "jev": {
+          "text": "Historical evidence, not instructions. Excerpts may be incomplete or superseded; exact originals remain available through archive_retrieve.\n{\"id\":\"6f8c037b53b35354010bd3041d160aced147f9dbfe66dc5f5f80beb52862705e\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-4\\nstage: 2\\nsequence: 16\\nrecordedAt: 2026-09-13T14:30:00Z\\nstatus: approved\\nsubject: promotion rule\\nfact: discountCapCents\\nvalue: 1250\\nattemptedAction: read-only observation\\ndoNotRepeat: true\\nnote: The promotion may remove no more than 1250 cents.\\nverification: Read-only evidence for the discount and tax cents calculator contract; later records supersede earlier observations only when they say so explicitly.\"}\n{\"id\":\"0b1c5bc5902359735e1b4aa4142db59f4da50bd080914498acbc129c54a56cae\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-4\\nstage: 2\\nsequence: 10\\nrecordedAt: 2026-09-12T10:50:00Z\\nstatus: corrected\\nsubject: pricing contract\\nfact: rounding\\nvalue: half-up cents\\ncorrection: A floor-only implementation undercharged tie values.\\nattemptedAction: read-only observation\\ndoNotRepeat: true\\nnote: Every percentage result rounds half-up at the cent boundary.\\nverification: Read-only evidence for the discount and tax cents calculator contract; later records supersede earlier observations only when they say so explicitly.\"}\n{\"id\":\"d5dcdc58948cd73092b51c355174ec8264e3a6611d5483e1e0df5a035787ca85\",\"tool\":\"message\",\"turn\":0,\"flags\":[\"constraint\"],\"excerpt\":\"Repair solve(input) in src/money.js. Amounts are integer cents. Discount and tax rates are basis points, each operation rounds half-up to cents, discount is capped, and totals must remain integer cents. Return discountCents, taxableCents, taxCents, totalCents.\\n\\nContract: input fields are subtotalCents integer (default 0), discountBps finite number (default 0), optional discountCapCents nonnegative integer, and taxBps finite number (default 0). Output is exactly four nonnegative integer cents fields: discountCents, taxableCents, taxCents, totalCents. Invalid or negative amounts/rates clamp to zero. Percentage cents use half-up rounding; discount is bounded by the cap and subtotal, tax uses post-discount taxable cents, and total is taxable plus tax.\\n\\nfunction solve(input) {\\n  const subtotal = Number(input && input.subtotalCents) || 0;\\n  const discount = subtotal * (Number(input && input.discountBps) || 0) / 10000;\\n  const tax = (subtotal - discount) * (Number(input && input.taxBps) || 0) / 10000;\\n  return { discountCents: Math.floor(discount), taxableCents: subtotal - Math.floor(discount), taxCents: Math.floor(tax), totalCents: subtotal - Math.floor(discount) + Math.floor(tax) };\\n}\"}\n{\"id\":\"d17a39560aa7adbce87d3fecb266c91212ce7e3cfce0eea63712035dba6825ed\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[\"failure\"],\"excerpt\":\"workspace: maintenance-sandbox-4\\nstage: 3\\nsequence: 12\\nrecordedAt: 2026-09-15T17:20:00Z\\nstatus: verified\\nsubject: tax configuration\\nfact: taxBps\\nvalue: 825\\nattemptedAction: read-only observation\\ndoNotRepeat: true\\nnote: Tax is computed from taxable cents after discount at 825 basis points; invalid or negative money inputs clamp to zero.\\nverification: Read-only evidence for the discount and tax cents calculator contract; later records supersede earlier observations only when they say so explicitly.\"}\n{\"id\":\"be1412efc9a30901b1672dcf0baaf3ac5ec02c1dd85b755276e804051cf0fbe3\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-4\\nstage: 3\\nsequence: 3\\nstatus: observed\\nobservedAt: 2026-09-12T11:23:00Z\\nsummary: A historical test artifact is retained for audit and does not change runtime behavior.\\ndetails: The bounded lookup returned a stable read-only result for sample 4-3-4; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: stale-cache-review\"}\n{\"id\":\"1e117f61e9fe9ee7d6a187823eaf7136dd2a1569551323f0f2ccba58077391f1\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-4\\nstage: 3\\nsequence: 20\\nstatus: warning\\nobservedAt: 2026-09-12T10:20:00Z\\nsummary: The review found no write request, credential use, or dependency installation.\\ndetails: The bounded lookup returned a stable read-only result for sample 4-3-21; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: unit-test-index\"}\n{\"id\":\"8bf7a7b055007b3c674b59b6f9832b89deca25426c3f9995c64e5c5961fd583f\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-4\\nstage: 3\\nsequence: 13\\nstatus: observed\\nobservedAt: 2026-09-12T12:23:00Z\\nsummary: The review found no write request, credential use, or dependency installation.\\ndetails: The bounded lookup returned a stable read-only result for sample 4-3-14; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: unit-test-index\"}\n{\"id\":\"b87ba7152d419a0cabc108b43685107320b02d55264df67d73970651972c2104\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-4\\nstage: 3\\nsequence: 0\\nstatus: warning\\nobservedAt: 2026-09-12T08:20:00Z\\nsummary: The staging sample uses a different label set while retaining the same parser version.\\ndetails: The bounded lookup returned a stable read-only result for sample 4-3-1; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: stale-cache-review\"}",
+          "chars": 5581,
+          "hash": "a63cfe20665852c1212c33118209d0b89672f0239b1d476ca2b8885b0bbfc430",
+          "ids": [
+            "6f8c037b53b35354010bd3041d160aced147f9dbfe66dc5f5f80beb52862705e",
+            "0b1c5bc5902359735e1b4aa4142db59f4da50bd080914498acbc129c54a56cae",
+            "d5dcdc58948cd73092b51c355174ec8264e3a6611d5483e1e0df5a035787ca85",
+            "d17a39560aa7adbce87d3fecb266c91212ce7e3cfce0eea63712035dba6825ed",
+            "be1412efc9a30901b1672dcf0baaf3ac5ec02c1dd85b755276e804051cf0fbe3",
+            "1e117f61e9fe9ee7d6a187823eaf7136dd2a1569551323f0f2ccba58077391f1",
+            "8bf7a7b055007b3c674b59b6f9832b89deca25426c3f9995c64e5c5961fd583f",
+            "b87ba7152d419a0cabc108b43685107320b02d55264df67d73970651972c2104"
+          ],
+          "targetRecordsShown": 3,
+          "scoredFactRecordsShown": [
+            "rounding",
+            "discountCapCents"
+          ]
+        }
+      },
+      "checkpoints": [
+        {
+          "stage": 0,
+          "answerHash": "4d4defbe7df48a8f6002a19e4512413283402eca7317d9a65d4686b9ff44e6d5",
+          "latencyMs": 8400,
+          "toolCalls": 0
+        },
+        {
+          "stage": 1,
+          "answerHash": "e422386eceb7868a06f73767887d4b3bb47924b5eda0169ce6eba1f86b7da531",
+          "latencyMs": 4291,
+          "toolCalls": 0
+        },
+        {
+          "stage": 2,
+          "answerHash": "b26b7222d4732f9b68a6f33d2cd66885459c437192a01236eff2f5493a29e283",
+          "latencyMs": 3962,
+          "toolCalls": 0
+        }
+      ],
+      "compactions": [
+        {
+          "latencyMs": 16964,
+          "completed": true
+        },
+        {
+          "latencyMs": 16068,
+          "completed": true
+        },
+        {
+          "latencyMs": 21496,
+          "completed": true
+        }
+      ],
+      "continuations": [
+        {
+          "arm": "local",
+          "repetition": 0,
+          "tools": [],
+          "promptHash": "6fa14451e6e2240cd8cc11060bcc26bdfd5178d51f28ef54f824c3f3af270d25",
+          "forkedFromBaseConfirmed": true,
+          "parsedAnswer": {
+            "source": "function solve(input) {\n  const value = input && typeof input === \"object\" ? input : {};\n  const nonnegativeInteger = (x) => Number.isInteger(x) && Number.isFinite(x) && x >= 0 ? x : 0;\n  const nonnegativeFinite = (x) => Number.isFinite(x) && x >= 0 ? x : 0;\n  const roundHalfUp = (x) => Math.floor(x + 0.5);\n  const subtotal = nonnegativeInteger(value.subtotalCents);\n  const discountBps = nonnegativeFinite(value.discountBps);\n  const taxBps = nonnegativeFinite(value.taxBps);\n  const discountCap = Object.prototype.hasOwnProperty.call(value, \"discountCapCents\") ? nonnegativeInteger(value.discountCapCents) : null;\n  const calculatedDiscount = roundHalfUp(subtotal * discountBps / 10000);\n  const discountCents = Math.min(subtotal, calculatedDiscount, discountCap === null ? calculatedDiscount : discountCap);\n  const taxableCents = subtotal - discountCents;\n  const taxCents = roundHalfUp(taxableCents * taxBps / 10000);\n  return { discountCents, taxableCents, taxCents, totalCents: taxableCents + taxCents };\n}",
+            "facts": {
+              "rateBasis": "Basis points, denominator 10000",
+              "rounding": "Half-up to cents",
+              "discountCapCents": null
+            }
+          },
+          "score": {
+            "fullyCorrect": false,
+            "facts": {
+              "correctFields": 0,
+              "totalFields": 3,
+              "fullyCorrect": false
+            },
+            "code": {
+              "passed": 8,
+              "total": 8,
+              "allPassed": true,
+              "failedTests": [],
+              "regressionFailures": 0
+            }
+          },
+          "latencyMs": 12804,
+          "beforeUsage": null,
+          "reportedUsage": {
+            "totalTokens": 85867,
+            "inputTokens": 83970,
+            "cachedInputTokens": 2816,
+            "cacheWriteInputTokens": 0,
+            "outputTokens": 1897,
+            "reasoningOutputTokens": 1106
+          },
+          "reportedToolCalls": 0
+        },
+        {
+          "arm": "jev",
+          "repetition": 0,
+          "tools": [],
+          "promptHash": "db8f778e378d41f096c33c1978a09c47fb9dabb0f30021c3be4b1e768a228f5b",
+          "forkedFromBaseConfirmed": true,
+          "parsedAnswer": {
+            "source": "function solve(input) {\n  const data = input && typeof input === \"object\" ? input : {};\n  const nonnegativeInteger = value => Number.isInteger(value) && Number.isFinite(value) && value >= 0 ? value : 0;\n  const nonnegativeFinite = value => Number.isFinite(value) && value >= 0 ? value : 0;\n  const roundHalfUp = value => Math.floor(value + 0.5);\n  const subtotalCents = nonnegativeInteger(data.subtotalCents);\n  const discountBps = nonnegativeFinite(data.discountBps);\n  const taxBps = nonnegativeFinite(data.taxBps);\n  const rawDiscountCents = roundHalfUp(subtotalCents * discountBps / 10000);\n  const hasCap = Object.prototype.hasOwnProperty.call(data, \"discountCapCents\");\n  const capCents = hasCap ? nonnegativeInteger(data.discountCapCents) : null;\n  const discountCents = Math.min(subtotalCents, rawDiscountCents, capCents === null ? rawDiscountCents : capCents);\n  const taxableCents = subtotalCents - discountCents;\n  const taxCents = roundHalfUp(taxableCents * taxBps / 10000);\n  return { discountCents, taxableCents, taxCents, totalCents: taxableCents + taxCents };\n}",
+            "facts": {
+              "rateBasis": "basis points, denominator 10000",
+              "rounding": "half-up to cents",
+              "discountCapCents": 1250
+            }
+          },
+          "score": {
+            "fullyCorrect": false,
+            "facts": {
+              "correctFields": 1,
+              "totalFields": 3,
+              "fullyCorrect": false
+            },
+            "code": {
+              "passed": 8,
+              "total": 8,
+              "allPassed": true,
+              "failedTests": [],
+              "regressionFailures": 0
+            }
+          },
+          "latencyMs": 8943,
+          "beforeUsage": null,
+          "reportedUsage": {
+            "totalTokens": 85647,
+            "inputTokens": 83971,
+            "cachedInputTokens": 5632,
+            "cacheWriteInputTokens": 0,
+            "outputTokens": 1676,
+            "reasoningOutputTokens": 863
+          },
+          "reportedToolCalls": 0
+        },
+        {
+          "arm": "native-reference",
+          "repetition": 0,
+          "tools": [],
+          "promptHash": "57f3e6d68fea26478b3d22d53a8930bd49e0d5292ad072764b844902c5e0f7e4",
+          "forkedFromBaseConfirmed": true,
+          "parsedAnswer": {
+            "source": "function solve(input) {\n  const value = input && typeof input === \"object\" ? input : {};\n  const cents = (n) => Number.isInteger(n) && Number.isFinite(n) && n >= 0 ? n : 0;\n  const rate = (n) => Number.isFinite(n) && n >= 0 ? n : 0;\n  const halfUp = (n) => Math.floor(n + 0.5);\n\n  const subtotalCents = cents(value.subtotalCents);\n  const discountBps = rate(value.discountBps);\n  const taxBps = rate(value.taxBps);\n  const rawDiscountCents = halfUp(subtotalCents * discountBps / 10000);\n  const hasCap = Object.prototype.hasOwnProperty.call(value, \"discountCapCents\");\n  const capCents = hasCap ? cents(value.discountCapCents) : rawDiscountCents;\n  const discountCents = Math.min(subtotalCents, rawDiscountCents, capCents);\n  const taxableCents = subtotalCents - discountCents;\n  const taxCents = halfUp(taxableCents * taxBps / 10000);\n\n  return {\n    discountCents,\n    taxableCents,\n    taxCents,\n    totalCents: taxableCents + taxCents\n  };\n}",
+            "facts": {
+              "rateBasis": "basis points, denominator 10000",
+              "rounding": "half-up to cents",
+              "discountCapCents": 1250
+            }
+          },
+          "score": {
+            "fullyCorrect": false,
+            "facts": {
+              "correctFields": 1,
+              "totalFields": 3,
+              "fullyCorrect": false
+            },
+            "code": {
+              "passed": 8,
+              "total": 8,
+              "allPassed": true,
+              "failedTests": [],
+              "regressionFailures": 0
+            }
+          },
+          "latencyMs": 12402,
+          "beforeUsage": null,
+          "reportedUsage": {
+            "totalTokens": 84318,
+            "inputTokens": 82409,
+            "cachedInputTokens": 2816,
+            "cacheWriteInputTokens": 0,
+            "outputTokens": 1909,
+            "reasoningOutputTokens": 1101
+          },
+          "reportedToolCalls": 0
+        },
+        {
+          "arm": "jev",
+          "repetition": 1,
+          "tools": [],
+          "promptHash": "db8f778e378d41f096c33c1978a09c47fb9dabb0f30021c3be4b1e768a228f5b",
+          "forkedFromBaseConfirmed": true,
+          "parsedAnswer": {
+            "source": "function solve(input) {\n  const value = input && typeof input === \"object\" ? input : {};\n  const validCents = n => Number.isFinite(n) && Number.isInteger(n) && n >= 0 ? n : 0;\n  const validRate = n => Number.isFinite(n) && n >= 0 ? n : 0;\n  const roundHalfUp = n => Math.floor(n + 0.5);\n  const subtotal = validCents(value.subtotalCents);\n  const discountBps = validRate(value.discountBps);\n  const taxBps = validRate(value.taxBps);\n  const cap = Object.prototype.hasOwnProperty.call(value, \"discountCapCents\") ? validCents(value.discountCapCents) : 1250;\n  const discountCents = Math.min(subtotal, cap, roundHalfUp(subtotal * discountBps / 10000));\n  const taxableCents = subtotal - discountCents;\n  const taxCents = roundHalfUp(taxableCents * taxBps / 10000);\n  return { discountCents, taxableCents, taxCents, totalCents: taxableCents + taxCents };\n}",
+            "facts": {
+              "rateBasis": "basis points, denominator 10000",
+              "rounding": "half-up to cents",
+              "discountCapCents": 1250
+            }
+          },
+          "score": {
+            "fullyCorrect": false,
+            "facts": {
+              "correctFields": 1,
+              "totalFields": 3,
+              "fullyCorrect": false
+            },
+            "code": {
+              "passed": 8,
+              "total": 8,
+              "allPassed": true,
+              "failedTests": [],
+              "regressionFailures": 0
+            }
+          },
+          "latencyMs": 12886,
+          "beforeUsage": null,
+          "reportedUsage": {
+            "totalTokens": 85978,
+            "inputTokens": 83971,
+            "cachedInputTokens": 20992,
+            "cacheWriteInputTokens": 0,
+            "outputTokens": 2007,
+            "reasoningOutputTokens": 1240
+          },
+          "reportedToolCalls": 0
+        },
+        {
+          "arm": "native-reference",
+          "repetition": 1,
+          "tools": [],
+          "promptHash": "57f3e6d68fea26478b3d22d53a8930bd49e0d5292ad072764b844902c5e0f7e4",
+          "forkedFromBaseConfirmed": true,
+          "parsedAnswer": {
+            "source": "function solve(input) {\n  const value = input && typeof input === \"object\" ? input : {};\n  const cents = (v) => Number.isInteger(v) && Number.isFinite(v) && v >= 0 ? v : 0;\n  const rate = (v) => Number.isFinite(v) && v >= 0 ? v : 0;\n  const roundHalfUp = (v) => Math.floor(v + 0.5);\n  const subtotal = cents(value.subtotalCents);\n  const discountBps = rate(value.discountBps);\n  const taxBps = rate(value.taxBps);\n  const roundedDiscount = roundHalfUp(subtotal * discountBps / 10000);\n  const hasCap = Object.prototype.hasOwnProperty.call(value, \"discountCapCents\");\n  const cap = hasCap ? cents(value.discountCapCents) : roundedDiscount;\n  const discountCents = Math.min(subtotal, roundedDiscount, cap);\n  const taxableCents = subtotal - discountCents;\n  const taxCents = roundHalfUp(taxableCents * taxBps / 10000);\n  return { discountCents, taxableCents, taxCents, totalCents: taxableCents + taxCents };\n}",
+            "facts": {
+              "rateBasis": "basis points; divide by 10000",
+              "rounding": "half-up to cents for discount and tax",
+              "discountCapCents": 1250
+            }
+          },
+          "score": {
+            "fullyCorrect": false,
+            "facts": {
+              "correctFields": 1,
+              "totalFields": 3,
+              "fullyCorrect": false
+            },
+            "code": {
+              "passed": 8,
+              "total": 8,
+              "allPassed": true,
+              "failedTests": [],
+              "regressionFailures": 0
+            }
+          },
+          "latencyMs": 10366,
+          "beforeUsage": null,
+          "reportedUsage": {
+            "totalTokens": 84203,
+            "inputTokens": 82409,
+            "cachedInputTokens": 2816,
+            "cacheWriteInputTokens": 0,
+            "outputTokens": 1794,
+            "reasoningOutputTokens": 1008
+          },
+          "reportedToolCalls": 0
+        },
+        {
+          "arm": "local",
+          "repetition": 1,
+          "tools": [],
+          "promptHash": "6fa14451e6e2240cd8cc11060bcc26bdfd5178d51f28ef54f824c3f3af270d25",
+          "forkedFromBaseConfirmed": true,
+          "parsedAnswer": {
+            "source": "function solve(input) {\n  const value = input && typeof input === \"object\" ? input : {};\n  const nonnegativeInteger = value => Number.isInteger(value) && value >= 0 ? value : 0;\n  const nonnegativeFinite = value => Number.isFinite(value) && value >= 0 ? value : 0;\n  const roundHalfUp = value => Math.floor(value + 0.5);\n  const subtotalCents = nonnegativeInteger(value.subtotalCents);\n  const discountBps = nonnegativeFinite(value.discountBps);\n  const taxBps = nonnegativeFinite(value.taxBps);\n  const discountCapCents = Object.prototype.hasOwnProperty.call(value, \"discountCapCents\") ? nonnegativeInteger(value.discountCapCents) : null;\n  const calculatedDiscount = roundHalfUp(subtotalCents * discountBps / 10000);\n  const discountCents = Math.min(subtotalCents, calculatedDiscount, discountCapCents === null ? calculatedDiscount : discountCapCents);\n  const taxableCents = subtotalCents - discountCents;\n  const taxCents = roundHalfUp(taxableCents * taxBps / 10000);\n  return { discountCents, taxableCents, taxCents, totalCents: taxableCents + taxCents };\n}",
+            "facts": {
+              "rateBasis": "basis points, denominator 10000",
+              "rounding": "half-up to cents",
+              "discountCapCents": null
+            }
+          },
+          "score": {
+            "fullyCorrect": false,
+            "facts": {
+              "correctFields": 0,
+              "totalFields": 3,
+              "fullyCorrect": false
+            },
+            "code": {
+              "passed": 8,
+              "total": 8,
+              "allPassed": true,
+              "failedTests": [],
+              "regressionFailures": 0
+            }
+          },
+          "latencyMs": 14788,
+          "beforeUsage": null,
+          "reportedUsage": {
+            "totalTokens": 86122,
+            "inputTokens": 83970,
+            "cachedInputTokens": 19968,
+            "cacheWriteInputTokens": 0,
+            "outputTokens": 2152,
+            "reasoningOutputTokens": 1359
+          },
+          "reportedToolCalls": 0
+        }
+      ],
+      "baseIdHash": "6b7229e15298e16e700c89cbcd709634a4b690b5946a870053ea00e0143ee0d9"
+    },
+    {
+      "id": "reservation-ledger",
+      "historyChars": 54428,
+      "candidateCount": 20,
+      "candidateHash": "357236d47b19477a9da0819e9662199a5e34bc37791111895eda23712f3b3474",
+      "candidateIds": [
+        "02a9292e3bf24cf49d0b316c57cad6aca03358b05e34c04e64d97c8b8cb17dac",
+        "4f6159c26395f84eeadf939a382924965f9a18333799cbda47eb30e3db3118a5",
+        "07c96588aea885203d22665d87f283729f36de0ec35c60e3d29f0a7019d4b759",
+        "465fe78a2ecddfd59c7f212ea2d0816c15d78e1cac386f19a816505c45928433",
+        "7688983195190fed324343de963dfa209ab4f4233ef0ee99f5e2adf002362f2d",
+        "6932fa1c38bd433552ce6e0369947f95ec97d4094719b7c2d67f3064b16c386e",
+        "5bc84f6bc95f95e786aba493f01f6fe147f8c8b2e3f3fd64796cb66df8536d24",
+        "eba6354422dbf42453a9b603a142c3d307640976c0f3ca9076aa4d5691e26c42",
+        "9fecebd6ec83c0b80eed83ec7ff2b7b7a545ee598ea430af0837ea9393c90c12",
+        "f183c95cf76ed3f6b46099a25737b628ebe311e5e9041c6f0e85a0818f7648db",
+        "7ee8760bb2365b5c170b00e63fe442b59c512abee60f83fb58caace701110133",
+        "28824325ef0244e2883bd264d9c9891186481283fe996ba30b26e271d1fc7355",
+        "7763f0435e412fa7b39ddf70f1eef8dba9a400f8861d9c5baf71f37163674f98",
+        "f6654c7c95f732b6352b27936d7bbf2a6db7a5ed0a296a8ae3fe153038259852",
+        "1e8bc0709b565b2e42d6c7f7e44a53d89f3d33b9115ded90d74059051141107b",
+        "b3175545ff12d244c67020cade0d22a49118176f0e96ecac9ce45f14165983eb",
+        "b60a299e7808153e1eebfdd8249f933dbd3fd2b9736b615af1fb6f8db1cdd2fb",
+        "41110a4acb30706da3e908ef71ff82b6f00702738c918812c59b680468e0480b",
+        "77e938b16f8361542af43f24e0c77046acb1c9856b78eae24c0ee0d56d173277",
+        "9382f167d3dbfff2902d438c1720e706409e3a975929efeb0058e12006f1b74a"
+      ],
+      "targetRecords": 4,
+      "targetCandidates": 4,
+      "factSources": {
+        "activeStatuses": "02a9292e3bf24cf49d0b316c57cad6aca03358b05e34c04e64d97c8b8cb17dac",
+        "reservationTtlMinutes": "7688983195190fed324343de963dfa209ab4f4233ef0ee99f5e2adf002362f2d",
+        "duplicatePolicy": "465fe78a2ecddfd59c7f212ea2d0816c15d78e1cac386f19a816505c45928433"
+      },
+      "scoredFactsInCandidates": [
+        "activeStatuses",
+        "reservationTtlMinutes",
+        "duplicatePolicy"
+      ],
+      "jev": {
+        "calls": 1,
+        "latencyMs": 173.3519,
+        "requestChars": 25283,
+        "usage": {
+          "input_tokens": 9012,
+          "output_tokens": 414
+        },
+        "model": "jev-1.13.0"
+      },
+      "rankings": {
+        "local": [
+          "02a9292e3bf24cf49d0b316c57cad6aca03358b05e34c04e64d97c8b8cb17dac",
+          "4f6159c26395f84eeadf939a382924965f9a18333799cbda47eb30e3db3118a5",
+          "07c96588aea885203d22665d87f283729f36de0ec35c60e3d29f0a7019d4b759",
+          "465fe78a2ecddfd59c7f212ea2d0816c15d78e1cac386f19a816505c45928433",
+          "7688983195190fed324343de963dfa209ab4f4233ef0ee99f5e2adf002362f2d",
+          "6932fa1c38bd433552ce6e0369947f95ec97d4094719b7c2d67f3064b16c386e",
+          "5bc84f6bc95f95e786aba493f01f6fe147f8c8b2e3f3fd64796cb66df8536d24",
+          "eba6354422dbf42453a9b603a142c3d307640976c0f3ca9076aa4d5691e26c42",
+          "9fecebd6ec83c0b80eed83ec7ff2b7b7a545ee598ea430af0837ea9393c90c12",
+          "f183c95cf76ed3f6b46099a25737b628ebe311e5e9041c6f0e85a0818f7648db",
+          "7ee8760bb2365b5c170b00e63fe442b59c512abee60f83fb58caace701110133",
+          "28824325ef0244e2883bd264d9c9891186481283fe996ba30b26e271d1fc7355",
+          "7763f0435e412fa7b39ddf70f1eef8dba9a400f8861d9c5baf71f37163674f98",
+          "f6654c7c95f732b6352b27936d7bbf2a6db7a5ed0a296a8ae3fe153038259852",
+          "1e8bc0709b565b2e42d6c7f7e44a53d89f3d33b9115ded90d74059051141107b",
+          "b3175545ff12d244c67020cade0d22a49118176f0e96ecac9ce45f14165983eb",
+          "b60a299e7808153e1eebfdd8249f933dbd3fd2b9736b615af1fb6f8db1cdd2fb",
+          "41110a4acb30706da3e908ef71ff82b6f00702738c918812c59b680468e0480b",
+          "77e938b16f8361542af43f24e0c77046acb1c9856b78eae24c0ee0d56d173277",
+          "9382f167d3dbfff2902d438c1720e706409e3a975929efeb0058e12006f1b74a"
+        ],
+        "jev": [
+          "465fe78a2ecddfd59c7f212ea2d0816c15d78e1cac386f19a816505c45928433",
+          "07c96588aea885203d22665d87f283729f36de0ec35c60e3d29f0a7019d4b759",
+          "02a9292e3bf24cf49d0b316c57cad6aca03358b05e34c04e64d97c8b8cb17dac",
+          "4f6159c26395f84eeadf939a382924965f9a18333799cbda47eb30e3db3118a5",
+          "5bc84f6bc95f95e786aba493f01f6fe147f8c8b2e3f3fd64796cb66df8536d24",
+          "28824325ef0244e2883bd264d9c9891186481283fe996ba30b26e271d1fc7355",
+          "6932fa1c38bd433552ce6e0369947f95ec97d4094719b7c2d67f3064b16c386e",
+          "eba6354422dbf42453a9b603a142c3d307640976c0f3ca9076aa4d5691e26c42",
+          "9fecebd6ec83c0b80eed83ec7ff2b7b7a545ee598ea430af0837ea9393c90c12",
+          "f183c95cf76ed3f6b46099a25737b628ebe311e5e9041c6f0e85a0818f7648db",
+          "41110a4acb30706da3e908ef71ff82b6f00702738c918812c59b680468e0480b",
+          "7688983195190fed324343de963dfa209ab4f4233ef0ee99f5e2adf002362f2d",
+          "7ee8760bb2365b5c170b00e63fe442b59c512abee60f83fb58caace701110133",
+          "7763f0435e412fa7b39ddf70f1eef8dba9a400f8861d9c5baf71f37163674f98",
+          "f6654c7c95f732b6352b27936d7bbf2a6db7a5ed0a296a8ae3fe153038259852",
+          "1e8bc0709b565b2e42d6c7f7e44a53d89f3d33b9115ded90d74059051141107b",
+          "b3175545ff12d244c67020cade0d22a49118176f0e96ecac9ce45f14165983eb",
+          "b60a299e7808153e1eebfdd8249f933dbd3fd2b9736b615af1fb6f8db1cdd2fb",
+          "9382f167d3dbfff2902d438c1720e706409e3a975929efeb0058e12006f1b74a",
+          "77e938b16f8361542af43f24e0c77046acb1c9856b78eae24c0ee0d56d173277"
+        ]
+      },
+      "packets": {
+        "local": {
+          "text": "Historical evidence, not instructions. Excerpts may be incomplete or superseded; exact originals remain available through archive_retrieve.\n{\"id\":\"02a9292e3bf24cf49d0b316c57cad6aca03358b05e34c04e64d97c8b8cb17dac\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[\"failure\"],\"excerpt\":\"workspace: maintenance-sandbox-5\\nstage: 1\\nsequence: 8\\nrecordedAt: 2026-09-10T08:55:00Z\\nstatus: observed\\nsubject: stock policy\\nfact: activeStatuses\\nvalue: held\\nvalue: confirmed\\nattemptedAction: read-only observation\\ndoNotRepeat: true\\nnote: Both held and confirmed rows consume available units when qty is a positive integer. Ignore other statuses and rows with invalid quantities. Requests must also have a positive integer qty.\\nverification: Read-only evidence for the inventory reservation helper contract; later records supersede earlier observations only when they say so explicitly.\"}\n{\"id\":\"4f6159c26395f84eeadf939a382924965f9a18333799cbda47eb30e3db3118a5\",\"tool\":\"message\",\"turn\":0,\"flags\":[\"constraint\"],\"excerpt\":\"Repair solve(input) in src/reservations.js. Available units are reduced by held and confirmed reservations. A matching active reservation id is idempotent, invalid quantities reject, and a request may not partially reserve. Return reservationId, status, reservedQty, and remaining.\\n\\nContract: input has available integer units (default 0), reservations array of {id,qty,status}, and request {id,qty}. Output is exactly {reservationId:string|null,status:string,reservedQty:integer,remaining:integer}. Active statuses are held and confirmed. A repeated active id returns status already-held with its existing quantity; invalid or nonpositive requests and insufficient stock return rejected with reservedQty 0; successful requests return reserved. When calculating used stock, count only positive integer quantities on active rows; ignore invalid or nonpositive quantities. Remaining never goes below zero.\\n\\nfunction solve(input) {\\n  const available = Number(input && input.available) || 0;\\n  const used = (input && input.reservations || []).reduce((sum, item) => sum + (Number(item.qty) || 0), 0);\\n  const qty = Number(input && input.request && input.request.qty) || 0;\\n  return { reservationId: input && input.request && input.request.id || null, status: qty <= available - used ? 'reserved' : 'rejected', reservedQty: qty, remaining: Math.max(0, available - used - qty) };\\n}\"}\n{\"id\":\"07c96588aea885203d22665d87f283729f36de0ec35c60e3d29f0a7019d4b759\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-5\\nstage: 3\\nsequence: 11\\nrecordedAt: 2026-09-15T13:35:00Z\\nstatus: verified\\nsubject: allocation policy\\nfact: partialReservations\\nvalue: false\\nattemptedAction: read-only observation\\ndoNotRepeat: true\\nnote: Insufficient remaining stock rejects the whole request.\\nverification: Read-only evidence for the inventory reservation helper contract; later records supersede earlier observations only when they say so explicitly.\"}\n{\"id\":\"465fe78a2ecddfd59c7f212ea2d0816c15d78e1cac386f19a816505c45928433\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-5\\nstage: 2\\nsequence: 20\\nrecordedAt: 2026-09-13T15:10:00Z\\nstatus: approved\\nsubject: idempotency policy\\nfact: duplicatePolicy\\nvalue: return existing\\nattemptedAction: read-only observation\\ndoNotRepeat: true\\nnote: A repeated active reservation id returns status already-held with its existing quantity and does not consume stock again.\\nverification: Read-only evidence for the inventory reservation helper contract; later records supersede earlier observations only when they say so explicitly.\"}\n{\"id\":\"7688983195190fed324343de963dfa209ab4f4233ef0ee99f5e2adf002362f2d\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-5\\nstage: 2\\nsequence: 7\\nrecordedAt: 2026-09-12T12:05:00Z\\nstatus: corrected\\nsubject: reservation policy\\nfact: reservationTtlMinutes\\nvalue: 20\\ncorrection: The 30-minute draft belonged to an older channel.\\nattemptedAction: read-only observation\\ndoNotRepeat: true\\nnote: New holds use a 20-minute TTL outside this pure helper.\\nverification: Read-only evidence for the inventory reservation helper contract; later records supersede earlier observations only when they say so explicitly.\"}\n{\"id\":\"6932fa1c38bd433552ce6e0369947f95ec97d4094719b7c2d67f3064b16c386e\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-5\\nstage: 3\\nsequence: 23\\nstatus: observed\\nobservedAt: 2026-09-12T13:23:00Z\\nsummary: A historical test artifact is retained for audit and does not change runtime behavior.\\ndetails: The bounded lookup returned a stable read-only result for sample 5-3-24; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: unit-test-index\"}\n{\"id\":\"5bc84f6bc95f95e786aba493f01f6fe147f8c8b2e3f3fd64796cb66df8536d24\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-5\\nstage: 3\\nsequence: 19\\nstatus: observed\\nobservedAt: 2026-09-12T09:29:00Z\\nsummary: The review found no write request, credential use, or dependency installation.\\ndetails: The bounded lookup returned a stable read-only result for sample 5-3-20; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: unit-test-index\"}\n{\"id\":\"eba6354422dbf42453a9b603a142c3d307640976c0f3ca9076aa4d5691e26c42\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-5\\nstage: 3\\nsequence: 16\\nstatus: observed\\nobservedAt: 2026-09-12T15:26:00Z\\nsummary: A historical test artifact is retained for audit and does not change runtime behavior.\\ndetails: The bounded lookup returned a stable read-only result for sample 5-3-17; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: unit-test-index\"}",
+          "chars": 5961,
+          "hash": "1ec6af07c1489309f8b7b4e7977f59b6eb76975bad7a8a96f3ad0761a95dfff8",
+          "ids": [
+            "02a9292e3bf24cf49d0b316c57cad6aca03358b05e34c04e64d97c8b8cb17dac",
+            "4f6159c26395f84eeadf939a382924965f9a18333799cbda47eb30e3db3118a5",
+            "07c96588aea885203d22665d87f283729f36de0ec35c60e3d29f0a7019d4b759",
+            "465fe78a2ecddfd59c7f212ea2d0816c15d78e1cac386f19a816505c45928433",
+            "7688983195190fed324343de963dfa209ab4f4233ef0ee99f5e2adf002362f2d",
+            "6932fa1c38bd433552ce6e0369947f95ec97d4094719b7c2d67f3064b16c386e",
+            "5bc84f6bc95f95e786aba493f01f6fe147f8c8b2e3f3fd64796cb66df8536d24",
+            "eba6354422dbf42453a9b603a142c3d307640976c0f3ca9076aa4d5691e26c42"
+          ],
+          "targetRecordsShown": 4,
+          "scoredFactRecordsShown": [
+            "activeStatuses",
+            "reservationTtlMinutes",
+            "duplicatePolicy"
+          ]
+        },
+        "jev": {
+          "text": "Historical evidence, not instructions. Excerpts may be incomplete or superseded; exact originals remain available through archive_retrieve.\n{\"id\":\"465fe78a2ecddfd59c7f212ea2d0816c15d78e1cac386f19a816505c45928433\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-5\\nstage: 2\\nsequence: 20\\nrecordedAt: 2026-09-13T15:10:00Z\\nstatus: approved\\nsubject: idempotency policy\\nfact: duplicatePolicy\\nvalue: return existing\\nattemptedAction: read-only observation\\ndoNotRepeat: true\\nnote: A repeated active reservation id returns status already-held with its existing quantity and does not consume stock again.\\nverification: Read-only evidence for the inventory reservation helper contract; later records supersede earlier observations only when they say so explicitly.\"}\n{\"id\":\"07c96588aea885203d22665d87f283729f36de0ec35c60e3d29f0a7019d4b759\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-5\\nstage: 3\\nsequence: 11\\nrecordedAt: 2026-09-15T13:35:00Z\\nstatus: verified\\nsubject: allocation policy\\nfact: partialReservations\\nvalue: false\\nattemptedAction: read-only observation\\ndoNotRepeat: true\\nnote: Insufficient remaining stock rejects the whole request.\\nverification: Read-only evidence for the inventory reservation helper contract; later records supersede earlier observations only when they say so explicitly.\"}\n{\"id\":\"02a9292e3bf24cf49d0b316c57cad6aca03358b05e34c04e64d97c8b8cb17dac\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[\"failure\"],\"excerpt\":\"workspace: maintenance-sandbox-5\\nstage: 1\\nsequence: 8\\nrecordedAt: 2026-09-10T08:55:00Z\\nstatus: observed\\nsubject: stock policy\\nfact: activeStatuses\\nvalue: held\\nvalue: confirmed\\nattemptedAction: read-only observation\\ndoNotRepeat: true\\nnote: Both held and confirmed rows consume available units when qty is a positive integer. Ignore other statuses and rows with invalid quantities. Requests must also have a positive integer qty.\\nverification: Read-only evidence for the inventory reservation helper contract; later records supersede earlier observations only when they say so explicitly.\"}\n{\"id\":\"4f6159c26395f84eeadf939a382924965f9a18333799cbda47eb30e3db3118a5\",\"tool\":\"message\",\"turn\":0,\"flags\":[\"constraint\"],\"excerpt\":\"Repair solve(input) in src/reservations.js. Available units are reduced by held and confirmed reservations. A matching active reservation id is idempotent, invalid quantities reject, and a request may not partially reserve. Return reservationId, status, reservedQty, and remaining.\\n\\nContract: input has available integer units (default 0), reservations array of {id,qty,status}, and request {id,qty}. Output is exactly {reservationId:string|null,status:string,reservedQty:integer,remaining:integer}. Active statuses are held and confirmed. A repeated active id returns status already-held with its existing quantity; invalid or nonpositive requests and insufficient stock return rejected with reservedQty 0; successful requests return reserved. When calculating used stock, count only positive integer quantities on active rows; ignore invalid or nonpositive quantities. Remaining never goes below zero.\\n\\nfunction solve(input) {\\n  const available = Number(input && input.available) || 0;\\n  const used = (input && input.reservations || []).reduce((sum, item) => sum + (Number(item.qty) || 0), 0);\\n  const qty = Number(input && input.request && input.request.qty) || 0;\\n  return { reservationId: input && input.request && input.request.id || null, status: qty <= available - used ? 'reserved' : 'rejected', reservedQty: qty, remaining: Math.max(0, available - used - qty) };\\n}\"}\n{\"id\":\"5bc84f6bc95f95e786aba493f01f6fe147f8c8b2e3f3fd64796cb66df8536d24\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-5\\nstage: 3\\nsequence: 19\\nstatus: observed\\nobservedAt: 2026-09-12T09:29:00Z\\nsummary: The review found no write request, credential use, or dependency installation.\\ndetails: The bounded lookup returned a stable read-only result for sample 5-3-20; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: unit-test-index\"}\n{\"id\":\"28824325ef0244e2883bd264d9c9891186481283fe996ba30b26e271d1fc7355\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-5\\nstage: 3\\nsequence: 2\\nstatus: observed\\nobservedAt: 2026-09-12T10:22:00Z\\nsummary: A historical test artifact is retained for audit and does not change runtime behavior.\\ndetails: The bounded lookup returned a stable read-only result for sample 5-3-3; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: unit-test-index\"}\n{\"id\":\"6932fa1c38bd433552ce6e0369947f95ec97d4094719b7c2d67f3064b16c386e\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-5\\nstage: 3\\nsequence: 23\\nstatus: observed\\nobservedAt: 2026-09-12T13:23:00Z\\nsummary: A historical test artifact is retained for audit and does not change runtime behavior.\\ndetails: The bounded lookup returned a stable read-only result for sample 5-3-24; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: unit-test-index\"}\n{\"id\":\"eba6354422dbf42453a9b603a142c3d307640976c0f3ca9076aa4d5691e26c42\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-5\\nstage: 3\\nsequence: 16\\nstatus: observed\\nobservedAt: 2026-09-12T15:26:00Z\\nsummary: A historical test artifact is retained for audit and does not change runtime behavior.\\ndetails: The bounded lookup returned a stable read-only result for sample 5-3-17; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: unit-test-index\"}",
+          "chars": 5857,
+          "hash": "3aa1a972078a54cdc540a526b9b12c455c6ceb026288b4bec732d1dbce90f76e",
+          "ids": [
+            "465fe78a2ecddfd59c7f212ea2d0816c15d78e1cac386f19a816505c45928433",
+            "07c96588aea885203d22665d87f283729f36de0ec35c60e3d29f0a7019d4b759",
+            "02a9292e3bf24cf49d0b316c57cad6aca03358b05e34c04e64d97c8b8cb17dac",
+            "4f6159c26395f84eeadf939a382924965f9a18333799cbda47eb30e3db3118a5",
+            "5bc84f6bc95f95e786aba493f01f6fe147f8c8b2e3f3fd64796cb66df8536d24",
+            "28824325ef0244e2883bd264d9c9891186481283fe996ba30b26e271d1fc7355",
+            "6932fa1c38bd433552ce6e0369947f95ec97d4094719b7c2d67f3064b16c386e",
+            "eba6354422dbf42453a9b603a142c3d307640976c0f3ca9076aa4d5691e26c42"
+          ],
+          "targetRecordsShown": 3,
+          "scoredFactRecordsShown": [
+            "activeStatuses",
+            "duplicatePolicy"
+          ]
+        }
+      },
+      "checkpoints": [
+        {
+          "stage": 0,
+          "answerHash": "8294a790fc0cb60df7d808a1afce2b9238d8624b40c0c989bcd27f2765b78ccb",
+          "latencyMs": 7460,
+          "toolCalls": 0
+        },
+        {
+          "stage": 1,
+          "answerHash": "27d8dfdc0e732d6cfa31cc7b2167ba15026ef8db3df6f7470a14e10ca59c66f4",
+          "latencyMs": 5226,
+          "toolCalls": 0
+        },
+        {
+          "stage": 2,
+          "answerHash": "49cc660de9b7115e37b013f60df0d0e9cc17648cabec6c6d76e1bf24543c88b4",
+          "latencyMs": 3162,
+          "toolCalls": 0
+        }
+      ],
+      "compactions": [
+        {
+          "latencyMs": 9778,
+          "completed": true
+        },
+        {
+          "latencyMs": 10990,
+          "completed": true
+        },
+        {
+          "latencyMs": 12351,
+          "completed": true
+        }
+      ],
+      "continuations": [
+        {
+          "arm": "jev",
+          "repetition": 0,
+          "tools": [],
+          "promptHash": "912e9e642cfc8ded975771156b4913e75d99738bef539bac83d0cbdad0e1c9b2",
+          "forkedFromBaseConfirmed": true,
+          "parsedAnswer": {
+            "source": "function solve(input) {\n  const available = Number.isInteger(input && input.available) && input.available > 0 ? input.available : 0;\n  const reservations = Array.isArray(input && input.reservations) ? input.reservations : [];\n  const request = input && input.request;\n  const reservationId = request && typeof request.id === 'string' ? request.id : null;\n  const qty = request && Number.isInteger(request.qty) ? request.qty : 0;\n  const active = item => item && (item.status === 'held' || item.status === 'confirmed');\n  const validQty = item => Number.isInteger(item.qty) && item.qty > 0;\n  const used = reservations.reduce((sum, item) => sum + (active(item) && validQty(item) ? item.qty : 0), 0);\n  const remaining = Math.max(0, available - used);\n  const existing = reservationId !== null && reservations.find(item => active(item) && item.id === reservationId && validQty(item));\n\n  if (existing) {\n    return { reservationId, status: 'already-held', reservedQty: existing.qty, remaining };\n  }\n  if (qty <= 0 || reservationId === null || qty > remaining) {\n    return { reservationId, status: 'rejected', reservedQty: 0, remaining };\n  }\n  return { reservationId, status: 'reserved', reservedQty: qty, remaining: remaining - qty };\n}",
+            "facts": {
+              "activeStatuses": [
+                "held",
+                "confirmed"
+              ],
+              "reservationTtlMinutes": null,
+              "duplicatePolicy": "return existing"
+            }
+          },
+          "score": {
+            "fullyCorrect": false,
+            "facts": {
+              "correctFields": 2,
+              "totalFields": 3,
+              "fullyCorrect": false
+            },
+            "code": {
+              "passed": 8,
+              "total": 8,
+              "allPassed": true,
+              "failedTests": [],
+              "regressionFailures": 0
+            }
+          },
+          "latencyMs": 10856,
+          "beforeUsage": null,
+          "reportedUsage": {
+            "totalTokens": 83572,
+            "inputTokens": 82120,
+            "cachedInputTokens": 16640,
+            "cacheWriteInputTokens": 0,
+            "outputTokens": 1452,
+            "reasoningOutputTokens": 725
+          },
+          "reportedToolCalls": 0
+        },
+        {
+          "arm": "native-reference",
+          "repetition": 0,
+          "tools": [],
+          "promptHash": "6ec82b3c4ca61df7d39453651689da447f17ef19f89101fafc5433cd8c3a41c1",
+          "forkedFromBaseConfirmed": true,
+          "parsedAnswer": {
+            "source": "function solve(input) {\n  const available = input && Number.isInteger(input.available) && input.available > 0 ? input.available : 0;\n  const reservations = Array.isArray(input && input.reservations) ? input.reservations : [];\n  const request = input && input.request || {};\n  const reservationId = typeof request.id === 'string' ? request.id : null;\n  const qty = request.qty;\n  const isValidQty = Number.isInteger(qty) && qty > 0;\n  const active = item => item && (item.status === 'held' || item.status === 'confirmed') && Number.isInteger(item.qty) && item.qty > 0;\n  const used = reservations.filter(active).reduce((sum, item) => sum + item.qty, 0);\n  const remainingBefore = Math.max(0, available - used);\n  const existing = reservationId === null ? null : reservations.find(item => active(item) && item.id === reservationId);\n\n  if (existing) {\n    return { reservationId, status: 'already-held', reservedQty: existing.qty, remaining: remainingBefore };\n  }\n  if (!isValidQty || qty > remainingBefore) {\n    return { reservationId, status: 'rejected', reservedQty: 0, remaining: remainingBefore };\n  }\n  return { reservationId, status: 'reserved', reservedQty: qty, remaining: remainingBefore - qty };\n}",
+            "facts": {
+              "activeStatuses": [
+                "held",
+                "confirmed"
+              ],
+              "reservationTtlMinutes": 20,
+              "duplicatePolicy": "return existing"
+            }
+          },
+          "score": {
+            "fullyCorrect": true,
+            "facts": {
+              "correctFields": 3,
+              "totalFields": 3,
+              "fullyCorrect": true
+            },
+            "code": {
+              "passed": 8,
+              "total": 8,
+              "allPassed": true,
+              "failedTests": [],
+              "regressionFailures": 0
+            }
+          },
+          "latencyMs": 11585,
+          "beforeUsage": null,
+          "reportedUsage": {
+            "totalTokens": 82114,
+            "inputTokens": 80561,
+            "cachedInputTokens": 16640,
+            "cacheWriteInputTokens": 0,
+            "outputTokens": 1553,
+            "reasoningOutputTokens": 837
+          },
+          "reportedToolCalls": 0
+        },
+        {
+          "arm": "local",
+          "repetition": 0,
+          "tools": [],
+          "promptHash": "d0c7afaf413ad7d90a221040e6ce8e00351d478349baca6642ee7fb600714bb9",
+          "forkedFromBaseConfirmed": true,
+          "parsedAnswer": {
+            "source": "function solve(input) {\n  const activeStatuses = new Set(['held', 'confirmed']);\n  const available = Number.isInteger(input && input.available) && input.available > 0 ? input.available : 0;\n  const reservations = Array.isArray(input && input.reservations) ? input.reservations : [];\n  const request = input && input.request;\n  const reservationId = request && typeof request.id === 'string' ? request.id : null;\n  const qty = request && Number.isInteger(request.qty) ? request.qty : 0;\n  const active = reservations.filter(item => item && activeStatuses.has(item.status) && Number.isInteger(item.qty) && item.qty > 0);\n  const used = active.reduce((sum, item) => sum + item.qty, 0);\n  const remaining = Math.max(0, available - used);\n  const existing = reservationId !== null ? active.find(item => item.id === reservationId) : null;\n\n  if (existing) {\n    return { reservationId, status: 'already-held', reservedQty: existing.qty, remaining };\n  }\n  if (qty <= 0 || qty > remaining) {\n    return { reservationId, status: 'rejected', reservedQty: 0, remaining };\n  }\n  return { reservationId, status: 'reserved', reservedQty: qty, remaining: remaining - qty };\n}",
+            "facts": {
+              "activeStatuses": [
+                "held",
+                "confirmed"
+              ],
+              "reservationTtlMinutes": 20,
+              "duplicatePolicy": "return existing"
+            }
+          },
+          "score": {
+            "fullyCorrect": true,
+            "facts": {
+              "correctFields": 3,
+              "totalFields": 3,
+              "fullyCorrect": true
+            },
+            "code": {
+              "passed": 8,
+              "total": 8,
+              "allPassed": true,
+              "failedTests": [],
+              "regressionFailures": 0
+            }
+          },
+          "latencyMs": 14549,
+          "beforeUsage": null,
+          "reportedUsage": {
+            "totalTokens": 83915,
+            "inputTokens": 82141,
+            "cachedInputTokens": 32768,
+            "cacheWriteInputTokens": 0,
+            "outputTokens": 1774,
+            "reasoningOutputTokens": 1070
+          },
+          "reportedToolCalls": 0
+        },
+        {
+          "arm": "native-reference",
+          "repetition": 1,
+          "tools": [],
+          "promptHash": "6ec82b3c4ca61df7d39453651689da447f17ef19f89101fafc5433cd8c3a41c1",
+          "forkedFromBaseConfirmed": true,
+          "parsedAnswer": {
+            "source": "function solve(input) {\n  const available = Number.isInteger(input && input.available) && input.available > 0 ? input.available : 0;\n  const reservations = Array.isArray(input && input.reservations) ? input.reservations : [];\n  const request = input && input.request;\n  const reservationId = request && typeof request.id === 'string' ? request.id : null;\n  const qty = request && Number.isInteger(request.qty) ? request.qty : 0;\n  const active = item => item && (item.status === 'held' || item.status === 'confirmed') && Number.isInteger(item.qty) && item.qty > 0;\n  const used = reservations.filter(active).reduce((sum, item) => sum + item.qty, 0);\n  const existing = reservationId !== null ? reservations.find(item => active(item) && item.id === reservationId) : null;\n  const remaining = Math.max(0, available - used);\n  if (qty <= 0) return { reservationId, status: 'rejected', reservedQty: 0, remaining };\n  if (existing) return { reservationId, status: 'already-held', reservedQty: existing.qty, remaining };\n  if (qty > remaining) return { reservationId, status: 'rejected', reservedQty: 0, remaining };\n  return { reservationId, status: 'reserved', reservedQty: qty, remaining: remaining - qty };\n}",
+            "facts": {
+              "activeStatuses": [
+                "held",
+                "confirmed"
+              ],
+              "reservationTtlMinutes": 20,
+              "duplicatePolicy": "return existing"
+            }
+          },
+          "score": {
+            "fullyCorrect": true,
+            "facts": {
+              "correctFields": 3,
+              "totalFields": 3,
+              "fullyCorrect": true
+            },
+            "code": {
+              "passed": 8,
+              "total": 8,
+              "allPassed": true,
+              "failedTests": [],
+              "regressionFailures": 0
+            }
+          },
+          "latencyMs": 10375,
+          "beforeUsage": null,
+          "reportedUsage": {
+            "totalTokens": 82032,
+            "inputTokens": 80561,
+            "cachedInputTokens": 16640,
+            "cacheWriteInputTokens": 0,
+            "outputTokens": 1471,
+            "reasoningOutputTokens": 758
+          },
+          "reportedToolCalls": 0
+        },
+        {
+          "arm": "local",
+          "repetition": 1,
+          "tools": [],
+          "promptHash": "d0c7afaf413ad7d90a221040e6ce8e00351d478349baca6642ee7fb600714bb9",
+          "forkedFromBaseConfirmed": true,
+          "parsedAnswer": {
+            "source": "function solve(input) {\n  const data = input && typeof input === 'object' ? input : {};\n  const available = Number.isInteger(data.available) && data.available > 0 ? data.available : 0;\n  const reservations = Array.isArray(data.reservations) ? data.reservations : [];\n  const request = data.request && typeof data.request === 'object' ? data.request : {};\n  const reservationId = typeof request.id === 'string' ? request.id : null;\n  const isActive = item => item && (item.status === 'held' || item.status === 'confirmed');\n  const isValidQty = qty => Number.isInteger(qty) && qty > 0;\n  const activeRows = reservations.filter(item => isActive(item) && isValidQty(item.qty));\n  const used = activeRows.reduce((sum, item) => sum + item.qty, 0);\n  const remaining = Math.max(0, available - used);\n  const existing = activeRows.find(item => reservationId !== null && item.id === reservationId);\n\n  if (existing) {\n    return { reservationId, status: 'already-held', reservedQty: existing.qty, remaining };\n  }\n\n  const qty = request.qty;\n  if (!isValidQty(qty) || qty > remaining) {\n    return { reservationId, status: 'rejected', reservedQty: 0, remaining };\n  }\n\n  return { reservationId, status: 'reserved', reservedQty: qty, remaining: remaining - qty };\n}",
+            "facts": {
+              "activeStatuses": [
+                "held",
+                "confirmed"
+              ],
+              "reservationTtlMinutes": 20,
+              "duplicatePolicy": "return existing"
+            }
+          },
+          "score": {
+            "fullyCorrect": true,
+            "facts": {
+              "correctFields": 3,
+              "totalFields": 3,
+              "fullyCorrect": true
+            },
+            "code": {
+              "passed": 8,
+              "total": 8,
+              "allPassed": true,
+              "failedTests": [],
+              "regressionFailures": 0
+            }
+          },
+          "latencyMs": 13221,
+          "beforeUsage": null,
+          "reportedUsage": {
+            "totalTokens": 83820,
+            "inputTokens": 82141,
+            "cachedInputTokens": 19456,
+            "cacheWriteInputTokens": 0,
+            "outputTokens": 1679,
+            "reasoningOutputTokens": 939
+          },
+          "reportedToolCalls": 0
+        },
+        {
+          "arm": "jev",
+          "repetition": 1,
+          "tools": [],
+          "promptHash": "912e9e642cfc8ded975771156b4913e75d99738bef539bac83d0cbdad0e1c9b2",
+          "forkedFromBaseConfirmed": true,
+          "parsedAnswer": {
+            "source": "function solve(input) {\n  const data = input && typeof input === 'object' ? input : {};\n  const available = Number.isInteger(data.available) && data.available > 0 ? data.available : 0;\n  const reservations = Array.isArray(data.reservations) ? data.reservations : [];\n  const request = data.request && typeof data.request === 'object' ? data.request : {};\n  const reservationId = typeof request.id === 'string' ? request.id : null;\n  const qty = request.qty;\n  const validQty = Number.isInteger(qty) && qty > 0;\n  let used = 0;\n  let existingQty = null;\n  for (const item of reservations) {\n    if (!item || (item.status !== 'held' && item.status !== 'confirmed')) continue;\n    if (!Number.isInteger(item.qty) || item.qty <= 0) continue;\n    used += item.qty;\n    if (reservationId !== null && item.id === reservationId && existingQty === null) existingQty = item.qty;\n  }\n  const remaining = Math.max(0, available - used);\n  if (!validQty) return { reservationId, status: 'rejected', reservedQty: 0, remaining };\n  if (existingQty !== null) return { reservationId, status: 'already-held', reservedQty: existingQty, remaining };\n  if (qty > remaining) return { reservationId, status: 'rejected', reservedQty: 0, remaining };\n  return { reservationId, status: 'reserved', reservedQty: qty, remaining: remaining - qty };\n}",
+            "facts": {
+              "activeStatuses": [
+                "held",
+                "confirmed"
+              ],
+              "reservationTtlMinutes": null,
+              "duplicatePolicy": "return existing"
+            }
+          },
+          "score": {
+            "fullyCorrect": false,
+            "facts": {
+              "correctFields": 2,
+              "totalFields": 3,
+              "fullyCorrect": false
+            },
+            "code": {
+              "passed": 8,
+              "total": 8,
+              "allPassed": true,
+              "failedTests": [],
+              "regressionFailures": 0
+            }
+          },
+          "latencyMs": 16751,
+          "beforeUsage": null,
+          "reportedUsage": {
+            "totalTokens": 84112,
+            "inputTokens": 82120,
+            "cachedInputTokens": 32768,
+            "cacheWriteInputTokens": 0,
+            "outputTokens": 1992,
+            "reasoningOutputTokens": 1234
+          },
+          "reportedToolCalls": 0
+        }
+      ],
+      "baseIdHash": "3a00a432f89f1a54ce7b2306690e312244d69d28d1fec69c92716c862cb03502"
+    },
+    {
+      "id": "csv-identifiers",
+      "historyChars": 54002,
+      "candidateCount": 20,
+      "candidateHash": "7df159cc6ebf8c5479d91c638d1516cb7988a3cbeb7426063531003c141b6914",
+      "candidateIds": [
+        "c169adfa37d6ab130f5ef2c1f7e19e86086e0e5a94cc473a9664bbd95224a167",
+        "139412fea65edbbbb48bb0dfda8efe829c2b9010bb0b1bef7c423c293d3c19c0",
+        "49d2a972e44dd1e55005f43112013a15052cbe2249b1268e701a77ae1ac7407e",
+        "8d492d181126ef1dfbe3b49f4e8a4138cebc84e55aa6fc3e1c030a54f678e017",
+        "ca7af1200583c6af475befa45a7979e7f7bdb5dcbe68ceefcf882d0149e5d581",
+        "5ee49961080c6d9afa0dcc55e33ece4e5f23fc3ac2ff269ea4194cd16f7cff44",
+        "776c2e70a2bc9955e4f4d0a1d5fa7afd66037792b8cec8381cb6efe0556ef6f7",
+        "acc56183f714f46768f72377c00c7260350ddccf2fc774929b7e08442faf2ca9",
+        "dcacaf684520ee1bea7f1fd72ea9966e81f843ff585d9ee921e255757d2251cc",
+        "2ed36e65464585ed22bb86a3dc6bdac1934d105745c31e1a95e1321087cd0644",
+        "5bc7899c9fcb1ce6d09209ca1edf889a6572be79c7815a46b6b1d6375844d7cb",
+        "ed02162e5d2bd82266144a611f1bd0215cbf821d6035a70a601fcb58ae175721",
+        "7f93633254ba62bd66026dd9853cde1408698a8b1878a6788ec905768c48eeb5",
+        "17c4e52ec40079f6e1c625bf2de666917ba3fe58ece69cc9ab96b8d13f37d8ee",
+        "c8a96ad6d6aa4cba7c5afb3681590ee9720ac21b65c1035ad05b8de7b44f39b3",
+        "7fe263d6d0b388eebfde37d63ae1cd1e70248feebf1de1a954fbfb2eeaf5efa9",
+        "f9fe961b4d7dbce9179f2952016e83d0c7f7b5c22e2f7eef702f0c381750c85e",
+        "87a1dce490472d117387ad386f38f887898919d718ae381d8f1eeac96baca3f8",
+        "89a524a2a6c9718d393c7572e07b6e3b944e6d61415a1095d1cb5c82d7300327",
+        "59094b7ec1dbb308b98141ed20afbe7f9a3e442a3f412248fd636bbf43f5da06"
+      ],
+      "targetRecords": 4,
+      "targetCandidates": 4,
+      "factSources": {
+        "idHeader": "8d492d181126ef1dfbe3b49f4e8a4138cebc84e55aa6fc3e1c030a54f678e017",
+        "normalization": "49d2a972e44dd1e55005f43112013a15052cbe2249b1268e701a77ae1ac7407e",
+        "duplicatePolicy": "ca7af1200583c6af475befa45a7979e7f7bdb5dcbe68ceefcf882d0149e5d581"
+      },
+      "scoredFactsInCandidates": [
+        "idHeader",
+        "normalization",
+        "duplicatePolicy"
+      ],
+      "jev": {
+        "calls": 1,
+        "latencyMs": 179.1847,
+        "requestChars": 25102,
+        "usage": {
+          "input_tokens": 8873,
+          "output_tokens": 414
+        },
+        "model": "jev-1.13.0"
+      },
+      "rankings": {
+        "local": [
+          "c169adfa37d6ab130f5ef2c1f7e19e86086e0e5a94cc473a9664bbd95224a167",
+          "139412fea65edbbbb48bb0dfda8efe829c2b9010bb0b1bef7c423c293d3c19c0",
+          "49d2a972e44dd1e55005f43112013a15052cbe2249b1268e701a77ae1ac7407e",
+          "8d492d181126ef1dfbe3b49f4e8a4138cebc84e55aa6fc3e1c030a54f678e017",
+          "ca7af1200583c6af475befa45a7979e7f7bdb5dcbe68ceefcf882d0149e5d581",
+          "5ee49961080c6d9afa0dcc55e33ece4e5f23fc3ac2ff269ea4194cd16f7cff44",
+          "776c2e70a2bc9955e4f4d0a1d5fa7afd66037792b8cec8381cb6efe0556ef6f7",
+          "acc56183f714f46768f72377c00c7260350ddccf2fc774929b7e08442faf2ca9",
+          "dcacaf684520ee1bea7f1fd72ea9966e81f843ff585d9ee921e255757d2251cc",
+          "2ed36e65464585ed22bb86a3dc6bdac1934d105745c31e1a95e1321087cd0644",
+          "5bc7899c9fcb1ce6d09209ca1edf889a6572be79c7815a46b6b1d6375844d7cb",
+          "ed02162e5d2bd82266144a611f1bd0215cbf821d6035a70a601fcb58ae175721",
+          "7f93633254ba62bd66026dd9853cde1408698a8b1878a6788ec905768c48eeb5",
+          "17c4e52ec40079f6e1c625bf2de666917ba3fe58ece69cc9ab96b8d13f37d8ee",
+          "c8a96ad6d6aa4cba7c5afb3681590ee9720ac21b65c1035ad05b8de7b44f39b3",
+          "7fe263d6d0b388eebfde37d63ae1cd1e70248feebf1de1a954fbfb2eeaf5efa9",
+          "f9fe961b4d7dbce9179f2952016e83d0c7f7b5c22e2f7eef702f0c381750c85e",
+          "87a1dce490472d117387ad386f38f887898919d718ae381d8f1eeac96baca3f8",
+          "89a524a2a6c9718d393c7572e07b6e3b944e6d61415a1095d1cb5c82d7300327",
+          "59094b7ec1dbb308b98141ed20afbe7f9a3e442a3f412248fd636bbf43f5da06"
+        ],
+        "jev": [
+          "49d2a972e44dd1e55005f43112013a15052cbe2249b1268e701a77ae1ac7407e",
+          "139412fea65edbbbb48bb0dfda8efe829c2b9010bb0b1bef7c423c293d3c19c0",
+          "ca7af1200583c6af475befa45a7979e7f7bdb5dcbe68ceefcf882d0149e5d581",
+          "8d492d181126ef1dfbe3b49f4e8a4138cebc84e55aa6fc3e1c030a54f678e017",
+          "c169adfa37d6ab130f5ef2c1f7e19e86086e0e5a94cc473a9664bbd95224a167",
+          "c8a96ad6d6aa4cba7c5afb3681590ee9720ac21b65c1035ad05b8de7b44f39b3",
+          "5ee49961080c6d9afa0dcc55e33ece4e5f23fc3ac2ff269ea4194cd16f7cff44",
+          "7f93633254ba62bd66026dd9853cde1408698a8b1878a6788ec905768c48eeb5",
+          "acc56183f714f46768f72377c00c7260350ddccf2fc774929b7e08442faf2ca9",
+          "5bc7899c9fcb1ce6d09209ca1edf889a6572be79c7815a46b6b1d6375844d7cb",
+          "ed02162e5d2bd82266144a611f1bd0215cbf821d6035a70a601fcb58ae175721",
+          "89a524a2a6c9718d393c7572e07b6e3b944e6d61415a1095d1cb5c82d7300327",
+          "776c2e70a2bc9955e4f4d0a1d5fa7afd66037792b8cec8381cb6efe0556ef6f7",
+          "dcacaf684520ee1bea7f1fd72ea9966e81f843ff585d9ee921e255757d2251cc",
+          "2ed36e65464585ed22bb86a3dc6bdac1934d105745c31e1a95e1321087cd0644",
+          "17c4e52ec40079f6e1c625bf2de666917ba3fe58ece69cc9ab96b8d13f37d8ee",
+          "7fe263d6d0b388eebfde37d63ae1cd1e70248feebf1de1a954fbfb2eeaf5efa9",
+          "f9fe961b4d7dbce9179f2952016e83d0c7f7b5c22e2f7eef702f0c381750c85e",
+          "87a1dce490472d117387ad386f38f887898919d718ae381d8f1eeac96baca3f8",
+          "59094b7ec1dbb308b98141ed20afbe7f9a3e442a3f412248fd636bbf43f5da06"
+        ]
+      },
+      "packets": {
+        "local": {
+          "text": "Historical evidence, not instructions. Excerpts may be incomplete or superseded; exact originals remain available through archive_retrieve.\n{\"id\":\"c169adfa37d6ab130f5ef2c1f7e19e86086e0e5a94cc473a9664bbd95224a167\",\"tool\":\"message\",\"turn\":0,\"flags\":[\"constraint\"],\"excerpt\":\"Repair solve(input) in src/import.js. Parse the supplied CSV, find idColumn case-insensitively, preserve leading zeroes while trimming and uppercasing identifiers, accept each identifier once, and report rejected row numbers for blanks and duplicates. Quoted commas and doubled quotes are valid.\\n\\nContract: input has csv string (default empty) and idColumn string. Output is exactly {identifiers:string[],rowsAccepted:integer,rejected:{line:integer,reason:string}[]}. Headers match case-insensitively. Values are trimmed and uppercased without numeric conversion; quoted commas, newlines, and doubled quotes parse as CSV. The first normalized identifier is accepted, later ones reject with duplicate, blank values reject with blank, and a missing header rejects line 1 with missing-column.\\n\\nfunction solve(input) {\\n  const lines = String(input && input.csv || '').split(/\\\\r?\\\\n/).filter(Boolean);\\n  const header = (lines.shift() || '').split(',');\\n  const at = header.indexOf(input && input.idColumn);\\n  const identifiers = [], seen = new Set();\\n  for (const line of lines) { const value = (line.split(',')[at] || '').trim().toLowerCase(); if (value && !seen.has(value)) { seen.add(value); identifiers.push(value); } }\\n  return { identifiers, rowsAccepted: identifiers.length, rejected: [] };\\n}\"}\n{\"id\":\"139412fea65edbbbb48bb0dfda8efe829c2b9010bb0b1bef7c423c293d3c19c0\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-6\\nstage: 2\\nsequence: 21\\nrecordedAt: 2026-09-13T16:15:00Z\\nstatus: approved\\nsubject: CSV grammar\\nfact: quotedFields\\nvalue: true\\nattemptedAction: read-only observation\\ndoNotRepeat: true\\nnote: Commas inside quoted fields and doubled quote escapes are part of the accepted input; blank values reject with reason blank.\\nverification: Read-only evidence for the quoted identifier import contract; later records supersede earlier observations only when they say so explicitly.\"}\n{\"id\":\"49d2a972e44dd1e55005f43112013a15052cbe2249b1268e701a77ae1ac7407e\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-6\\nstage: 2\\nsequence: 5\\nrecordedAt: 2026-09-12T13:25:00Z\\nstatus: corrected\\nsubject: identifier policy\\nfact: normalization\\nvalue: trim-uppercase-preserve-leading-zero\\ncorrection: A lowercasing import lost the distinction required by downstream labels.\\nattemptedAction: read-only observation\\ndoNotRepeat: true\\nnote: Trim and uppercase values but never parse them as numbers.\\nverification: Read-only evidence for the quoted identifier import contract; later records supersede earlier observations only when they say so explicitly.\"}\n{\"id\":\"8d492d181126ef1dfbe3b49f4e8a4138cebc84e55aa6fc3e1c030a54f678e017\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-6\\nstage: 1\\nsequence: 9\\nrecordedAt: 2026-09-10T09:50:00Z\\nstatus: observed\\nsubject: import schema\\nfact: idHeader\\nvalue: vendor_id\\nattemptedAction: read-only observation\\ndoNotRepeat: true\\nnote: The identifier column is vendor_id and matching is case-insensitive; a missing column rejects line 1 with missing-column.\\nverification: Read-only evidence for the quoted identifier import contract; later records supersede earlier observations only when they say so explicitly.\"}\n{\"id\":\"ca7af1200583c6af475befa45a7979e7f7bdb5dcbe68ceefcf882d0149e5d581\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-6\\nstage: 3\\nsequence: 10\\nrecordedAt: 2026-09-15T14:45:00Z\\nstatus: verified\\nsubject: row policy\\nfact: duplicatePolicy\\nvalue: reject duplicate\\nattemptedAction: read-only observation\\ndoNotRepeat: true\\nnote: The first normalized occurrence is accepted and later occurrences report duplicate.\\nverification: Read-only evidence for the quoted identifier import contract; later records supersede earlier observations only when they say so explicitly.\"}\n{\"id\":\"5ee49961080c6d9afa0dcc55e33ece4e5f23fc3ac2ff269ea4194cd16f7cff44\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-6\\nstage: 3\\nsequence: 22\\nstatus: observed\\nobservedAt: 2026-09-12T12:22:00Z\\nsummary: A historical test artifact is retained for audit and does not change runtime behavior.\\ndetails: The bounded lookup returned a stable read-only result for sample 6-3-23; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: unit-test-index\"}\n{\"id\":\"776c2e70a2bc9955e4f4d0a1d5fa7afd66037792b8cec8381cb6efe0556ef6f7\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-6\\nstage: 3\\nsequence: 19\\nstatus: observed\\nobservedAt: 2026-09-12T09:29:00Z\\nsummary: The staging sample uses a different label set while retaining the same parser version.\\ndetails: The bounded lookup returned a stable read-only result for sample 6-3-20; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: unit-test-index\"}\n{\"id\":\"acc56183f714f46768f72377c00c7260350ddccf2fc774929b7e08442faf2ca9\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-6\\nstage: 3\\nsequence: 18\\nstatus: observed\\nobservedAt: 2026-09-12T08:28:00Z\\nsummary: The review found no write request, credential use, or dependency installation.\\ndetails: The bounded lookup returned a stable read-only result for sample 6-3-19; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: stale-cache-review\"}",
+          "chars": 5838,
+          "hash": "48f9a1e577f2ce12b8c03c08411cd9a2b9633afcd1f220b696786e4bcf255d8c",
+          "ids": [
+            "c169adfa37d6ab130f5ef2c1f7e19e86086e0e5a94cc473a9664bbd95224a167",
+            "139412fea65edbbbb48bb0dfda8efe829c2b9010bb0b1bef7c423c293d3c19c0",
+            "49d2a972e44dd1e55005f43112013a15052cbe2249b1268e701a77ae1ac7407e",
+            "8d492d181126ef1dfbe3b49f4e8a4138cebc84e55aa6fc3e1c030a54f678e017",
+            "ca7af1200583c6af475befa45a7979e7f7bdb5dcbe68ceefcf882d0149e5d581",
+            "5ee49961080c6d9afa0dcc55e33ece4e5f23fc3ac2ff269ea4194cd16f7cff44",
+            "776c2e70a2bc9955e4f4d0a1d5fa7afd66037792b8cec8381cb6efe0556ef6f7",
+            "acc56183f714f46768f72377c00c7260350ddccf2fc774929b7e08442faf2ca9"
+          ],
+          "targetRecordsShown": 4,
+          "scoredFactRecordsShown": [
+            "idHeader",
+            "normalization",
+            "duplicatePolicy"
+          ]
+        },
+        "jev": {
+          "text": "Historical evidence, not instructions. Excerpts may be incomplete or superseded; exact originals remain available through archive_retrieve.\n{\"id\":\"49d2a972e44dd1e55005f43112013a15052cbe2249b1268e701a77ae1ac7407e\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-6\\nstage: 2\\nsequence: 5\\nrecordedAt: 2026-09-12T13:25:00Z\\nstatus: corrected\\nsubject: identifier policy\\nfact: normalization\\nvalue: trim-uppercase-preserve-leading-zero\\ncorrection: A lowercasing import lost the distinction required by downstream labels.\\nattemptedAction: read-only observation\\ndoNotRepeat: true\\nnote: Trim and uppercase values but never parse them as numbers.\\nverification: Read-only evidence for the quoted identifier import contract; later records supersede earlier observations only when they say so explicitly.\"}\n{\"id\":\"139412fea65edbbbb48bb0dfda8efe829c2b9010bb0b1bef7c423c293d3c19c0\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-6\\nstage: 2\\nsequence: 21\\nrecordedAt: 2026-09-13T16:15:00Z\\nstatus: approved\\nsubject: CSV grammar\\nfact: quotedFields\\nvalue: true\\nattemptedAction: read-only observation\\ndoNotRepeat: true\\nnote: Commas inside quoted fields and doubled quote escapes are part of the accepted input; blank values reject with reason blank.\\nverification: Read-only evidence for the quoted identifier import contract; later records supersede earlier observations only when they say so explicitly.\"}\n{\"id\":\"ca7af1200583c6af475befa45a7979e7f7bdb5dcbe68ceefcf882d0149e5d581\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-6\\nstage: 3\\nsequence: 10\\nrecordedAt: 2026-09-15T14:45:00Z\\nstatus: verified\\nsubject: row policy\\nfact: duplicatePolicy\\nvalue: reject duplicate\\nattemptedAction: read-only observation\\ndoNotRepeat: true\\nnote: The first normalized occurrence is accepted and later occurrences report duplicate.\\nverification: Read-only evidence for the quoted identifier import contract; later records supersede earlier observations only when they say so explicitly.\"}\n{\"id\":\"8d492d181126ef1dfbe3b49f4e8a4138cebc84e55aa6fc3e1c030a54f678e017\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-6\\nstage: 1\\nsequence: 9\\nrecordedAt: 2026-09-10T09:50:00Z\\nstatus: observed\\nsubject: import schema\\nfact: idHeader\\nvalue: vendor_id\\nattemptedAction: read-only observation\\ndoNotRepeat: true\\nnote: The identifier column is vendor_id and matching is case-insensitive; a missing column rejects line 1 with missing-column.\\nverification: Read-only evidence for the quoted identifier import contract; later records supersede earlier observations only when they say so explicitly.\"}\n{\"id\":\"c169adfa37d6ab130f5ef2c1f7e19e86086e0e5a94cc473a9664bbd95224a167\",\"tool\":\"message\",\"turn\":0,\"flags\":[\"constraint\"],\"excerpt\":\"Repair solve(input) in src/import.js. Parse the supplied CSV, find idColumn case-insensitively, preserve leading zeroes while trimming and uppercasing identifiers, accept each identifier once, and report rejected row numbers for blanks and duplicates. Quoted commas and doubled quotes are valid.\\n\\nContract: input has csv string (default empty) and idColumn string. Output is exactly {identifiers:string[],rowsAccepted:integer,rejected:{line:integer,reason:string}[]}. Headers match case-insensitively. Values are trimmed and uppercased without numeric conversion; quoted commas, newlines, and doubled quotes parse as CSV. The first normalized identifier is accepted, later ones reject with duplicate, blank values reject with blank, and a missing header rejects line 1 with missing-column.\\n\\nfunction solve(input) {\\n  const lines = String(input && input.csv || '').split(/\\\\r?\\\\n/).filter(Boolean);\\n  const header = (lines.shift() || '').split(',');\\n  const at = header.indexOf(input && input.idColumn);\\n  const identifiers = [], seen = new Set();\\n  for (const line of lines) { const value = (line.split(',')[at] || '').trim().toLowerCase(); if (value && !seen.has(value)) { seen.add(value); identifiers.push(value); } }\\n  return { identifiers, rowsAccepted: identifiers.length, rejected: [] };\\n}\"}\n{\"id\":\"c8a96ad6d6aa4cba7c5afb3681590ee9720ac21b65c1035ad05b8de7b44f39b3\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-6\\nstage: 3\\nsequence: 1\\nstatus: observed\\nobservedAt: 2026-09-12T09:21:00Z\\nsummary: A historical test artifact is retained for audit and does not change runtime behavior.\\ndetails: The bounded lookup returned a stable read-only result for sample 6-3-2; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: unit-test-index\"}\n{\"id\":\"5ee49961080c6d9afa0dcc55e33ece4e5f23fc3ac2ff269ea4194cd16f7cff44\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-6\\nstage: 3\\nsequence: 22\\nstatus: observed\\nobservedAt: 2026-09-12T12:22:00Z\\nsummary: A historical test artifact is retained for audit and does not change runtime behavior.\\ndetails: The bounded lookup returned a stable read-only result for sample 6-3-23; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: unit-test-index\"}\n{\"id\":\"7f93633254ba62bd66026dd9853cde1408698a8b1878a6788ec905768c48eeb5\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-6\\nstage: 3\\nsequence: 5\\nstatus: warning\\nobservedAt: 2026-09-12T13:25:00Z\\nsummary: The staging sample uses a different label set while retaining the same parser version.\\ndetails: The bounded lookup returned a stable read-only result for sample 6-3-6; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: unit-test-index\"}",
+          "chars": 5838,
+          "hash": "db550f97c105bac0da750038df0ac033cf75a72da14d0d92768cc971cd39880c",
+          "ids": [
+            "49d2a972e44dd1e55005f43112013a15052cbe2249b1268e701a77ae1ac7407e",
+            "139412fea65edbbbb48bb0dfda8efe829c2b9010bb0b1bef7c423c293d3c19c0",
+            "ca7af1200583c6af475befa45a7979e7f7bdb5dcbe68ceefcf882d0149e5d581",
+            "8d492d181126ef1dfbe3b49f4e8a4138cebc84e55aa6fc3e1c030a54f678e017",
+            "c169adfa37d6ab130f5ef2c1f7e19e86086e0e5a94cc473a9664bbd95224a167",
+            "c8a96ad6d6aa4cba7c5afb3681590ee9720ac21b65c1035ad05b8de7b44f39b3",
+            "5ee49961080c6d9afa0dcc55e33ece4e5f23fc3ac2ff269ea4194cd16f7cff44",
+            "7f93633254ba62bd66026dd9853cde1408698a8b1878a6788ec905768c48eeb5"
+          ],
+          "targetRecordsShown": 4,
+          "scoredFactRecordsShown": [
+            "idHeader",
+            "normalization",
+            "duplicatePolicy"
+          ]
+        }
+      },
+      "checkpoints": [
+        {
+          "stage": 0,
+          "answerHash": "e3c19ca3a6a5763d838eddba6f0c03bc93549512cd45279ae510a87d2da21949",
+          "latencyMs": 7510,
+          "toolCalls": 0
+        },
+        {
+          "stage": 1,
+          "answerHash": "6a67517aed958b6e7e88ae203778eddf3768e4fe2e48b5a782e72d06811e1f8b",
+          "latencyMs": 5706,
+          "toolCalls": 0
+        },
+        {
+          "stage": 2,
+          "answerHash": "88a697295afa624cf6fddf2c0dd88f3fc9e1fb18cc40662fb138902606c12a28",
+          "latencyMs": 5445,
+          "toolCalls": 0
+        }
+      ],
+      "compactions": [
+        {
+          "latencyMs": 9601,
+          "completed": true
+        },
+        {
+          "latencyMs": 13506,
+          "completed": true
+        },
+        {
+          "latencyMs": 14979,
+          "completed": true
+        }
+      ],
+      "continuations": [
+        {
+          "arm": "native-reference",
+          "repetition": 0,
+          "tools": [],
+          "promptHash": "5215278cb143c3d2b15570146d85a7da676e2b08a5d16525020cdeb67f0d3960",
+          "forkedFromBaseConfirmed": true,
+          "parsedAnswer": {
+            "source": "function solve(input) {\n  const csv = String(input && input.csv || '');\n  const rows = [];\n  let row = [], field = '', quoted = false, closed = false;\n\n  for (let i = 0; i < csv.length; i++) {\n    const ch = csv[i];\n    if (quoted) {\n      if (ch === '\"') {\n        if (csv[i + 1] === '\"') { field += '\"'; i++; }\n        else { quoted = false; closed = true; }\n      } else field += ch;\n    } else if (ch === '\"' && field === '') {\n      quoted = true;\n      closed = false;\n    } else if (ch === ',') {\n      row.push(field); field = ''; closed = false;\n    } else if (ch === '\\r' || ch === '\\n') {\n      if (ch === '\\r' && csv[i + 1] === '\\n') i++;\n      row.push(field); rows.push(row);\n      row = []; field = ''; closed = false;\n    } else {\n      field += ch; closed = false;\n    }\n  }\n  if (field !== '' || row.length > 0) { row.push(field); rows.push(row); }\n\n  const rejected = [];\n  if (!rows.length) return { identifiers: [], rowsAccepted: 0, rejected: [{ line: 1, reason: 'missing-column' }] };\n\n  const wanted = String(input && input.idColumn || '').trim().toUpperCase();\n  const at = rows[0].findIndex(value => String(value).trim().toUpperCase() === wanted);\n  if (at < 0) return { identifiers: [], rowsAccepted: 0, rejected: [{ line: 1, reason: 'missing-column' }] };\n\n  const identifiers = [];\n  const seen = new Set();\n  for (let i = 1; i < rows.length; i++) {\n    const value = String(rows[i][at] == null ? '' : rows[i][at]).trim().toUpperCase();\n    const line = i + 1;\n    if (!value) rejected.push({ line, reason: 'blank' });\n    else if (seen.has(value)) rejected.push({ line, reason: 'duplicate' });\n    else { seen.add(value); identifiers.push(value); }\n  }\n  return { identifiers, rowsAccepted: identifiers.length, rejected };\n}",
+            "facts": {
+              "idHeader": "case-insensitive",
+              "normalization": "trim and uppercase as strings; preserve leading zeroes",
+              "duplicatePolicy": "accept the first normalized occurrence and reject later occurrences with duplicate"
+            }
+          },
+          "score": {
+            "fullyCorrect": false,
+            "facts": {
+              "correctFields": 0,
+              "totalFields": 3,
+              "fullyCorrect": false
+            },
+            "code": {
+              "passed": 8,
+              "total": 8,
+              "allPassed": true,
+              "failedTests": [],
+              "regressionFailures": 0
+            }
+          },
+          "latencyMs": 17676,
+          "beforeUsage": null,
+          "reportedUsage": {
+            "totalTokens": 83274,
+            "inputTokens": 80863,
+            "cachedInputTokens": 5632,
+            "cacheWriteInputTokens": 0,
+            "outputTokens": 2411,
+            "reasoningOutputTokens": 1415
+          },
+          "reportedToolCalls": 0
+        },
+        {
+          "arm": "local",
+          "repetition": 0,
+          "tools": [],
+          "promptHash": "6c5a1a19b4dac7fc67b1df15157525fa2015c695081bc74812b467f839118f2a",
+          "forkedFromBaseConfirmed": true,
+          "parsedAnswer": {
+            "source": "function solve(input) {\n  const text = String(input && input.csv || '');\n  const records = [];\n  let fields = [], field = '', quoted = false, closed = false;\n  let line = 1, recordLine = 1;\n\n  for (let i = 0; i < text.length; i++) {\n    const ch = text[i];\n    if (quoted) {\n      if (ch === '\"') {\n        if (text[i + 1] === '\"') { field += '\"'; i++; }\n        else { quoted = false; closed = true; }\n      } else {\n        field += ch;\n        if (ch === '\\n') line++;\n      }\n    } else if (ch === '\"' && field === '') {\n      quoted = true;\n      closed = false;\n    } else if (ch === ',') {\n      fields.push(field); field = ''; closed = false;\n    } else if (ch === '\\n' || ch === '\\r') {\n      if (ch === '\\r' && text[i + 1] === '\\n') i++;\n      fields.push(field);\n      records.push({ fields, line: recordLine });\n      fields = []; field = ''; closed = false;\n      line++; recordLine = line;\n    } else {\n      field += ch;\n      closed = false;\n    }\n  }\n\n  if (field !== '' || fields.length || text.length === 0) {\n    fields.push(field);\n    if (text.length || fields.length > 1) records.push({ fields, line: recordLine });\n  }\n\n  const identifiers = [], rejected = [], seen = new Set();\n  const header = records.length ? records[0].fields : [];\n  const wanted = String(input && input.idColumn || '').trim().toLowerCase();\n  const at = header.findIndex(value => String(value).trim().toLowerCase() === wanted);\n  if (at < 0) return { identifiers, rowsAccepted: 0, rejected: [{ line: 1, reason: 'missing-column' }] };\n\n  for (let i = 1; i < records.length; i++) {\n    const value = String(records[i].fields[at] == null ? '' : records[i].fields[at]).trim().toUpperCase();\n    if (!value) rejected.push({ line: records[i].line, reason: 'blank' });\n    else if (seen.has(value)) rejected.push({ line: records[i].line, reason: 'duplicate' });\n    else { seen.add(value); identifiers.push(value); }\n  }\n  return { identifiers, rowsAccepted: identifiers.length, rejected };\n}",
+            "facts": {
+              "idHeader": "Case-insensitive idColumn matching; missing column rejects line 1 with missing-column.",
+              "normalization": "Trim and uppercase identifier strings while preserving leading zeroes; never convert to numbers.",
+              "duplicatePolicy": "Accept the first normalized identifier and reject later occurrences with duplicate; blank values reject with blank."
+            }
+          },
+          "score": {
+            "fullyCorrect": false,
+            "facts": {
+              "correctFields": 0,
+              "totalFields": 3,
+              "fullyCorrect": false
+            },
+            "code": {
+              "passed": 8,
+              "total": 8,
+              "allPassed": true,
+              "failedTests": [],
+              "regressionFailures": 0
+            }
+          },
+          "latencyMs": 22432,
+          "beforeUsage": null,
+          "reportedUsage": {
+            "totalTokens": 85268,
+            "inputTokens": 82438,
+            "cachedInputTokens": 5632,
+            "cacheWriteInputTokens": 0,
+            "outputTokens": 2830,
+            "reasoningOutputTokens": 1757
+          },
+          "reportedToolCalls": 0
+        },
+        {
+          "arm": "jev",
+          "repetition": 0,
+          "tools": [],
+          "promptHash": "717885cd70ee528b8c0639bf94d0dea3ad3e60357a594a6282d5bc04dfb2e5b2",
+          "forkedFromBaseConfirmed": true,
+          "parsedAnswer": {
+            "source": "function solve(input) {\n  const csv = String(input && input.csv != null ? input.csv : '');\n  const records = [];\n  let fields = [], field = '', inQuotes = false, line = 1, startLine = 1, started = false;\n\n  function finishRecord() {\n    records.push({ fields: fields.concat(field), line: startLine });\n    fields = [];\n    field = '';\n    started = false;\n    startLine = line;\n  }\n\n  for (let i = 0; i < csv.length; i++) {\n    const c = csv[i];\n    if (inQuotes) {\n      if (c === '\"') {\n        if (csv[i + 1] === '\"') {\n          field += '\"';\n          i++;\n        } else {\n          inQuotes = false;\n        }\n      } else if (c === '\\r') {\n        field += '\\n';\n        if (csv[i + 1] === '\\n') i++;\n        line++;\n      } else if (c === '\\n') {\n        field += '\\n';\n        line++;\n      } else {\n        field += c;\n      }\n      continue;\n    }\n\n    if (c === '\"') {\n      inQuotes = true;\n      started = true;\n    } else if (c === ',') {\n      fields.push(field);\n      field = '';\n      started = true;\n    } else if (c === '\\r' || c === '\\n') {\n      finishRecord();\n      if (c === '\\r' && csv[i + 1] === '\\n') i++;\n      line++;\n      startLine = line;\n    } else {\n      field += c;\n      started = true;\n    }\n  }\n\n  if (started || fields.length || field) finishRecord();\n\n  const identifiers = [];\n  const rejected = [];\n  const seen = new Set();\n  const requested = String(input && input.idColumn != null ? input.idColumn : '').trim().toUpperCase();\n  const header = records[0];\n  const at = header ? header.fields.findIndex(value => String(value).trim().toUpperCase() === requested) : -1;\n\n  if (at < 0) {\n    rejected.push({ line: 1, reason: 'missing-column' });\n    return { identifiers, rowsAccepted: 0, rejected };\n  }\n\n  for (let i = 1; i < records.length; i++) {\n    const value = String(records[i].fields[at] == null ? '' : records[i].fields[at]).trim().toUpperCase();\n    if (!value) {\n      rejected.push({ line: records[i].line, reason: 'blank' });\n    } else if (seen.has(value)) {\n      rejected.push({ line: records[i].line, reason: 'duplicate' });\n    } else {\n      seen.add(value);\n      identifiers.push(value);\n    }\n  }\n\n  return { identifiers, rowsAccepted: identifiers.length, rejected };\n}",
+            "facts": {
+              "idHeader": "vendor_id",
+              "normalization": "trim-uppercase-preserve-leading-zero",
+              "duplicatePolicy": "reject duplicate"
+            }
+          },
+          "score": {
+            "fullyCorrect": true,
+            "facts": {
+              "correctFields": 3,
+              "totalFields": 3,
+              "fullyCorrect": true
+            },
+            "code": {
+              "passed": 8,
+              "total": 8,
+              "allPassed": true,
+              "failedTests": [],
+              "regressionFailures": 0
+            }
+          },
+          "latencyMs": 23759,
+          "beforeUsage": null,
+          "reportedUsage": {
+            "totalTokens": 85322,
+            "inputTokens": 82441,
+            "cachedInputTokens": 21760,
+            "cacheWriteInputTokens": 0,
+            "outputTokens": 2881,
+            "reasoningOutputTokens": 1737
+          },
+          "reportedToolCalls": 0
+        },
+        {
+          "arm": "local",
+          "repetition": 1,
+          "tools": [],
+          "promptHash": "6c5a1a19b4dac7fc67b1df15157525fa2015c695081bc74812b467f839118f2a",
+          "forkedFromBaseConfirmed": true,
+          "parsedAnswer": {
+            "source": "function solve(input) {\n  const csv = String(input && input.csv || '');\n  const rows = [];\n  let fields = [], field = '', quoted = false, line = 1, startLine = 1;\n  for (let i = 0; i < csv.length; i++) {\n    const ch = csv[i];\n    if (quoted) {\n      if (ch === '\"') {\n        if (csv[i + 1] === '\"') { field += '\"'; i++; }\n        else quoted = false;\n      } else {\n        field += ch;\n      }\n    } else if (ch === '\"' && field === '') {\n      quoted = true;\n    } else if (ch === ',') {\n      fields.push(field); field = '';\n    } else if (ch === '\\n' || ch === '\\r') {\n      fields.push(field); rows.push({ fields, line: startLine });\n      fields = []; field = '';\n      if (ch === '\\r' && csv[i + 1] === '\\n') i++;\n      line++; startLine = line;\n    } else {\n      field += ch;\n    }\n  }\n  if (field !== '' || fields.length) {\n    fields.push(field); rows.push({ fields, line: startLine });\n  }\n  const identifiers = [], rejected = [], seen = new Set();\n  const wanted = String(input && input.idColumn || '').trim().toLowerCase();\n  const header = rows.length ? rows[0].fields : [];\n  const at = header.findIndex(value => String(value).trim().toLowerCase() === wanted);\n  if (at < 0) return { identifiers, rowsAccepted: 0, rejected: [{ line: 1, reason: 'missing-column' }] };\n  for (const row of rows.slice(1)) {\n    const value = String(row.fields[at] == null ? '' : row.fields[at]).trim().toUpperCase();\n    if (!value) rejected.push({ line: row.line, reason: 'blank' });\n    else if (seen.has(value)) rejected.push({ line: row.line, reason: 'duplicate' });\n    else { seen.add(value); identifiers.push(value); }\n  }\n  return { identifiers, rowsAccepted: identifiers.length, rejected };\n}",
+            "facts": {
+              "idHeader": "Case-insensitive header matching; missing column rejects line 1 with missing-column.",
+              "normalization": "Trim and uppercase identifiers as strings while preserving leading zeroes; never perform numeric conversion.",
+              "duplicatePolicy": "Accept the first normalized occurrence and reject later occurrences with duplicate; reject blank values with blank."
+            }
+          },
+          "score": {
+            "fullyCorrect": false,
+            "facts": {
+              "correctFields": 0,
+              "totalFields": 3,
+              "fullyCorrect": false
+            },
+            "code": {
+              "passed": 8,
+              "total": 8,
+              "allPassed": true,
+              "failedTests": [],
+              "regressionFailures": 0
+            }
+          },
+          "latencyMs": 15074,
+          "beforeUsage": null,
+          "reportedUsage": {
+            "totalTokens": 84500,
+            "inputTokens": 82438,
+            "cachedInputTokens": 23808,
+            "cacheWriteInputTokens": 0,
+            "outputTokens": 2062,
+            "reasoningOutputTokens": 1070
+          },
+          "reportedToolCalls": 0
+        },
+        {
+          "arm": "jev",
+          "repetition": 1,
+          "tools": [],
+          "promptHash": "717885cd70ee528b8c0639bf94d0dea3ad3e60357a594a6282d5bc04dfb2e5b2",
+          "forkedFromBaseConfirmed": true,
+          "parsedAnswer": {
+            "source": "function solve(input) {\n  const text = String(input && input.csv || '');\n  const records = [];\n  let row = [], field = '', quoted = false, afterQuote = false, line = 1, rowLine = 1, endedWithRecordBreak = false;\n\n  for (let i = 0; i < text.length; i++) {\n    const ch = text[i];\n    if (quoted) {\n      if (ch === '\"') {\n        if (text[i + 1] === '\"') { field += '\"'; i++; }\n        else { quoted = false; afterQuote = true; }\n      } else {\n        field += ch;\n        if (ch === '\\n') line++;\n      }\n    } else if (ch === '\"' && field === '') {\n      quoted = true; afterQuote = false;\n    } else if (ch === ',') {\n      row.push(field); field = ''; afterQuote = false; endedWithRecordBreak = false;\n    } else if (ch === '\\r' || ch === '\\n') {\n      row.push(field); field = '';\n      records.push({ fields: row, line: rowLine });\n      row = []; endedWithRecordBreak = true;\n      if (ch === '\\r' && text[i + 1] === '\\n') i++;\n      line++; rowLine = line; afterQuote = false;\n    } else {\n      field += ch; afterQuote = false; endedWithRecordBreak = false;\n    }\n  }\n  if (row.length || field !== '' || !endedWithRecordBreak) {\n    row.push(field);\n    if (row.length > 1 || row[0] !== '' || records.length === 0) records.push({ fields: row, line: rowLine });\n  }\n\n  const identifiers = [], rejected = [], seen = new Set();\n  const requested = String(input && input.idColumn || '').trim().toUpperCase();\n  const header = records[0];\n  const at = header ? header.fields.findIndex(value => String(value).trim().toUpperCase() === requested) : -1;\n  if (at < 0) return { identifiers, rowsAccepted: 0, rejected: [{ line: 1, reason: 'missing-column' }] };\n\n  for (const record of records.slice(1)) {\n    const value = String(record.fields[at] == null ? '' : record.fields[at]).trim().toUpperCase();\n    if (!value) rejected.push({ line: record.line, reason: 'blank' });\n    else if (seen.has(value)) rejected.push({ line: record.line, reason: 'duplicate' });\n    else { seen.add(value); identifiers.push(value); }\n  }\n  return { identifiers, rowsAccepted: identifiers.length, rejected };\n}",
+            "facts": {
+              "idHeader": "vendor_id",
+              "normalization": "trim-uppercase-preserve-leading-zero",
+              "duplicatePolicy": "reject duplicate"
+            }
+          },
+          "score": {
+            "fullyCorrect": true,
+            "facts": {
+              "correctFields": 3,
+              "totalFields": 3,
+              "fullyCorrect": true
+            },
+            "code": {
+              "passed": 8,
+              "total": 8,
+              "allPassed": true,
+              "failedTests": [],
+              "regressionFailures": 0
+            }
+          },
+          "latencyMs": 19875,
+          "beforeUsage": null,
+          "reportedUsage": {
+            "totalTokens": 85027,
+            "inputTokens": 82441,
+            "cachedInputTokens": 8448,
+            "cacheWriteInputTokens": 0,
+            "outputTokens": 2586,
+            "reasoningOutputTokens": 1523
+          },
+          "reportedToolCalls": 0
+        },
+        {
+          "arm": "native-reference",
+          "repetition": 1,
+          "tools": [],
+          "promptHash": "5215278cb143c3d2b15570146d85a7da676e2b08a5d16525020cdeb67f0d3960",
+          "forkedFromBaseConfirmed": true,
+          "parsedAnswer": {
+            "source": "function solve(input) {\n  const csv = String(input && input.csv || '');\n  const rows = [];\n  let row = [], field = '', quoted = false;\n\n  for (let i = 0; i < csv.length; i++) {\n    const ch = csv[i];\n    if (quoted) {\n      if (ch === '\"') {\n        if (csv[i + 1] === '\"') { field += '\"'; i++; }\n        else quoted = false;\n      } else {\n        field += ch;\n      }\n    } else if (ch === '\"' && field === '') {\n      quoted = true;\n    } else if (ch === ',') {\n      row.push(field); field = '';\n    } else if (ch === '\\n' || ch === '\\r') {\n      if (ch === '\\r' && csv[i + 1] === '\\n') i++;\n      row.push(field); rows.push(row); row = []; field = '';\n    } else {\n      field += ch;\n    }\n  }\n  if (row.length || field) { row.push(field); rows.push(row); }\n\n  const identifiers = [], rejected = [], seen = new Set();\n  const header = rows.shift() || [];\n  const wanted = String(input && input.idColumn || '').trim().toUpperCase();\n  const at = header.findIndex(value => String(value).trim().toUpperCase() === wanted);\n  if (at < 0) return { identifiers, rowsAccepted: 0, rejected: [{ line: 1, reason: 'missing-column' }] };\n\n  rows.forEach((record, index) => {\n    const value = String(record[at] === undefined ? '' : record[at]).trim().toUpperCase();\n    const line = index + 2;\n    if (!value) rejected.push({ line, reason: 'blank' });\n    else if (seen.has(value)) rejected.push({ line, reason: 'duplicate' });\n    else { seen.add(value); identifiers.push(value); }\n  });\n  return { identifiers, rowsAccepted: identifiers.length, rejected };\n}",
+            "facts": {
+              "idHeader": "Match idColumn case-insensitively; report missing-column on line 1 when absent.",
+              "normalization": "Trim and uppercase identifiers as strings, preserving leading zeroes; blank values are rejected with blank.",
+              "duplicatePolicy": "Accept the first normalized occurrence and reject later occurrences with duplicate."
+            }
+          },
+          "score": {
+            "fullyCorrect": false,
+            "facts": {
+              "correctFields": 0,
+              "totalFields": 3,
+              "fullyCorrect": false
+            },
+            "code": {
+              "passed": 8,
+              "total": 8,
+              "allPassed": true,
+              "failedTests": [],
+              "regressionFailures": 0
+            }
+          },
+          "latencyMs": 19519,
+          "beforeUsage": null,
+          "reportedUsage": {
+            "totalTokens": 83377,
+            "inputTokens": 80863,
+            "cachedInputTokens": 8448,
+            "cacheWriteInputTokens": 0,
+            "outputTokens": 2514,
+            "reasoningOutputTokens": 1565
+          },
+          "reportedToolCalls": 0
+        }
+      ],
+      "baseIdHash": "1e12af62ad6595a1a5bb427dffbb019d6815297218e85ce8360cab20fcdadd3b"
+    }
+  ],
+  "summary": {
+    "native-reference": {
+      "runs": 8,
+      "fullyCorrect": 4,
+      "codePassed": 64,
+      "codeTotal": 64,
+      "factCorrect": 14,
+      "factTotal": 24,
+      "regressionFailures": 0,
+      "recoveryCalls": 0,
+      "duplicateCalls": 0,
+      "answerLatencyMs": 100254,
+      "rankingLatencyMs": 0
+    },
+    "local": {
+      "runs": 8,
+      "fullyCorrect": 4,
+      "codePassed": 64,
+      "codeTotal": 64,
+      "factCorrect": 12,
+      "factTotal": 24,
+      "regressionFailures": 0,
+      "recoveryCalls": 0,
+      "duplicateCalls": 0,
+      "answerLatencyMs": 112890,
+      "rankingLatencyMs": 0
+    },
+    "jev": {
+      "runs": 8,
+      "fullyCorrect": 4,
+      "codePassed": 64,
+      "codeTotal": 64,
+      "factCorrect": 18,
+      "factTotal": 24,
+      "regressionFailures": 0,
+      "recoveryCalls": 0,
+      "duplicateCalls": 0,
+      "answerLatencyMs": 108463,
+      "rankingLatencyMs": 2358.9786
+    }
+  },
+  "jevRequests": 4,
+  "costUsd": null,
+  "decision": {
+    "outcome": "shelve",
+    "comparisons": {
+      "native-reference": {
+        "quality": false,
+        "efficiency": false,
+        "noRegression": true,
+        "regressionPairs": 0,
+        "winCases": 1,
+        "repeatedLossCases": 1,
+        "recoverySavingCases": 0
+      },
+      "local": {
+        "quality": false,
+        "efficiency": false,
+        "noRegression": true,
+        "regressionPairs": 0,
+        "winCases": 1,
+        "repeatedLossCases": 1,
+        "recoverySavingCases": 0
+      }
+    }
+  },
+  "implementationCommit": "7044602c85d2323f274d53839d64339c6c7637af",
+  "verified": {
+    "implementationHashes": true,
+    "fixtureHashes": true,
+    "all24AnswersRescored": true,
+    "forkLineage": true,
+    "exactStageCounts": true,
+    "productionRankingUnchangedFromPilot": true
+  },
+  "jevTotals": {
+    "requests": 4,
+    "latencyMs": 1179.4893,
+    "inputTokens": 35657,
+    "outputTokens": 1656
+  },
+  "excludedPilotUsage": {
+    "requests": 6,
+    "latencyMs": 1644.2446,
+    "inputTokens": 52020,
+    "outputTokens": 2484
+  },
+  "posthocSemanticAudit": {
+    "preregistered": false,
+    "replacesFrozenScoring": false,
+    "method": "Read each returned fact against its fixture. Accept the observed equivalent wording for basis points, half-up cents, trim/uppercase/leading-zero preservation, and first-occurrence duplicate rejection. Do not accept missing numeric facts or a header matching rule in place of the historical column name. Rules describe only these observed answers; not a validated general-purpose semantic grader.",
+    "summary": {
+      "native-reference": {
+        "correctFacts": 22,
+        "totalFacts": 24,
+        "allCodeAndSemanticFacts": 6,
+        "runs": 8
+      },
+      "local": {
+        "correctFacts": 20,
+        "totalFacts": 24,
+        "allCodeAndSemanticFacts": 4,
+        "runs": 8
+      },
+      "jev": {
+        "correctFacts": 22,
+        "totalFacts": 24,
+        "allCodeAndSemanticFacts": 6,
+        "runs": 8
+      }
+    },
+    "rows": [
+      {
+        "case": "local-window",
+        "arm": "native-reference",
+        "repetition": 0,
+        "fields": [
+          {
+            "field": "offsetMinutes",
+            "expected": -300,
+            "actual": -300,
+            "literalCorrect": true,
+            "semanticCorrect": true
+          },
+          {
+            "field": "windowStart",
+            "expected": 1320,
+            "actual": 1320,
+            "literalCorrect": true,
+            "semanticCorrect": true
+          },
+          {
+            "field": "windowEnd",
+            "expected": 120,
+            "actual": 120,
+            "literalCorrect": true,
+            "semanticCorrect": true
+          }
+        ],
+        "semanticCorrect": 3,
+        "allCodeAndSemanticFacts": true
+      },
+      {
+        "case": "local-window",
+        "arm": "local",
+        "repetition": 0,
+        "fields": [
+          {
+            "field": "offsetMinutes",
+            "expected": -300,
+            "actual": -300,
+            "literalCorrect": true,
+            "semanticCorrect": true
+          },
+          {
+            "field": "windowStart",
+            "expected": 1320,
+            "actual": 1320,
+            "literalCorrect": true,
+            "semanticCorrect": true
+          },
+          {
+            "field": "windowEnd",
+            "expected": 120,
+            "actual": 120,
+            "literalCorrect": true,
+            "semanticCorrect": true
+          }
+        ],
+        "semanticCorrect": 3,
+        "allCodeAndSemanticFacts": true
+      },
+      {
+        "case": "local-window",
+        "arm": "jev",
+        "repetition": 0,
+        "fields": [
+          {
+            "field": "offsetMinutes",
+            "expected": -300,
+            "actual": -300,
+            "literalCorrect": true,
+            "semanticCorrect": true
+          },
+          {
+            "field": "windowStart",
+            "expected": 1320,
+            "actual": 1320,
+            "literalCorrect": true,
+            "semanticCorrect": true
+          },
+          {
+            "field": "windowEnd",
+            "expected": 120,
+            "actual": 120,
+            "literalCorrect": true,
+            "semanticCorrect": true
+          }
+        ],
+        "semanticCorrect": 3,
+        "allCodeAndSemanticFacts": true
+      },
+      {
+        "case": "local-window",
+        "arm": "local",
+        "repetition": 1,
+        "fields": [
+          {
+            "field": "offsetMinutes",
+            "expected": -300,
+            "actual": -300,
+            "literalCorrect": true,
+            "semanticCorrect": true
+          },
+          {
+            "field": "windowStart",
+            "expected": 1320,
+            "actual": 1320,
+            "literalCorrect": true,
+            "semanticCorrect": true
+          },
+          {
+            "field": "windowEnd",
+            "expected": 120,
+            "actual": 120,
+            "literalCorrect": true,
+            "semanticCorrect": true
+          }
+        ],
+        "semanticCorrect": 3,
+        "allCodeAndSemanticFacts": true
+      },
+      {
+        "case": "local-window",
+        "arm": "jev",
+        "repetition": 1,
+        "fields": [
+          {
+            "field": "offsetMinutes",
+            "expected": -300,
+            "actual": -300,
+            "literalCorrect": true,
+            "semanticCorrect": true
+          },
+          {
+            "field": "windowStart",
+            "expected": 1320,
+            "actual": 1320,
+            "literalCorrect": true,
+            "semanticCorrect": true
+          },
+          {
+            "field": "windowEnd",
+            "expected": 120,
+            "actual": 120,
+            "literalCorrect": true,
+            "semanticCorrect": true
+          }
+        ],
+        "semanticCorrect": 3,
+        "allCodeAndSemanticFacts": true
+      },
+      {
+        "case": "local-window",
+        "arm": "native-reference",
+        "repetition": 1,
+        "fields": [
+          {
+            "field": "offsetMinutes",
+            "expected": -300,
+            "actual": -300,
+            "literalCorrect": true,
+            "semanticCorrect": true
+          },
+          {
+            "field": "windowStart",
+            "expected": 1320,
+            "actual": 1320,
+            "literalCorrect": true,
+            "semanticCorrect": true
+          },
+          {
+            "field": "windowEnd",
+            "expected": 120,
+            "actual": 120,
+            "literalCorrect": true,
+            "semanticCorrect": true
+          }
+        ],
+        "semanticCorrect": 3,
+        "allCodeAndSemanticFacts": true
+      },
+      {
+        "case": "cent-rounding",
+        "arm": "local",
+        "repetition": 0,
+        "fields": [
+          {
+            "field": "rateBasis",
+            "expected": "basis points",
+            "actual": "Basis points, denominator 10000",
+            "literalCorrect": false,
+            "semanticCorrect": true
+          },
+          {
+            "field": "rounding",
+            "expected": "half-up cents",
+            "actual": "Half-up to cents",
+            "literalCorrect": false,
+            "semanticCorrect": true
+          },
+          {
+            "field": "discountCapCents",
+            "expected": 1250,
+            "actual": null,
+            "literalCorrect": false,
+            "semanticCorrect": false
+          }
+        ],
+        "semanticCorrect": 2,
+        "allCodeAndSemanticFacts": false
+      },
+      {
+        "case": "cent-rounding",
+        "arm": "jev",
+        "repetition": 0,
+        "fields": [
+          {
+            "field": "rateBasis",
+            "expected": "basis points",
+            "actual": "basis points, denominator 10000",
+            "literalCorrect": false,
+            "semanticCorrect": true
+          },
+          {
+            "field": "rounding",
+            "expected": "half-up cents",
+            "actual": "half-up to cents",
+            "literalCorrect": false,
+            "semanticCorrect": true
+          },
+          {
+            "field": "discountCapCents",
+            "expected": 1250,
+            "actual": 1250,
+            "literalCorrect": true,
+            "semanticCorrect": true
+          }
+        ],
+        "semanticCorrect": 3,
+        "allCodeAndSemanticFacts": true
+      },
+      {
+        "case": "cent-rounding",
+        "arm": "native-reference",
+        "repetition": 0,
+        "fields": [
+          {
+            "field": "rateBasis",
+            "expected": "basis points",
+            "actual": "basis points, denominator 10000",
+            "literalCorrect": false,
+            "semanticCorrect": true
+          },
+          {
+            "field": "rounding",
+            "expected": "half-up cents",
+            "actual": "half-up to cents",
+            "literalCorrect": false,
+            "semanticCorrect": true
+          },
+          {
+            "field": "discountCapCents",
+            "expected": 1250,
+            "actual": 1250,
+            "literalCorrect": true,
+            "semanticCorrect": true
+          }
+        ],
+        "semanticCorrect": 3,
+        "allCodeAndSemanticFacts": true
+      },
+      {
+        "case": "cent-rounding",
+        "arm": "jev",
+        "repetition": 1,
+        "fields": [
+          {
+            "field": "rateBasis",
+            "expected": "basis points",
+            "actual": "basis points, denominator 10000",
+            "literalCorrect": false,
+            "semanticCorrect": true
+          },
+          {
+            "field": "rounding",
+            "expected": "half-up cents",
+            "actual": "half-up to cents",
+            "literalCorrect": false,
+            "semanticCorrect": true
+          },
+          {
+            "field": "discountCapCents",
+            "expected": 1250,
+            "actual": 1250,
+            "literalCorrect": true,
+            "semanticCorrect": true
+          }
+        ],
+        "semanticCorrect": 3,
+        "allCodeAndSemanticFacts": true
+      },
+      {
+        "case": "cent-rounding",
+        "arm": "native-reference",
+        "repetition": 1,
+        "fields": [
+          {
+            "field": "rateBasis",
+            "expected": "basis points",
+            "actual": "basis points; divide by 10000",
+            "literalCorrect": false,
+            "semanticCorrect": true
+          },
+          {
+            "field": "rounding",
+            "expected": "half-up cents",
+            "actual": "half-up to cents for discount and tax",
+            "literalCorrect": false,
+            "semanticCorrect": true
+          },
+          {
+            "field": "discountCapCents",
+            "expected": 1250,
+            "actual": 1250,
+            "literalCorrect": true,
+            "semanticCorrect": true
+          }
+        ],
+        "semanticCorrect": 3,
+        "allCodeAndSemanticFacts": true
+      },
+      {
+        "case": "cent-rounding",
+        "arm": "local",
+        "repetition": 1,
+        "fields": [
+          {
+            "field": "rateBasis",
+            "expected": "basis points",
+            "actual": "basis points, denominator 10000",
+            "literalCorrect": false,
+            "semanticCorrect": true
+          },
+          {
+            "field": "rounding",
+            "expected": "half-up cents",
+            "actual": "half-up to cents",
+            "literalCorrect": false,
+            "semanticCorrect": true
+          },
+          {
+            "field": "discountCapCents",
+            "expected": 1250,
+            "actual": null,
+            "literalCorrect": false,
+            "semanticCorrect": false
+          }
+        ],
+        "semanticCorrect": 2,
+        "allCodeAndSemanticFacts": false
+      },
+      {
+        "case": "reservation-ledger",
+        "arm": "jev",
+        "repetition": 0,
+        "fields": [
+          {
+            "field": "activeStatuses",
+            "expected": [
+              "held",
+              "confirmed"
+            ],
+            "actual": [
+              "held",
+              "confirmed"
+            ],
+            "literalCorrect": true,
+            "semanticCorrect": true
+          },
+          {
+            "field": "reservationTtlMinutes",
+            "expected": 20,
+            "actual": null,
+            "literalCorrect": false,
+            "semanticCorrect": false
+          },
+          {
+            "field": "duplicatePolicy",
+            "expected": "return existing",
+            "actual": "return existing",
+            "literalCorrect": true,
+            "semanticCorrect": true
+          }
+        ],
+        "semanticCorrect": 2,
+        "allCodeAndSemanticFacts": false
+      },
+      {
+        "case": "reservation-ledger",
+        "arm": "native-reference",
+        "repetition": 0,
+        "fields": [
+          {
+            "field": "activeStatuses",
+            "expected": [
+              "held",
+              "confirmed"
+            ],
+            "actual": [
+              "held",
+              "confirmed"
+            ],
+            "literalCorrect": true,
+            "semanticCorrect": true
+          },
+          {
+            "field": "reservationTtlMinutes",
+            "expected": 20,
+            "actual": 20,
+            "literalCorrect": true,
+            "semanticCorrect": true
+          },
+          {
+            "field": "duplicatePolicy",
+            "expected": "return existing",
+            "actual": "return existing",
+            "literalCorrect": true,
+            "semanticCorrect": true
+          }
+        ],
+        "semanticCorrect": 3,
+        "allCodeAndSemanticFacts": true
+      },
+      {
+        "case": "reservation-ledger",
+        "arm": "local",
+        "repetition": 0,
+        "fields": [
+          {
+            "field": "activeStatuses",
+            "expected": [
+              "held",
+              "confirmed"
+            ],
+            "actual": [
+              "held",
+              "confirmed"
+            ],
+            "literalCorrect": true,
+            "semanticCorrect": true
+          },
+          {
+            "field": "reservationTtlMinutes",
+            "expected": 20,
+            "actual": 20,
+            "literalCorrect": true,
+            "semanticCorrect": true
+          },
+          {
+            "field": "duplicatePolicy",
+            "expected": "return existing",
+            "actual": "return existing",
+            "literalCorrect": true,
+            "semanticCorrect": true
+          }
+        ],
+        "semanticCorrect": 3,
+        "allCodeAndSemanticFacts": true
+      },
+      {
+        "case": "reservation-ledger",
+        "arm": "native-reference",
+        "repetition": 1,
+        "fields": [
+          {
+            "field": "activeStatuses",
+            "expected": [
+              "held",
+              "confirmed"
+            ],
+            "actual": [
+              "held",
+              "confirmed"
+            ],
+            "literalCorrect": true,
+            "semanticCorrect": true
+          },
+          {
+            "field": "reservationTtlMinutes",
+            "expected": 20,
+            "actual": 20,
+            "literalCorrect": true,
+            "semanticCorrect": true
+          },
+          {
+            "field": "duplicatePolicy",
+            "expected": "return existing",
+            "actual": "return existing",
+            "literalCorrect": true,
+            "semanticCorrect": true
+          }
+        ],
+        "semanticCorrect": 3,
+        "allCodeAndSemanticFacts": true
+      },
+      {
+        "case": "reservation-ledger",
+        "arm": "local",
+        "repetition": 1,
+        "fields": [
+          {
+            "field": "activeStatuses",
+            "expected": [
+              "held",
+              "confirmed"
+            ],
+            "actual": [
+              "held",
+              "confirmed"
+            ],
+            "literalCorrect": true,
+            "semanticCorrect": true
+          },
+          {
+            "field": "reservationTtlMinutes",
+            "expected": 20,
+            "actual": 20,
+            "literalCorrect": true,
+            "semanticCorrect": true
+          },
+          {
+            "field": "duplicatePolicy",
+            "expected": "return existing",
+            "actual": "return existing",
+            "literalCorrect": true,
+            "semanticCorrect": true
+          }
+        ],
+        "semanticCorrect": 3,
+        "allCodeAndSemanticFacts": true
+      },
+      {
+        "case": "reservation-ledger",
+        "arm": "jev",
+        "repetition": 1,
+        "fields": [
+          {
+            "field": "activeStatuses",
+            "expected": [
+              "held",
+              "confirmed"
+            ],
+            "actual": [
+              "held",
+              "confirmed"
+            ],
+            "literalCorrect": true,
+            "semanticCorrect": true
+          },
+          {
+            "field": "reservationTtlMinutes",
+            "expected": 20,
+            "actual": null,
+            "literalCorrect": false,
+            "semanticCorrect": false
+          },
+          {
+            "field": "duplicatePolicy",
+            "expected": "return existing",
+            "actual": "return existing",
+            "literalCorrect": true,
+            "semanticCorrect": true
+          }
+        ],
+        "semanticCorrect": 2,
+        "allCodeAndSemanticFacts": false
+      },
+      {
+        "case": "csv-identifiers",
+        "arm": "native-reference",
+        "repetition": 0,
+        "fields": [
+          {
+            "field": "idHeader",
+            "expected": "vendor_id",
+            "actual": "case-insensitive",
+            "literalCorrect": false,
+            "semanticCorrect": false
+          },
+          {
+            "field": "normalization",
+            "expected": "trim-uppercase-preserve-leading-zero",
+            "actual": "trim and uppercase as strings; preserve leading zeroes",
+            "literalCorrect": false,
+            "semanticCorrect": true
+          },
+          {
+            "field": "duplicatePolicy",
+            "expected": "reject duplicate",
+            "actual": "accept the first normalized occurrence and reject later occurrences with duplicate",
+            "literalCorrect": false,
+            "semanticCorrect": true
+          }
+        ],
+        "semanticCorrect": 2,
+        "allCodeAndSemanticFacts": false
+      },
+      {
+        "case": "csv-identifiers",
+        "arm": "local",
+        "repetition": 0,
+        "fields": [
+          {
+            "field": "idHeader",
+            "expected": "vendor_id",
+            "actual": "Case-insensitive idColumn matching; missing column rejects line 1 with missing-column.",
+            "literalCorrect": false,
+            "semanticCorrect": false
+          },
+          {
+            "field": "normalization",
+            "expected": "trim-uppercase-preserve-leading-zero",
+            "actual": "Trim and uppercase identifier strings while preserving leading zeroes; never convert to numbers.",
+            "literalCorrect": false,
+            "semanticCorrect": true
+          },
+          {
+            "field": "duplicatePolicy",
+            "expected": "reject duplicate",
+            "actual": "Accept the first normalized identifier and reject later occurrences with duplicate; blank values reject with blank.",
+            "literalCorrect": false,
+            "semanticCorrect": true
+          }
+        ],
+        "semanticCorrect": 2,
+        "allCodeAndSemanticFacts": false
+      },
+      {
+        "case": "csv-identifiers",
+        "arm": "jev",
+        "repetition": 0,
+        "fields": [
+          {
+            "field": "idHeader",
+            "expected": "vendor_id",
+            "actual": "vendor_id",
+            "literalCorrect": true,
+            "semanticCorrect": true
+          },
+          {
+            "field": "normalization",
+            "expected": "trim-uppercase-preserve-leading-zero",
+            "actual": "trim-uppercase-preserve-leading-zero",
+            "literalCorrect": true,
+            "semanticCorrect": true
+          },
+          {
+            "field": "duplicatePolicy",
+            "expected": "reject duplicate",
+            "actual": "reject duplicate",
+            "literalCorrect": true,
+            "semanticCorrect": true
+          }
+        ],
+        "semanticCorrect": 3,
+        "allCodeAndSemanticFacts": true
+      },
+      {
+        "case": "csv-identifiers",
+        "arm": "local",
+        "repetition": 1,
+        "fields": [
+          {
+            "field": "idHeader",
+            "expected": "vendor_id",
+            "actual": "Case-insensitive header matching; missing column rejects line 1 with missing-column.",
+            "literalCorrect": false,
+            "semanticCorrect": false
+          },
+          {
+            "field": "normalization",
+            "expected": "trim-uppercase-preserve-leading-zero",
+            "actual": "Trim and uppercase identifiers as strings while preserving leading zeroes; never perform numeric conversion.",
+            "literalCorrect": false,
+            "semanticCorrect": true
+          },
+          {
+            "field": "duplicatePolicy",
+            "expected": "reject duplicate",
+            "actual": "Accept the first normalized occurrence and reject later occurrences with duplicate; reject blank values with blank.",
+            "literalCorrect": false,
+            "semanticCorrect": true
+          }
+        ],
+        "semanticCorrect": 2,
+        "allCodeAndSemanticFacts": false
+      },
+      {
+        "case": "csv-identifiers",
+        "arm": "jev",
+        "repetition": 1,
+        "fields": [
+          {
+            "field": "idHeader",
+            "expected": "vendor_id",
+            "actual": "vendor_id",
+            "literalCorrect": true,
+            "semanticCorrect": true
+          },
+          {
+            "field": "normalization",
+            "expected": "trim-uppercase-preserve-leading-zero",
+            "actual": "trim-uppercase-preserve-leading-zero",
+            "literalCorrect": true,
+            "semanticCorrect": true
+          },
+          {
+            "field": "duplicatePolicy",
+            "expected": "reject duplicate",
+            "actual": "reject duplicate",
+            "literalCorrect": true,
+            "semanticCorrect": true
+          }
+        ],
+        "semanticCorrect": 3,
+        "allCodeAndSemanticFacts": true
+      },
+      {
+        "case": "csv-identifiers",
+        "arm": "native-reference",
+        "repetition": 1,
+        "fields": [
+          {
+            "field": "idHeader",
+            "expected": "vendor_id",
+            "actual": "Match idColumn case-insensitively; report missing-column on line 1 when absent.",
+            "literalCorrect": false,
+            "semanticCorrect": false
+          },
+          {
+            "field": "normalization",
+            "expected": "trim-uppercase-preserve-leading-zero",
+            "actual": "Trim and uppercase identifiers as strings, preserving leading zeroes; blank values are rejected with blank.",
+            "literalCorrect": false,
+            "semanticCorrect": true
+          },
+          {
+            "field": "duplicatePolicy",
+            "expected": "reject duplicate",
+            "actual": "Accept the first normalized occurrence and reject later occurrences with duplicate.",
+            "literalCorrect": false,
+            "semanticCorrect": true
+          }
+        ],
+        "semanticCorrect": 2,
+        "allCodeAndSemanticFacts": false
+      }
+    ]
+  }
+}
