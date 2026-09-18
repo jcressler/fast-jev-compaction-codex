@@ -1,4 +1,5 @@
 import { mkdtemp, readFile, readdir, rm, stat, writeFile } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
@@ -69,6 +70,92 @@ function compactStart(value: Awaited<ReturnType<typeof fixture>>, session = 'ses
 }
 
 describe('Codex hook handoff', () => {
+  it('emits complementary evidence instead of filling the index with one repeated topic', async () => {
+    const value = await fixture('coverage');
+    const items: Record<string, unknown>[] = [
+      { type: 'message', role: 'user', content: 'Preserve the receipt reference.\nPreserve the migration invariant.' },
+    ];
+    for (let index = 0; index < 20; index++) {
+      items.push({ type: 'function_call', call_id: `receipt-${index}`, name: 'read_file', arguments: '{}' },
+        { type: 'function_call_output', call_id: `receipt-${index}`, output: `Receipt reference saved: R-101. ${'Receipt details. '.repeat(22)}` });
+    }
+    items.push({ type: 'function_call', call_id: 'migration', name: 'read_file', arguments: '{}' },
+      { type: 'function_call_output', call_id: 'migration', output: 'Migration invariant: never renumber existing item identifiers.' });
+    await writeFile(value.transcript, items.map(payload => JSON.stringify({ type: 'response_item', payload })).join('\n'));
+    const env = { ...value.env, FAST_JEV_MODE: 'jev', FAST_JEV_ALLOW_NETWORK: '1', TYPESAFE_API_KEY: 'test-only' };
+    let calls = 0;
+    const asker = { ask: async (state: unknown, questions: Record<string, unknown>) => {
+      calls++;
+      const typed = state as { requirements: string[]; candidates: Array<{ result?: string }> };
+      return { answers: Object.fromEntries(Object.entries(questions).map(([key, value]) => {
+        const question = value as { instructions: string };
+        const candidateIndex = Number(/state\.candidates\[(\d+)\]/.exec(question.instructions)![1]);
+        const requirementIndex = /state\.requirements\[(\d+)\]/.exec(question.instructions)?.[1];
+        const result = typed.candidates[candidateIndex]!.result ?? '';
+        let noul = result.includes('Receipt reference saved') ? 0.99 : result.includes('Migration invariant') ? 0.4 : 0.01;
+        if (requirementIndex !== undefined) {
+          const requirement = typed.requirements[Number(requirementIndex)]!;
+          noul = (/receipt/i.test(requirement) && result.includes('Receipt reference saved')) ||
+            (/migration/i.test(requirement) && result.includes('Migration invariant')) ? 0.99 : 0.01;
+        }
+        return [key, { noul }];
+      })) };
+    } };
+    await runHook(preInput(value), { env, asker });
+    const { archive } = checkpointPaths(preInput(value), env);
+    const catalog = await readCatalog(archive);
+    const migration = catalog.entries.find(entry => entry.callId === 'migration')!;
+    const selected = await readRecoveryRun(catalog, archive);
+    expect(selected?.mode).toBe('jev');
+    expect(selected?.requirements?.included).toBe(2);
+    expect(selected?.selectedIds.indexOf(migration.id)).toBeLessThan(3);
+    const restored = await runHook(compactStart(value), { env, asker });
+    expect(JSON.stringify(restored)).toContain('never renumber existing item identifiers');
+    expect((await readRecoveryRun(catalog, archive))?.emittedIds).toContain(migration.id);
+    expect(calls).toBe(1);
+  });
+
+  it('records the exact bounded index emitted after compaction, without storing its text in telemetry', async () => {
+    const value = await fixture('emission', 40);
+    await runHook(preInput(value), { env: value.env, now: () => 1_000 });
+    const { archive } = checkpointPaths(preInput(value), value.env);
+    const catalog = await readCatalog(archive);
+    expect((await readRecoveryRun(catalog, archive))?.emittedIds).toBeUndefined();
+    const output = await runHook(compactStart(value), { env: value.env, now: () => 1_001 }) as {
+      hookSpecificOutput: { additionalContext: string };
+    };
+    const context = output.hookSpecificOutput.additionalContext;
+    const ids = context.split('\n').filter(line => line.startsWith('{')).map(line => JSON.parse(line).id);
+    const run = await readRecoveryRun(catalog, archive);
+    expect(ids.length).toBeGreaterThan(0);
+    expect(ids.length).toBeLessThan(catalog.entries.filter(entry => entry.kind !== 'opaque').length);
+    expect(run).toMatchObject({ mode: 'local', emittedIds: ids, emittedContextChars: context.length,
+      emittedContextSha256: createHash('sha256').update(context).digest('hex') });
+    expect(context.length).toBeLessThanOrEqual(6_000);
+    expect(JSON.stringify(run)).not.toContain('request-emission');
+    expect(JSON.stringify(run)).not.toContain('private reasoning');
+    expect(await runHook(compactStart(value), { env: value.env, now: () => 1_002 })).toEqual({});
+    expect(await readRecoveryRun(catalog, archive)).toEqual(run);
+  });
+
+  it('rejects incomplete or invalid emission telemetry', async () => {
+    const value = await fixture('bad-emission');
+    await runHook(preInput(value), { env: value.env, now: () => 1_000 });
+    await runHook(compactStart(value), { env: value.env, now: () => 1_001 });
+    const paths = checkpointPaths(preInput(value), value.env);
+    const catalog = await readCatalog(paths.archive);
+    const path = join(paths.directory, `selection-${catalog.generation}.json`);
+    const run = JSON.parse(await readFile(path, 'utf8'));
+    for (const invalid of [
+      { emittedContextChars: 6_001 }, { emittedContextSha256: 'invalid' },
+      { emittedContextSha256: undefined }, { emittedIds: ['a'.repeat(64)] },
+      { emittedIds: [run.emittedIds[0], run.emittedIds[0]] },
+    ]) {
+      await writeFile(path, JSON.stringify({ ...run, ...invalid }));
+      expect(await readRecoveryRun(catalog, paths.archive)).toBeUndefined();
+    }
+  });
+
   it('uses configured Jev before compaction and delivers its selection exactly once', async () => {
     const value = await fixture('jev', 15);
     const env = { ...value.env, FAST_JEV_MODE: 'jev', FAST_JEV_ALLOW_NETWORK: '1', TYPESAFE_API_KEY: 'test-only-secret' };
@@ -86,9 +173,14 @@ describe('Codex hook handoff', () => {
     const run = await readRecoveryRun(catalog, archive);
     expect(run).toMatchObject({ mode: 'jev', requests: 1, model: 'jev-test', usage: { input_tokens: 100 } });
     expect(run!.selectedIds.length).toBeGreaterThan(0);
+    expect(run!.requirements?.included).toBeGreaterThan(0);
+    expect(run!.requirements?.sourceIds.every(id => catalog.entries.some(entry =>
+      entry.id === id && entry.kind === 'message' && entry.role === 'user'))).toBe(true);
     expect(JSON.stringify(run)).not.toContain('test-only-secret');
+    expect(JSON.stringify(run)).not.toContain('request-jev');
     const restored = await runHook(compactStart(value), { env, asker, now: () => 1_001 });
     expect(JSON.stringify(restored)).toContain('Selection: jev');
+    expect((await readRecoveryRun(catalog, archive))?.requirements).toEqual(run!.requirements);
     expect(calls).toBe(1);
     expect(await readFile(value.transcript)).toEqual(before);
     expect(await runHook(compactStart(value), { env, asker, now: () => 1_002 })).toEqual({});

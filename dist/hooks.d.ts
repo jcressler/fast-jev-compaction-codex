@@ -17,6 +17,10 @@ export type RecoveryRun = Omit<RecoverySelection, 'mode'> & {
     version: 1;
     generation: string;
     mode: RecoverySelection['mode'] | 'local';
+    /** What SessionStart emitted, not proof that a model consumed the context. */
+    emittedIds?: string[];
+    emittedContextChars?: number;
+    emittedContextSha256?: string;
 };
 /** Metadata only: no key, raw record, task prompt, or provider error is persisted here. */
 export declare function readRecoveryRun(catalog: EvidenceCatalog, archive: string): Promise<RecoveryRun | undefined>;

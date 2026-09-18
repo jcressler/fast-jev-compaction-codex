@@ -2,6 +2,7 @@ import { createHash } from 'node:crypto';
 import { open } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { readCatalog } from './archive.js';
+import { orderByRequirementCoverage } from './selection.js';
 const MAX_BYTES = 8 * 1024 * 1024;
 const MAX_OBJECT_BYTES = 2 * 1024 * 1024;
 const MAX_ENTRIES = 128;
@@ -446,7 +447,12 @@ export async function rankArchiveSearch(result, query, asker, limit = 10, option
             throw new Error('invalid Jev requirement support score');
         }
         const ordered = requirements?.length
-            ? orderByRequirementCoverage(scored, requirements.length)
+            ? orderByRequirementCoverage(scored.map(({ entry, index, score, support }) => ({
+                candidate: entry,
+                index,
+                score: score,
+                support: support,
+            })), requirements.length).map(({ candidate: entry, index, score, support }) => ({ entry, index, score, support }))
             : scored.sort((a, b) => b.score - a.score || a.index - b.index);
         return {
             entries: ordered.slice(0, count).map((candidate) => candidate.entry),
@@ -459,33 +465,5 @@ export async function rankArchiveSearch(result, query, asker, limit = 10, option
     catch {
         return fallback(1);
     }
-}
-function orderByRequirementCoverage(scored, requirementCount) {
-    const remaining = [...scored];
-    const ordered = [];
-    const maximum = Array.from({ length: requirementCount }, () => 0);
-    while (remaining.length) {
-        let bestPosition = 0;
-        let bestMarginal = -1;
-        for (let position = 0; position < remaining.length; position += 1) {
-            const candidate = remaining[position];
-            const marginal = candidate.support.reduce((sum, support, requirementIndex) => sum + Math.max(0, support - maximum[requirementIndex]), 0);
-            const best = remaining[bestPosition];
-            if (marginal > bestMarginal ||
-                (marginal === bestMarginal && (candidate.score > best.score ||
-                    (candidate.score === best.score && candidate.index < best.index)))) {
-                bestPosition = position;
-                bestMarginal = marginal;
-            }
-        }
-        const [selected] = remaining.splice(bestPosition, 1);
-        if (!selected)
-            break;
-        selected.support.forEach((support, requirementIndex) => {
-            maximum[requirementIndex] = Math.max(maximum[requirementIndex], support);
-        });
-        ordered.push(selected);
-    }
-    return ordered;
 }
 //# sourceMappingURL=search.js.map

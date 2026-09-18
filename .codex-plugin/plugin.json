@@ -1,6 +1,6 @@
 {
   "name": "fast-jev-compaction-codex",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "description": "Task-aware Jev evidence selection and exact local recovery around native Codex compaction.",
   "author": {
     "name": "James Cressler",

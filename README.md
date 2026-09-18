@@ -12,8 +12,14 @@ in 7/8 runs, versus 6/8 for the native reference. All three recovered 24/24 fact
 The trial does not demonstrate added value over local retrieval. Native
 compaction and local retrieval remain the defaults.
 
+Version 0.3.5 extends coverage selection to the automatic hook path and records
+which references the hook actually emits. Its [integration check](benchmarks/AUTOMATIC-HOOK-CHECK-2026-09-18.md)
+passed one live Jev request and the local handoff checks. The native host smoke
+stopped at an isolated-profile authentication error before recovery delivery;
+the new version has not completed the planned repository quality comparison.
+
 Fast Jev Compaction adds task-aware Jev evidence selection around Codex's native
-compaction. Version 0.3.4 records stable, immutable content-addressed objects
+compaction. It records stable, immutable content-addressed objects
 and a cumulative index that survives compaction. It helps you find and inspect
 earlier tool evidence after native compaction; it does not rewrite a live
 transcript, replace native compaction, or claim live token reduction.
@@ -45,15 +51,25 @@ structured and JSON-encoded batches. It returns query-centered excerpts with
 the original parent ID, record index, and field. This works with existing v2
 archives without rebuilding an index or changing stored objects.
 Search is lexical and bounded: a missing result is not proof of absence.
-Automatic Jev selection at compaction still uses its existing bounded excerpts.
+Automatic Jev selection at compaction uses bounded paired tool excerpts.
 Explicit search reranking uses fuller visible evidence, optional task context,
 and stable local ordering on ties or failed requests. Version 0.3.4 uses binary
 Noul questions with explicit criteria. Optional `--requirement` values identify
 the facts or constraints the answer must cover. Jev judges support separately
 for each requirement, and code favors evidence covering different requirements.
 This estimates coverage; it does not guarantee that every needed fact is present.
-The automatic PreCompact selector receives the corrected binary prompt but does
-not use the explicit search requirement interface.
+Version 0.3.5 brings the same requirement-coverage ordering into automatic
+`PreCompact` recovery. It derives up to six requirement units from archived
+user messages, asks separate binary support questions, and favors evidence
+covering different requirements. This is a bounded heuristic, not a complete
+understanding of the task. Oversized units are omitted instead of spliced into
+potentially different instructions; omission counts and source IDs are recorded.
+Fenced code and simple acknowledgements are excluded from requirement extraction;
+omission counts cover the remaining units rejected by the length or count limits.
+Tool and assistant text can supply evidence but cannot define requirements.
+Both selection paths share the coverage-ordering implementation. Their candidate
+pools, excerpts, and final context formatting still differ, so the v0.3.4 search
+results are not evidence of automatic-hook quality.
 
 Hooks are disabled with `FAST_JEV_ENABLED=0`. `FAST_JEV_ALLOW_NETWORK=1` enables
 network use only together with `FAST_JEV_MODE=jev` and a key. It does not gate
@@ -146,10 +162,27 @@ as described in the [official hook documentation](https://developers.openai.com/
 
 The local `selection-<generation>.json` report records `mode`, selected IDs,
 request count, latency, request character count, and available model/token usage.
+Automatic Jev reports also include requirement counts and source IDs. After
+`SessionStart`, `emittedIds`, `emittedContextChars`, and `emittedContextSha256`
+describe the actual bounded index returned by the hook. Emission does not prove
+that the native host accepted the context or that the model used every excerpt.
 Mode `local-fallback` means Jev selection did not complete successfully; it is
 not a successful Jev experiment. Reports contain no API key or raw task text.
 Set `FAST_JEV_MODE=local` to turn off automatic Jev requests. Explicit CLI
 search ranking still requires `--jev --allow-network` and a key.
+
+Check the production hook functions with synthetic data:
+
+```sh
+node benchmarks/automatic-hook-check.mjs
+# Exactly one live Jev request; requires TYPESAFE_API_KEY:
+node benchmarks/automatic-hook-check.mjs --live --allow-network --output hook-check.json
+```
+
+This check validates requirement propagation, metadata, immutable originals,
+and the single-use handoff. It does not launch Codex or measure coding quality.
+The [next automatic evaluation protocol](benchmarks/AUTOMATIC-EVAL.md) describes
+a separate comparison with ordinary Codex, local recovery, and Jev recovery.
 
 ## CLI
 
