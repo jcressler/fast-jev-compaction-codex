@@ -242,6 +242,74 @@ describe('bounded raw archive search', () => {
     expect(JSON.stringify({ receivedState, receivedQuestions })).not.toContain('matches');
   });
 
+  it('asks binary relevance and requirement propositions and selects complementary support', async () => {
+    const query = 'REQUIREMENT-COVERAGE-FACT';
+    const f = await fixture([
+      ...pair('redundant-high-general', `${query} requirement one evidence`),
+      ...pair('redundant-lower-general', `${query} requirement one older evidence`),
+      ...pair('complementary', `${query} requirement two evidence`),
+    ]);
+    const local = await searchArchive(f.index, query, { limit: 10 });
+    let receivedState: unknown;
+    let receivedQuestions: unknown;
+    const asker: JevAsker = { ask: async (state, questions) => {
+      receivedState = state;
+      receivedQuestions = questions;
+      const candidates = (state as { candidates: Array<{ callId?: string }> }).candidates;
+      const answers: Record<string, { type: 'noul'; noul: number }> = {};
+      candidates.forEach((candidate, index) => {
+        const general = candidate.callId === 'redundant-high-general' ? 1 : candidate.callId === 'redundant-lower-general' ? 0.9 : 0.1;
+        answers[`evidence_${index}`] = { type: 'noul', noul: general };
+        answers[`requirement_0_${index}`] = { type: 'noul', noul: candidate.callId === 'complementary' ? 0.1 : candidate.callId === 'redundant-high-general' ? 1 : 0.8 };
+        answers[`requirement_1_${index}`] = { type: 'noul', noul: candidate.callId === 'complementary' ? 0.9 : 0.05 };
+      });
+      return { answers };
+    } };
+    const ranked = await rankArchiveSearch(local, query, asker, 2, {
+      requirements: ['the first requested fact', 'the second requested fact'],
+    });
+    expect(ranked.mode).toBe('jev');
+    expect(ranked.entries.map((entry) => entry.callId)).toEqual(['redundant-high-general', 'complementary']);
+    const state = receivedState as { requirements: string[] };
+    expect(state.requirements).toEqual(['the first requested fact', 'the second requested fact']);
+    const questions = receivedQuestions as Record<string, { instructions: string; criteria?: { true?: string; false?: string } }>;
+    expect(Object.keys(questions)).toHaveLength(9);
+    expect(questions.evidence_0?.instructions).toMatch(/state\.candidates\[0\].*state\.query/i);
+    expect(questions.evidence_0?.criteria).toEqual(expect.objectContaining({ true: expect.any(String), false: expect.any(String) }));
+    expect(questions.requirement_0_0?.instructions).toMatch(/state\.candidates\[0\].*state\.requirements\[0\]/i);
+    expect(questions.requirement_0_0?.criteria?.false).toMatch(/topic overlap/i);
+  });
+
+  it('rejects incomplete, duplicate, and overlong requirements without truncating them', async () => {
+    const f = await fixture(pair('requirement-validation', 'REQUIREMENT-VALIDATION-FACT'));
+    const local = await searchArchive(f.index, 'REQUIREMENT-VALIDATION-FACT');
+    const asker: JevAsker = { ask: async () => ({ answers: {} }) };
+    await expect(rankArchiveSearch(local, 'REQUIREMENT-VALIDATION-FACT', asker, 10, { requirements: [''] })).rejects.toThrow(/1 to 240/);
+    await expect(rankArchiveSearch(local, 'REQUIREMENT-VALIDATION-FACT', asker, 10, { requirements: ['same', 'same'] })).rejects.toThrow(/unique/);
+    await expect(rankArchiveSearch(local, 'REQUIREMENT-VALIDATION-FACT', asker, 10, { requirements: ['x'.repeat(241)] })).rejects.toThrow(/1 to 240/);
+    await expect(rankArchiveSearch(local, 'REQUIREMENT-VALIDATION-FACT', asker, 10, { requirements: Array.from({ length: 7 }, (_, index) => `r${index}`) })).rejects.toThrow(/at most 6/);
+  });
+
+  it('falls back in local order when any general or requirement score is malformed', async () => {
+    const query = 'REQUIREMENT-SCORE-FALLBACK';
+    const f = await fixture([
+      ...pair('fallback-first', `${query} one`),
+      ...pair('fallback-second', `${query} two`),
+    ]);
+    const local = await searchArchive(f.index, query, { limit: 10 });
+    const localIDs = local.entries.map((entry) => entry.id);
+    const asker: JevAsker = { ask: async (state) => {
+      const candidates = (state as { candidates: unknown[] }).candidates;
+      return { answers: Object.fromEntries(candidates.flatMap((_, index) => [
+        [`evidence_${index}`, { type: 'noul' as const, noul: 0.9 }],
+        [`requirement_0_${index}`, { type: 'noul' as const, noul: index === 0 ? Number.NaN : 0.1 }],
+      ])) };
+    } };
+    const ranked = await rankArchiveSearch(local, query, asker, 10, { requirements: ['the requested fact'] });
+    expect(ranked.mode).toBe('local-fallback');
+    expect(ranked.entries.map((entry) => entry.id)).toEqual(localIDs);
+  });
+
   it('does not use an input-only raw match as the Jev outcome excerpt', async () => {
     const inputOnly = 'INPUT-ONLY-SEARCH-SECRET';
     const f = await fixture([
@@ -374,6 +442,42 @@ describe('bounded raw archive search', () => {
     expect(state.candidates).toHaveLength(20);
     expect(state.candidates.every((candidate) => (candidate.evidence?.length ?? 0) <= 1_800)).toBe(true);
     expect(Buffer.byteLength(JSON.stringify({ state: receivedState, questions: receivedQuestions }), 'utf8')).toBeLessThanOrEqual(48 * 1024);
+  });
+
+  it('fits twenty candidates and three long requirements without dropping the pool or evidence', async () => {
+    const query = 'REQUIREMENT-BUDGET-FACT';
+    const f = await fixture(Array.from({ length: 20 }, (_, index) => pair(
+      `requirement-budget-${index}`,
+      { paragraph: `${query} ${'visible evidence '.repeat(120)}`, status: 'complete', pageSize: index + 1, note: 'current visible evidence' },
+    )).flat());
+    const local = await searchArchive(f.index, query, { limit: 20 });
+    let receivedState: unknown;
+    let receivedQuestions: unknown;
+    const asker: JevAsker = { ask: async (state, questions) => {
+      receivedState = state;
+      receivedQuestions = questions;
+      return { answers: Object.fromEntries(Object.keys(questions).map((key) => [key, { type: 'noul' as const, noul: 0.5 }])) };
+    } };
+    const requirements = Array.from({ length: 3 }, (_, index) => `${String(index)} ${'requested fact '.repeat(16)}`.slice(0, 240));
+    const ranked = await rankArchiveSearch(local, query, asker, 20, { requirements });
+    expect(ranked.mode).toBe('jev');
+    const state = receivedState as { candidates: Array<{ evidence?: string }>; requirements: string[] };
+    expect(state.candidates).toHaveLength(20);
+    expect(state.requirements).toEqual(requirements);
+    expect(Math.max(...state.candidates.map((candidate) => candidate.evidence?.length ?? 0))).toBeGreaterThanOrEqual(580);
+    expect(Object.keys(receivedQuestions as object)).toHaveLength(80);
+    expect(Buffer.byteLength(JSON.stringify({ state: receivedState, questions: receivedQuestions }), 'utf8')).toBeLessThanOrEqual(48 * 1024);
+
+    const sixRequirements = Array.from({ length: 6 }, (_, index) => `${String(index)} ${'long requested fact '.repeat(15)}`.slice(0, 240));
+    const six = await rankArchiveSearch(local, query, asker, 20, { requirements: sixRequirements });
+    if (six.mode === 'jev') {
+      expect((receivedState as { candidates: unknown[] }).candidates).toHaveLength(20);
+      expect((receivedState as { requirements: string[] }).requirements).toEqual(sixRequirements);
+      expect(Buffer.byteLength(JSON.stringify({ state: receivedState, questions: receivedQuestions }), 'utf8')).toBeLessThanOrEqual(48 * 1024);
+    } else {
+      expect(six.mode).toBe('local-fallback');
+      expect(six.requests).toBe(0);
+    }
   });
 
   it('reports bounded text extraction when a structured result exceeds traversal limits', async () => {

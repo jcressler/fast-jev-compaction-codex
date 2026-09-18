@@ -109,15 +109,29 @@ describe('evidence retrieval', () => {
 
   it('uses valid Jev scores without exposing records', async () => {
     let state: unknown;
+    let questions: unknown;
     const entries = [summary('a', 'Read', 'alpha'), summary('b', 'Write', 'beta')];
-    const asker: JevAsker = { ask: async (received) => {
+    const asker: JevAsker = { ask: async (received, receivedQuestions) => {
       state = received;
+      questions = receivedQuestions;
       return { answers: { evidence_0: { type: 'noul', noul: 0.9 }, evidence_1: { type: 'noul', noul: 0.1 } }, usage: { input_tokens: 3 } };
     } };
     const ranked = await rankEvidence(entries, 'operation', asker, 2);
     expect(ranked.mode).toBe('jev');
     expect(ranked.entries.map((entry) => entry.id)).toEqual(['b', 'a']);
     expect(JSON.stringify(state)).not.toContain('records');
+    const candidateState = state as { candidates: Array<{ id: string }> };
+    const candidateQuestions = questions as Record<string, { type: string; instructions: string; criteria?: { true?: string; false?: string } }>;
+    expect(Object.values(candidateQuestions).every((question) => question.type === 'noul')).toBe(true);
+    Object.entries(candidateQuestions).forEach(([key, question]) => {
+      const index = Number(key.split('_')[1]);
+      expect(question.instructions).toContain(`state.candidates[${index}]`);
+      expect(question.instructions).toContain(`id=${candidateState.candidates[index]?.id}`);
+      expect(question.instructions).toContain('state.query');
+      expect(question.instructions).toMatch(/binary proposition/i);
+      expect(question.criteria?.true).toMatch(/failed attempt/i);
+      expect(question.criteria?.false).toMatch(/unrelated/i);
+    });
   });
 
   it('prefers newer local ties and bounds hostile Jev metadata', async () => {

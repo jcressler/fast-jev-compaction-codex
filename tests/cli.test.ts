@@ -88,6 +88,13 @@ async function invoke(args: string[], options: { input?: string; env?: NodeJS.Pr
 }
 
 describe('fast-jev-codex CLI', () => {
+  it('documents repeatable Jev requirements in help', async () => {
+    const result = await invoke(['--help']);
+    expect(result.code).toBe(0);
+    expect(result.stdout).toMatch(/repeatable --requirement/);
+    expect(result.stdout).toMatch(/1\.\.240/);
+  });
+
   it('inspects a transcript offline without an API key or source mutation', async () => {
     const value = await transcriptFixture();
     const before = await readFile(value.input);
@@ -194,6 +201,16 @@ describe('fast-jev-codex CLI', () => {
     const noKey = await invoke(['search', '--archive', indexPath, '--query', 'call-first', '--jev', '--allow-network'], { env });
     expect(noKey.code).toBe(1);
     expect(noKey.stderr).toContain('TYPESAFE_API_KEY');
+  });
+
+  it('does not silently ignore requirements on a local-only search', async () => {
+    const value = await archiveFixture();
+    const archive = join(value.directory, 'evidence-archive');
+    const env = environment(value.directory);
+    expect((await invoke(['archive', '--input', value.input, '--output', archive], { env })).code).toBe(0);
+    const result = await invoke(['search', '--archive', join(archive, 'index.json'), '--query', 'call-first', '--requirement', 'recover the result'], { env });
+    expect(result.code).toBe(1);
+    expect(result.stderr).toContain('--requirement requires --jev');
   });
 
   it('handles malformed hook JSON as a successful empty response', async () => {

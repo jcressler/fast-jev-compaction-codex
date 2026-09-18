@@ -61,12 +61,19 @@ describe('task-aware recovery selection', () => {
     expect(serialized).toContain('paired implementation');
     expect(serialized).not.toContain('private chain of thought');
     expect(serialized).not.toContain('system-only secret');
-    expect(JSON.stringify(seen.questions)).toMatch(/task relevance/i);
-    expect(JSON.stringify(seen.questions)).toMatch(/avoiding repeating mistakes/i);
-    expect(JSON.stringify(seen.questions)).toMatch(/yes\/no/i);
+    expect(JSON.stringify(seen.questions)).toMatch(/continue the task in state correctly/i);
+    expect(JSON.stringify(seen.questions)).toMatch(/avoiding repeated mistakes/i);
     const state = seen.state as { candidates: Array<{ id: string }> };
-    const questions = Object.values(seen.questions as Record<string, { instructions: string }>);
-    expect(state.candidates.every((candidate) => questions.some((question) => question.instructions.includes(candidate.id)))).toBe(true);
+    const questions = seen.questions as Record<string, { type: string; instructions: string; criteria?: { true?: string; false?: string } }>;
+    expect(Object.values(questions).every((question) => question.type === 'noul')).toBe(true);
+    Object.entries(questions).forEach(([key, question]) => {
+      const index = Number(key.split('_')[1]) - 1;
+      expect(question.instructions).toContain(`state.candidates[${index}]`);
+      expect(question.instructions).toContain(`id=${state.candidates[index]?.id}`);
+      expect(question.instructions).toMatch(/binary proposition/i);
+      expect(question.criteria?.true).toMatch(/failed attempt/i);
+      expect(question.criteria?.false).toMatch(/unrelated/i);
+    });
   });
 
   it('bounds adversarial context and tool strings below the serialized request budget', async () => {

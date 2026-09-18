@@ -1,15 +1,16 @@
 # Fast Jev Compaction for Codex
 
-**Experimental; further Jev feature development is shelved.** The
-[final bounded comparison](benchmarks/HELDOUT-RESULTS-2026-09-18.md) did not
-meet the predeclared continuation threshold. All approaches passed the coding
-checks; Jev improved some historical fact exposure and worsened others without
-a reliable advantage over the native reference. Native compaction and local
-retrieval remain the defaults. The optional integration is retained for
-reproduction and experimentation.
+**Experimental; added value is not yet established.** An audit of the
+[earlier comparison](benchmarks/HELDOUT-RESULTS-2026-09-18.md) found that its Jev
+question treated a yes/no probability as an ordinal utility rating and omitted
+the requested fact fields from the reranker's task. The earlier data is retained,
+but its recommendation to shelve the overall idea was too broad. Version 0.3.4
+corrects those issues and adds selection across explicit requirements. The
+[corrected experiment protocol](benchmarks/CORRECTED-EVAL.md) specifies a fresh
+comparison. Native compaction and local retrieval remain the defaults.
 
 Fast Jev Compaction adds task-aware Jev evidence selection around Codex's native
-compaction. Version 0.3.3 records stable, immutable content-addressed objects
+compaction. Version 0.3.4 records stable, immutable content-addressed objects
 and a cumulative index that survives compaction. It helps you find and inspect
 earlier tool evidence after native compaction; it does not rewrite a live
 transcript, replace native compaction, or claim live token reduction.
@@ -42,8 +43,14 @@ the original parent ID, record index, and field. This works with existing v2
 archives without rebuilding an index or changing stored objects.
 Search is lexical and bounded: a missing result is not proof of absence.
 Automatic Jev selection at compaction still uses its existing bounded excerpts.
-Version 0.3.3 improves explicit search reranking with fuller visible evidence,
-optional task context, and stable local ordering on ties or failed requests.
+Explicit search reranking uses fuller visible evidence, optional task context,
+and stable local ordering on ties or failed requests. Version 0.3.4 uses binary
+Noul questions with explicit criteria. Optional `--requirement` values identify
+the facts or constraints the answer must cover. Jev judges support separately
+for each requirement, and code favors evidence covering different requirements.
+This estimates coverage; it does not guarantee that every needed fact is present.
+The automatic PreCompact selector receives the corrected binary prompt but does
+not use the explicit search requirement interface.
 
 Hooks are disabled with `FAST_JEV_ENABLED=0`. `FAST_JEV_ALLOW_NETWORK=1` enables
 network use only together with `FAST_JEV_MODE=jev` and a key. It does not gate
@@ -176,10 +183,15 @@ Use optional Jev ranking only when the transfer is authorized:
 node dist/cli.js search \
   --archive DIRECTORY/index.json --query "migration failure" \
   --task-context "Continue the approved schema repair; preserve earlier constraints" \
+  --requirement "The currently approved schema version" \
+  --requirement "The previous failed migration and its cause" \
   --limit 10 --jev --allow-network
 ```
 
 Supply `TYPESAFE_API_KEY` through secure shell input or your secret manager.
+Pass up to six distinct requirements, each 1–240 characters. Describe what the
+answer needs to establish; do not supply evaluator answers. Requests without
+requirements use a single binary relevance question per candidate.
 
 Retrieve exact raw content by its full content ID. Retrieval is bounded and
 paginated; it never reruns a tool or writes to recover missing evidence:

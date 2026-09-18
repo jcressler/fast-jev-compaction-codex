@@ -261,7 +261,11 @@ function buildQuestions(candidates: readonly Candidate[]): JevQuestions {
     `candidate_${index + 1}`,
     {
       type: 'noul' as const,
-      instructions: `For candidate ${candidate.entry.id} (question key candidate_${index + 1}), answer yes/no as a probability in [0,1] for task relevance: would retaining this evidence materially help continue the current task correctly, including by preserving relevant facts, constraints, prior attempt outcomes, or avoiding repeating mistakes? Use 0 for unrelated evidence and 1 for evidence directly needed to continue the task. Consider the full cross-turn context and constraints.`,
+      instructions: `For state.candidates[${index}] (id=${candidate.entry.id}), answer this binary proposition: would retaining this evidence materially help continue the task in state correctly? Consider relevant facts, constraints, corrections, failed attempts, safety boundaries, prior outcomes, and avoiding repeated mistakes; a failure record can be useful evidence.`,
+      criteria: {
+        true: 'The candidate materially helps continue the task correctly or preserves a relevant fact, constraint, correction, failed attempt, safety boundary, or prior outcome.',
+        false: 'The candidate is unrelated to continuing the task correctly and does not preserve a relevant constraint or prior outcome.',
+      },
     },
   ]));
 }

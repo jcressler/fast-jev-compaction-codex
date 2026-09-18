@@ -44,6 +44,8 @@ export interface ArchiveSearchResult {
 export declare function searchArchive(archivePath: string, query: string, options?: ArchiveSearchOptions): Promise<ArchiveSearchResult>;
 export interface RankArchiveSearchOptions {
     taskContext?: string;
+    /** User-visible facts or requirements the selected evidence should answer. */
+    requirements?: string[];
 }
 /** Opt-in Jev reranking scores the existing local page without rereading raw data. */
 export declare function rankArchiveSearch(result: ArchiveSearchResult, query: string, asker: JevAsker, limit?: number, options?: RankArchiveSearchOptions): Promise<{

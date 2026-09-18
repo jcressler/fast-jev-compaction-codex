@@ -385,7 +385,11 @@ export async function rankEvidence(entries, query, asker, limit = 10) {
         const key = `evidence_${index}`;
         questions[key] = {
             type: 'noul',
-            instructions: clip(`Rate how useful this evidence is for the query (0 means unrelated, 1 means directly useful). Query: ${clip(query, MAX_JEV_QUERY)} Evidence: ${clip(`${safe.tool ?? safe.kind}: ${safe.summary}\n${safe.outcome}`, 300)}`, MAX_JEV_QUESTION),
+            instructions: clip(`For state.candidates[${index}] (id=${safe.id}), answer this binary proposition: would retaining this evidence materially help answer state.query correctly? Treat relevant facts, constraints, corrections, failed attempts, and safety boundaries as potentially useful evidence, including when the record reports a failure.`, MAX_JEV_QUESTION),
+            criteria: {
+                true: 'The candidate materially helps answer the query correctly or preserves a relevant fact, constraint, correction, failed attempt, or safety boundary.',
+                false: 'The candidate is unrelated to answering the query correctly and does not preserve a relevant constraint or prior outcome.',
+            },
         };
         return { key, entry, safe, index };
     });
