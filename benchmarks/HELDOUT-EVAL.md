@@ -8,7 +8,7 @@ unchanged. The automatic PreCompact selector is outside this experiment.
 
 ## Frozen comparison
 
-Six new coding-maintenance cases each contain three chronological stages of
+Four new coding-maintenance cases each contain three chronological stages of
 generated tool evidence, including failed attempts, corrections, and unrelated
 work. Codex reviews each stage, then runs native compaction. Thus every case
 has an actual model reasoning trajectory and three native compactions before
@@ -42,10 +42,11 @@ calls; attempted calls beyond that return a budget error and are counted.
 Repeated identical tool requests and regression-test failures are reported.
 
 The runner uses `gpt-5.6-luna`, medium effort, the same instructions and schema
-for all approaches, and counterbalanced order. Its upper bounds are six Jev
-requests, 18 shared checkpoint turns, 18 native compactions, and 36 final
+for all approaches, and order balanced to within one occurrence per position.
+Its upper bounds are four Jev
+requests, 12 shared checkpoint turns, 12 native compactions, and 24 final
 continuations. Repetitions share a compaction trajectory and ranking, so there
-are six distinct tasks, not 36 independent experiments.
+are four distinct tasks, not 24 independent experiments.
 
 Fixture, query, source, hidden-test, schema, and implementation hashes are
 written before any live request. All rankings are completed before any model
@@ -96,7 +97,7 @@ text, scores, tool-call counts, latency, and provider-reported usage. Do not
 publish native session rollouts, opaque reasoning payloads, authentication
 files, or the complete private run directory. Codex usage can include inherited
 history and caching; it is not summed into a verified bill. Dollar cost remains
-unknown. The six cases are unseen by earlier live trials, but their source is
+unknown. The four cases had no continuation outcomes in earlier live trials, but their source is
 visible to implementers; they are not a blind external evaluation.
 Some contract facts also appear in the task specification; the factual score
 is not a pure archive-recall measure. Reports distinguish scored fact records
@@ -104,3 +105,23 @@ from other historical target records; record presence is not proof that every
 fact survives an excerpt cap. Recovery-call counts exclude the separately
 reported Jev API request. Calls attempted after the eight-call budget return
 errors and remain in the overhead counts.
+
+## Invalidated pilot and protocol correction
+
+The initial protocol at commit `8851411` began with six cases. After twelve
+continuations on its cursor and retry cases, review found that hidden tests
+required details absent from their visible contracts: initial-null cursor
+behavior, the event key field, the location of retry-after, and the precise
+backoff exponent. The run was stopped before any continuation on the other
+four cases. Those twelve scores are not evidence for or against Jev.
+
+The corrected protocol uses only the four untouched cases (time windows,
+money rounding, reservations, and CSV import). Explicit input/output contracts
+are audited against their unchanged tests before execution. It makes four new
+Jev requests; the six pilot ranking requests are reported as discarded overhead.
+The production reranker and numeric continuation thresholds are unchanged.
+No ranking prompt, excerpt heuristic, candidate limit, or packet limit was
+retuned from the pilot outcomes. The dataset reduction and contract repair are
+protocol changes and are disclosed, rather than presenting this as the original
+six-case preregistration. Pilot details are retained in
+[the invalidated pilot record](HELDOUT-PILOT-INVALIDATED-2026-09-18.json).

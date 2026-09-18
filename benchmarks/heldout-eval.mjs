@@ -12,18 +12,19 @@ import { CodexEvalClient } from './codex-eval-client.mjs';
 import { digest } from './paired-eval.mjs';
 import { makeHeldoutCases } from './heldout-fixtures.mjs';
 
-export const PROTOCOL = Object.freeze({ schemaVersion: 1, model: 'gpt-5.6-luna', effort: 'medium',
-  cases: 6, repetitions: 2, stages: 3, candidateLimit: 20, packetBudgetChars: 6000,
-  entryBudgetChars: 2000, arms: ['native-reference', 'local', 'jev'], maxJevRequests: 6,
-  maxNativeCompactions: 18, maxCheckpointTurns: 18, maxContinuationTurns: 36,
+export const PROTOCOL = Object.freeze({ schemaVersion: 2, model: 'gpt-5.6-luna', effort: 'medium',
+  cases: 4, repetitions: 2, stages: 3, candidateLimit: 20, packetBudgetChars: 6000,
+  entryBudgetChars: 2000, arms: ['native-reference', 'local', 'jev'], maxJevRequests: 4,
+  maxNativeCompactions: 12, maxCheckpointTurns: 12, maxContinuationTurns: 24,
   maxRecoveryCallsPerTurn: 8, turnTimeoutMs: 120000,
   stoppingRule: { quality: 'At least 2 more fully correct runs than BOTH comparators, wins in at least 2 distinct cases versus each, and no case lost in both repetitions.',
     efficiency: 'Equal or better fully-correct count, code tests and factual fields versus BOTH; at least 25% fewer recovery calls, at least 4 saved calls across 2 cases versus each; no more than 10% added continuation plus Jev latency.',
-    guard: 'No additional hard-constraint regression test failures versus either comparator. All 36 runs and all 6 Jev requests must complete. Otherwise shelve further Jev development for this project.' },
+    guard: 'No additional hard-constraint regression test failures versus either comparator. All 24 runs and all 4 Jev requests must complete. Otherwise shelve further Jev development for this project.' },
+  pilotExclusion: 'The first two tasks of the original six-case protocol were invalidated because their visible input contracts omitted details required by the hidden tests. Their 12 continuations are excluded. Only the four cases with zero prior continuation outcomes are evaluated, with explicit input/output contracts. The production reranker is unchanged from 8851411.',
   limitations: ['Generated small coding-maintenance tasks, not real repository work or production acceptance.',
     'Three manually triggered compactions per case; no natural context-exhaustion event.',
     'Native-reference receives no proactive packet but has the SAME archive tools, so this is not stock Codex.',
-    'Two repetitions share one native trajectory and one Jev ranking; only six distinct tasks.',
+    'Two repetitions share one native trajectory and one Jev ranking; only four distinct tasks.',
     'All cases and grader rules are frozen before live results; fixtures are visible to implementers, not a blind external benchmark.',
     'Character caps are not equal token counts; cache state and cumulative inherited usage preclude a verified billing comparison.',
     'Final code is tested after submission; models cannot run the hidden tests or revise based on grader feedback.',
@@ -226,7 +227,7 @@ export function summarize(reports) {
 
 export function decision(reports) {
   const summary = summarize(reports), jev = summary.jev;
-  if (reports.length !== PROTOCOL.cases || PROTOCOL.arms.some(arm => summary[arm].runs !== 12) || reports.some(report =>
+  if (reports.length !== PROTOCOL.cases || PROTOCOL.arms.some(arm => summary[arm].runs !== PROTOCOL.cases * PROTOCOL.repetitions) || reports.some(report =>
     report.checkpoints?.length !== PROTOCOL.stages || report.checkpoints.some(point => point.toolCalls !== 0) ||
     report.compactions?.length !== PROTOCOL.stages || report.compactions.some(point => !point.completed) ||
     report.jev.calls !== 1 || !report.jev.model ||

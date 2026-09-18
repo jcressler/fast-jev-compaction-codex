@@ -20,9 +20,9 @@ function runSource(source, input) {
 function run() {
   const first = makeHeldoutCases();
   const second = makeHeldoutCases();
-  assert.equal(first.length, 6, 'held-out set should contain six cases');
+  assert.equal(first.length, 4, 'held-out set should contain four primary cases');
   assert.deepEqual(first.map((item) => item.id), [
-    'cursor-window', 'retry-key', 'local-window', 'cent-rounding', 'reservation-ledger', 'csv-identifiers',
+    'local-window', 'cent-rounding', 'reservation-ledger', 'csv-identifiers',
   ]);
   assert.deepEqual(first.map((item) => item.id), second.map((item) => item.id));
 

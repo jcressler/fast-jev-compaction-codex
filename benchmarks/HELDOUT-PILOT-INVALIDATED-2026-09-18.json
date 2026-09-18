@@ -1,0 +1,1672 @@
+{
+  "status": "invalidated-pilot",
+  "protocol": {
+    "schemaVersion": 1,
+    "model": "gpt-5.6-luna",
+    "effort": "medium",
+    "cases": 6,
+    "repetitions": 2,
+    "stages": 3,
+    "candidateLimit": 20,
+    "packetBudgetChars": 6000,
+    "entryBudgetChars": 2000,
+    "arms": [
+      "native-reference",
+      "local",
+      "jev"
+    ],
+    "maxJevRequests": 6,
+    "maxNativeCompactions": 18,
+    "maxCheckpointTurns": 18,
+    "maxContinuationTurns": 36,
+    "maxRecoveryCallsPerTurn": 8,
+    "turnTimeoutMs": 120000,
+    "stoppingRule": {
+      "quality": "At least 2 more fully correct runs than BOTH comparators, wins in at least 2 distinct cases versus each, and no case lost in both repetitions.",
+      "efficiency": "Equal or better fully-correct count, code tests and factual fields versus BOTH; at least 25% fewer recovery calls, at least 4 saved calls across 2 cases versus each; no more than 10% added continuation plus Jev latency.",
+      "guard": "No additional hard-constraint regression test failures versus either comparator. All 36 runs and all 6 Jev requests must complete. Otherwise shelve further Jev development for this project."
+    },
+    "limitations": [
+      "Generated small coding-maintenance tasks, not real repository work or production acceptance.",
+      "Three manually triggered compactions per case; no natural context-exhaustion event.",
+      "Native-reference receives no proactive packet but has the SAME archive tools, so this is not stock Codex.",
+      "Two repetitions share one native trajectory and one Jev ranking; only six distinct tasks.",
+      "All cases and grader rules are frozen before live results; fixtures are visible to implementers, not a blind external benchmark.",
+      "Character caps are not equal token counts; cache state and cumulative inherited usage preclude a verified billing comparison.",
+      "Final code is tested after submission; models cannot run the hidden tests or revise based on grader feedback.",
+      "Some scored contract facts also appear in the task specification; they do not all require archive recovery.",
+      "Regression tests cover historical code constraints, not prompt-injection resistance or real external side effects.",
+      "This exercises explicit search reranking and a common custom packet, not the automatic PreCompact selector.",
+      "Stopping thresholds are project decisions, not statistical significance or a universal claim about Jev."
+    ],
+    "live": true,
+    "fixtureHashes": [
+      {
+        "id": "cursor-window",
+        "stages": "19a94c06d4584ee6352368e4e73a5a8117cffd22caea938567fe0aad52d4320c",
+        "query": "71970e5175e4533327afa682b9b64b2449b927de6cc546eec7f30225644ddad9",
+        "taskContext": "2e35f404376c0b5f9b3d8cd2cc888c3b2959d4c8b8a31b6cf07905ba79da1087",
+        "source": "e9c24fdc991c4e8d63d30075b8fe3f6c8e366883a1ab4cae89f01da906ce5a13",
+        "tests": "0ee293b6737c576d82fabff63d09b2058c5f4ea4a4b7924704667838d9aaed5e",
+        "expectedSource": "57a5e8632dd21e431318a92858bf72ee58f2320977310678c0c2a0f784fe4def",
+        "expectedFacts": "ebf50acebbded98094161810770e0878d2381aa05e991421b14f636ee64563aa",
+        "schema": "53f9d48816a395d6c462924543b39b4adffd38e836f6924a88a82d9dcee2b612"
+      },
+      {
+        "id": "retry-key",
+        "stages": "20e018e88bd938d75e4717125a1dcffeebfe2e75ad501aace71eeb4b32ac6321",
+        "query": "82396fd3c2fe8ef3f43081dbbc26b41ff6262212e75427af42932eb52c03cb3c",
+        "taskContext": "9a28e7c0af39af3a29f47909e4dac3788daad7f476d62cf98d40877192a3f023",
+        "source": "3f4a76751e44e47d55fcb60ba0368cd57791821c47dd9f205bbf49bec13a17f5",
+        "tests": "7f551f31c9237f1b7854329728d46f94fff10e9a015ee0b382617076009e2e7b",
+        "expectedSource": "6e04ee836131b9aee54692b73a981766f8450125d5b74fee20ed47e8789c9451",
+        "expectedFacts": "fbe75128692ef9baf28dd446bf201aa030636d98026402d6f17b8ede1bc93b71",
+        "schema": "5f9337a14f313b9c8c56c7eac380508bd13bee162f6b7d90ea3bce55c073b733"
+      },
+      {
+        "id": "local-window",
+        "stages": "b67f7068fa5cd71a46a3937977d4c3cf06658767058cdd9749105496968cac8e",
+        "query": "4bac267b9d0d5e9acd2131c316e86414fee5bdccd805b586c45833153f3119e4",
+        "taskContext": "1be20fff94024a77cdb699f04bfecf9248519f282380a558cd599e3ef719ae43",
+        "source": "0dd04284701f382c91686a0386379e1ee095621b09eeb69f08ee461d2ebc1e6f",
+        "tests": "c1949a0742c28d46e75dd6f6f2d74902b9bdbb7074d4577ce55be4d12f242b7a",
+        "expectedSource": "5bbabc55f37f0095d6d563ba280b43b7f7ba1d66acc9e7b6821930491149be69",
+        "expectedFacts": "db71b658a50251911777a14240a5ec171c2f3106df1fc46c6f4b940e82a770c8",
+        "schema": "afab44bd42824f49979a4d9753021077b311defcd2065e35514ad4ec85d76da7"
+      },
+      {
+        "id": "cent-rounding",
+        "stages": "8ea425615188f74b5d88c88e11b567404b7188c787e5f52a10364288ccc60696",
+        "query": "6fe03e9c012b96ebc65a98b3b9cc6f5fd8f8ee448adaaa50b741c8738abcf449",
+        "taskContext": "5da158f3d299e58ed559e8035c32ecc1ebf90a596e7d038a0a82e3f72cc6c636",
+        "source": "15cdee13a84777a48b4129cdd63bebf0b25e591b8430a70d70aebcc78e2d55a6",
+        "tests": "d45133ba12f8501895a29696f4478cf115d8555f5628188dab1411793aedea31",
+        "expectedSource": "15f998a2fddc8a27083c050e662f5eed66c67e9ce8a486b1972021230cc14521",
+        "expectedFacts": "80f317e07bd4081a7a5c0b40a643f7117af4f9db9a7ea91f44bdc292a22f3fe9",
+        "schema": "5c682ddf5033df0e1d3bf1ade34dd678ea18d7c47832a8ef516dbb6851899a8e"
+      },
+      {
+        "id": "reservation-ledger",
+        "stages": "0012801d341fbdabed344695cfee0a1406ac197225f2a1c4fbc6406fdbc83307",
+        "query": "3a955cbcb7e6dd71e48af7197f38ff58c01baf0385249cb72e27e08c15834412",
+        "taskContext": "4b16a47790161c7b25d21c6b96d884fd7d37c16953bb6aa5a5aac113fd75eb08",
+        "source": "5cb0dbe4f49ce0bed170e2d2e7c58b0ff5bfb2d2afa86e0aad1512e2a63ff0ae",
+        "tests": "042fa33cff3c9b2c5e78436a8f03ab8a2413cd870184014052d199f9cc4bd02a",
+        "expectedSource": "cbda4735cd00a03b10bf6bd24a71a2d0ac6118753e32bc89e765062867e650f9",
+        "expectedFacts": "0c313a86a04bbd96998b305c9baad6bc4a24d714c8655e8b6196586ba55a42ef",
+        "schema": "1002db888ee90f4ffb2fce7988fbbe5e7ef4d6003eec8cb301e01c221119ca58"
+      },
+      {
+        "id": "csv-identifiers",
+        "stages": "4e21edeace04225e85dcaab088855e9ad9cdbd650786abd435f89b66640d1215",
+        "query": "230ed0116ad96be7429a0bd67a8a4f2906e3a94d14eabc239277f5ccbc05a37e",
+        "taskContext": "950381b7f46de78db389528709a68dc121349eac903c1ccab3ae4ce90edf2b87",
+        "source": "321351381214d67d30a3573cc81ef4ddefbb1889ff47164b0d89bcdc590ccd64",
+        "tests": "a10aa0c61f6ab59698185064fb1d24dcb7315133cc3662f92e09fe56bfaf3110",
+        "expectedSource": "87de7af8b0cc726751c58f8fe06abfa4f0676f324150279d6473e6864ca526df",
+        "expectedFacts": "e2b93d90c4706d9e58db9dc762f9f661ecf71d6f89196bb77eb3a39f99d66932",
+        "schema": "7bd558c36b4b9c770ea3bd3d0314e5d896a31ee13a9b1bff4ee2806a90554414"
+      }
+    ],
+    "implementationHashes": {
+      "heldout-eval.mjs": "2da6c51c7f84bba53ebcf403cf7a7354284264235cc5096b5e5768a63fba5153",
+      "heldout-fixtures.mjs": "1dacc7240cb179331a7750e6caaad46db39c0d275cc902b9ff35b3f9abc9d23a",
+      "heldout-code-worker.mjs": "51943c56da48f446948ee8ea5ec362135e15e77647db996d002da0116acba819",
+      "codex-eval-client.mjs": "a33293ac150504a0ac83304ef30e2aa7c174715b4b27e4f5ddc1d26ec2ee451d",
+      "paired-eval.mjs": "ce03456d7a9b1082400ea88d68913c2b5996a9f4bffbdc3c67dc81737b58b590",
+      "../dist/search.js": "e40b1650b07779d7eb9fec9c6c0539a09462f828b30504cb5b018cd81b3135f5",
+      "../dist/archive.js": "a5a033f8db0578c9637270f5c8a1912711c8fe07b9eca58876d239235ad02aa6",
+      "../dist/evidence.js": "823618e49a13f1760209497b1104e2e196709aaf08490c1e410806f2a2015fac",
+      "../dist/client.js": "e6b33c0e516d96faa06e93353b142f2ef797c74ccfc02196b8c92810f0da6424",
+      "../dist/request.js": "4669e12f0d389ac4b9da63cfb9fa576bf32d3aff21bb68910c916d3fe777e0e9"
+    }
+  },
+  "invalidation": {
+    "reason": "Visible cursor/retry input contracts omitted details required by hidden code tests; scores cannot support an outcome comparison.",
+    "completedContinuations": 12,
+    "remainingFourCasesHaveZeroContinuations": true,
+    "productionRerankerUnchanged": true
+  },
+  "jevRequests": 6,
+  "summary": {
+    "native-reference": {
+      "runs": 4,
+      "fullyCorrect": 0,
+      "codePassed": 13,
+      "codeTotal": 32,
+      "factCorrect": 12,
+      "factTotal": 12,
+      "regressionFailures": 6,
+      "recoveryCalls": 0,
+      "duplicateCalls": 0,
+      "answerLatencyMs": 69545,
+      "rankingLatencyMs": 0
+    },
+    "local": {
+      "runs": 4,
+      "fullyCorrect": 0,
+      "codePassed": 7,
+      "codeTotal": 32,
+      "factCorrect": 12,
+      "factTotal": 12,
+      "regressionFailures": 8,
+      "recoveryCalls": 0,
+      "duplicateCalls": 0,
+      "answerLatencyMs": 68406,
+      "rankingLatencyMs": 0
+    },
+    "jev": {
+      "runs": 4,
+      "fullyCorrect": 0,
+      "codePassed": 10,
+      "codeTotal": 32,
+      "factCorrect": 12,
+      "factTotal": 12,
+      "regressionFailures": 7,
+      "recoveryCalls": 0,
+      "duplicateCalls": 0,
+      "answerLatencyMs": 54952,
+      "rankingLatencyMs": 1699.1399999999999
+    }
+  },
+  "cases": [
+    {
+      "id": "cursor-window",
+      "historyChars": 53283,
+      "candidateCount": 20,
+      "candidateHash": "48d9e247775b112c2d428e735c7f942a1e89354cf5419a1bb7a068a52fce49a3",
+      "candidateIds": [
+        "f806a9bad5be862d3a6ec69bc9ffb21566635352ed6c30bae88a372cd8ec21cf",
+        "fc170552219b2736ef6d3001881d0149d7119541c9c15504d406d583dd14aa5f",
+        "9755d7c2f7d29d59dfb9e9a23f88f208d9f796405cce8775afc046bb0f90ed0d",
+        "32eaed4dc8001438444e9ef4c34707b05627aef00a261d34d1f37d61c11ef067",
+        "5fddfb153ac1e9b96c77d64929be13c2ae0b344e63be59f11a564b07674ef9c8",
+        "a6e651b64c3dd1466ac8044504ed2fba5f4b19c75bcaf75f28e25ee135d5d31b",
+        "6f58fe7451a043cdcdc91179679c73cf84697575b78cee334b9d5b311a5ba254",
+        "0ef5a7755a6aec5fbc3d02c0b74cf9d96904a2ca2789ee8904689d8b6be85514",
+        "4e5ce2b019c79a2a4e78bcc0f712df33d2a114d9a9ad93f151465cb844f44150",
+        "3f80a2ca9d4f2a7604b465991f6cbeca45312ab38acb6fc69258bbd74cea542a",
+        "6b61154902ebc85ee55403d79f38aa529743e0c1d22fff6682b22a908536c200",
+        "686c165cb4d9d898df934939d463f122592d1af0959738ce2bc57a241d67106a",
+        "65874103ed294ba697726e45d95814c0634d16122d904659403daf8c8f497ea9",
+        "ec23a73a571a789f7130c2b86c38816a94ecadf49408dc5944b955bd86561a5a",
+        "14ebc0247d40065d7c7d1d1880c3f5933c4d0669a35343ac18148c8e2c39ca1e",
+        "3525ede9e32f05b2829465ffdccefab5d0e4c0096aa829a299f240f17f9d54f3",
+        "1a727fccf0ac75c02d8c05f0b81d5553e881c658e987948951ee7bc6abbfa3f4",
+        "b635a2bb7c66deaf93ba0f10e96cd1f1aa97f6723ae267533ea762ad54000a63",
+        "d71897f2f0cf3e4b0da9e43011fad7b11ee78f07d6e5f5ef4ce29419bf9463b2",
+        "4c053aa8bf95b7705640776b2e440f788b7336e0a2934f43de8a49fedefc6138"
+      ],
+      "targetRecords": 4,
+      "targetCandidates": 3,
+      "factSources": {
+        "pageSize": "08ce96f35fd823ed4e34896666b7c5e852ceeb4a33b47106e2c2cbbd3f17dc8b",
+        "startCursor": "0ef5a7755a6aec5fbc3d02c0b74cf9d96904a2ca2789ee8904689d8b6be85514",
+        "terminalCursor": "b635a2bb7c66deaf93ba0f10e96cd1f1aa97f6723ae267533ea762ad54000a63"
+      },
+      "scoredFactsInCandidates": [
+        "startCursor",
+        "terminalCursor"
+      ],
+      "jev": {
+        "calls": 1,
+        "latencyMs": 693.3252,
+        "requestChars": 23802,
+        "usage": {
+          "input_tokens": 8715,
+          "output_tokens": 414
+        },
+        "model": "jev-1.13.0"
+      },
+      "rankings": {
+        "local": [
+          "f806a9bad5be862d3a6ec69bc9ffb21566635352ed6c30bae88a372cd8ec21cf",
+          "fc170552219b2736ef6d3001881d0149d7119541c9c15504d406d583dd14aa5f",
+          "9755d7c2f7d29d59dfb9e9a23f88f208d9f796405cce8775afc046bb0f90ed0d",
+          "32eaed4dc8001438444e9ef4c34707b05627aef00a261d34d1f37d61c11ef067",
+          "5fddfb153ac1e9b96c77d64929be13c2ae0b344e63be59f11a564b07674ef9c8",
+          "a6e651b64c3dd1466ac8044504ed2fba5f4b19c75bcaf75f28e25ee135d5d31b",
+          "6f58fe7451a043cdcdc91179679c73cf84697575b78cee334b9d5b311a5ba254",
+          "0ef5a7755a6aec5fbc3d02c0b74cf9d96904a2ca2789ee8904689d8b6be85514",
+          "4e5ce2b019c79a2a4e78bcc0f712df33d2a114d9a9ad93f151465cb844f44150",
+          "3f80a2ca9d4f2a7604b465991f6cbeca45312ab38acb6fc69258bbd74cea542a",
+          "6b61154902ebc85ee55403d79f38aa529743e0c1d22fff6682b22a908536c200",
+          "686c165cb4d9d898df934939d463f122592d1af0959738ce2bc57a241d67106a",
+          "65874103ed294ba697726e45d95814c0634d16122d904659403daf8c8f497ea9",
+          "ec23a73a571a789f7130c2b86c38816a94ecadf49408dc5944b955bd86561a5a",
+          "14ebc0247d40065d7c7d1d1880c3f5933c4d0669a35343ac18148c8e2c39ca1e",
+          "3525ede9e32f05b2829465ffdccefab5d0e4c0096aa829a299f240f17f9d54f3",
+          "1a727fccf0ac75c02d8c05f0b81d5553e881c658e987948951ee7bc6abbfa3f4",
+          "b635a2bb7c66deaf93ba0f10e96cd1f1aa97f6723ae267533ea762ad54000a63",
+          "d71897f2f0cf3e4b0da9e43011fad7b11ee78f07d6e5f5ef4ce29419bf9463b2",
+          "4c053aa8bf95b7705640776b2e440f788b7336e0a2934f43de8a49fedefc6138"
+        ],
+        "jev": [
+          "b635a2bb7c66deaf93ba0f10e96cd1f1aa97f6723ae267533ea762ad54000a63",
+          "fc170552219b2736ef6d3001881d0149d7119541c9c15504d406d583dd14aa5f",
+          "0ef5a7755a6aec5fbc3d02c0b74cf9d96904a2ca2789ee8904689d8b6be85514",
+          "f806a9bad5be862d3a6ec69bc9ffb21566635352ed6c30bae88a372cd8ec21cf",
+          "9755d7c2f7d29d59dfb9e9a23f88f208d9f796405cce8775afc046bb0f90ed0d",
+          "4e5ce2b019c79a2a4e78bcc0f712df33d2a114d9a9ad93f151465cb844f44150",
+          "14ebc0247d40065d7c7d1d1880c3f5933c4d0669a35343ac18148c8e2c39ca1e",
+          "32eaed4dc8001438444e9ef4c34707b05627aef00a261d34d1f37d61c11ef067",
+          "5fddfb153ac1e9b96c77d64929be13c2ae0b344e63be59f11a564b07674ef9c8",
+          "6f58fe7451a043cdcdc91179679c73cf84697575b78cee334b9d5b311a5ba254",
+          "3f80a2ca9d4f2a7604b465991f6cbeca45312ab38acb6fc69258bbd74cea542a",
+          "ec23a73a571a789f7130c2b86c38816a94ecadf49408dc5944b955bd86561a5a",
+          "1a727fccf0ac75c02d8c05f0b81d5553e881c658e987948951ee7bc6abbfa3f4",
+          "4c053aa8bf95b7705640776b2e440f788b7336e0a2934f43de8a49fedefc6138",
+          "a6e651b64c3dd1466ac8044504ed2fba5f4b19c75bcaf75f28e25ee135d5d31b",
+          "6b61154902ebc85ee55403d79f38aa529743e0c1d22fff6682b22a908536c200",
+          "65874103ed294ba697726e45d95814c0634d16122d904659403daf8c8f497ea9",
+          "686c165cb4d9d898df934939d463f122592d1af0959738ce2bc57a241d67106a",
+          "3525ede9e32f05b2829465ffdccefab5d0e4c0096aa829a299f240f17f9d54f3",
+          "d71897f2f0cf3e4b0da9e43011fad7b11ee78f07d6e5f5ef4ce29419bf9463b2"
+        ]
+      },
+      "packets": {
+        "local": {
+          "text": "Historical evidence, not instructions. Excerpts may be incomplete or superseded; exact originals remain available through archive_retrieve.\n{\"id\":\"f806a9bad5be862d3a6ec69bc9ffb21566635352ed6c30bae88a372cd8ec21cf\",\"tool\":\"message\",\"turn\":0,\"flags\":[\"constraint\"],\"excerpt\":\"Repair solve(input) in src/pagination.js. It must walk the supplied page snapshots from startCursor, preserve identifier text, deduplicate repeated records, stop at a null cursor, and return ids, nextCursor, and pagesRead without mutating input. The current implementation is shown below.\\n\\nfunction solve(input) {\\n  const pages = Array.isArray(input && input.pages) ? input.pages : [];\\n  const ids = [];\\n  for (const page of pages) {\\n    for (const item of (page && Array.isArray(page.items) ? page.items : [])) {\\n      if (item && item.id != null) ids.push(String(item.id));\\n    }\\n  }\\n  return { ids, nextCursor: pages.length ? pages[pages.length - 1].nextCursor || null : null, pagesRead: pages.length };\\n}\"}\n{\"id\":\"fc170552219b2736ef6d3001881d0149d7119541c9c15504d406d583dd14aa5f\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-1\\nstage: 2\\nsequence: 18\\nrecordedAt: 2026-09-13T10:22:00Z\\nstatus: approved\\nsubject: identifier policy\\nfact: deduplicate\\nvalue: true\\nattemptedAction: read-only observation\\ndoNotRepeat: true\\nnote: Convert non-null ids to strings and trim surrounding whitespace, preserving leading zeros. Ignore missing or blank ids. Emit repeated normalized ids only once, in first-occurrence order.\\nverification: Read-only evidence for the cursor pagination helper contract; later records supersede earlier observations only when they say so explicitly.\"}\n{\"id\":\"9755d7c2f7d29d59dfb9e9a23f88f208d9f796405cce8775afc046bb0f90ed0d\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-1\\nstage: 3\\nsequence: 20\\nstatus: warning\\nobservedAt: 2026-09-12T10:20:00Z\\nsummary: A historical test artifact is retained for audit and does not change runtime behavior.\\ndetails: The bounded lookup returned a stable read-only result for sample 1-3-21; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: unit-test-index\"}\n{\"id\":\"32eaed4dc8001438444e9ef4c34707b05627aef00a261d34d1f37d61c11ef067\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-1\\nstage: 3\\nsequence: 13\\nstatus: observed\\nobservedAt: 2026-09-12T12:23:00Z\\nsummary: A historical test artifact is retained for audit and does not change runtime behavior.\\ndetails: The bounded lookup returned a stable read-only result for sample 1-3-14; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: unit-test-index\"}\n{\"id\":\"5fddfb153ac1e9b96c77d64929be13c2ae0b344e63be59f11a564b07674ef9c8\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-1\\nstage: 3\\nsequence: 6\\nstatus: observed\\nobservedAt: 2026-09-12T14:26:00Z\\nsummary: A historical test artifact is retained for audit and does not change runtime behavior.\\ndetails: The bounded lookup returned a stable read-only result for sample 1-3-7; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: stale-cache-review\"}\n{\"id\":\"a6e651b64c3dd1466ac8044504ed2fba5f4b19c75bcaf75f28e25ee135d5d31b\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-1\\nstage: 2\\nsequence: 21\\nstatus: observed\\nobservedAt: 2026-09-11T11:21:00Z\\nsummary: A historical test artifact is retained for audit and does not change runtime behavior.\\ndetails: The bounded lookup returned a stable read-only result for sample 1-2-22; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: stale-cache-review\"}\n{\"id\":\"6f58fe7451a043cdcdc91179679c73cf84697575b78cee334b9d5b311a5ba254\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-1\\nstage: 2\\nsequence: 14\\nstatus: observed\\nobservedAt: 2026-09-11T13:24:00Z\\nsummary: A historical test artifact is retained for audit and does not change runtime behavior.\\ndetails: The bounded lookup returned a stable read-only result for sample 1-2-15; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: unit-test-index\"}\n{\"id\":\"0ef5a7755a6aec5fbc3d02c0b74cf9d96904a2ca2789ee8904689d8b6be85514\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-1\\nstage: 2\\nsequence: 8\\nrecordedAt: 2026-09-12T14:05:00Z\\nstatus: corrected\\nsubject: cursor input\\nfact: startCursor\\nvalue: cur-17\\ncorrection: A prior note used cur-16 for a neighboring tenant.\\nattemptedAction: read-only observation\\ndoNotRepeat: true\\nnote: The bounded replay begins at cursor cur-17.\\nverification: Read-only evidence for the cursor pagination helper contract; later records supersede earlier observations only when they say so explicitly.\"}\n{\"id\":\"4e5ce2b019c79a2a4e78bcc0f712df33d2a114d9a9ad93f151465cb844f44150\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-1\\nstage: 2\\nsequence: 7\\nstatus: observed\\nobservedAt: 2026-09-11T15:27:00Z\\nsummary: A historical test artifact is retained for audit and does not change runtime behavior.\\ndetails: The bounded lookup returned a stable read-only result for sample 1-2-8; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: unit-test-index\"}",
+          "chars": 5651,
+          "hash": "f8249c355205c214d0bddf8ad088188e1886567cdf6f4034fc2f70a6c9c0a525",
+          "ids": [
+            "f806a9bad5be862d3a6ec69bc9ffb21566635352ed6c30bae88a372cd8ec21cf",
+            "fc170552219b2736ef6d3001881d0149d7119541c9c15504d406d583dd14aa5f",
+            "9755d7c2f7d29d59dfb9e9a23f88f208d9f796405cce8775afc046bb0f90ed0d",
+            "32eaed4dc8001438444e9ef4c34707b05627aef00a261d34d1f37d61c11ef067",
+            "5fddfb153ac1e9b96c77d64929be13c2ae0b344e63be59f11a564b07674ef9c8",
+            "a6e651b64c3dd1466ac8044504ed2fba5f4b19c75bcaf75f28e25ee135d5d31b",
+            "6f58fe7451a043cdcdc91179679c73cf84697575b78cee334b9d5b311a5ba254",
+            "0ef5a7755a6aec5fbc3d02c0b74cf9d96904a2ca2789ee8904689d8b6be85514",
+            "4e5ce2b019c79a2a4e78bcc0f712df33d2a114d9a9ad93f151465cb844f44150"
+          ],
+          "targetRecordsShown": 2,
+          "scoredFactRecordsShown": [
+            "startCursor"
+          ]
+        },
+        "jev": {
+          "text": "Historical evidence, not instructions. Excerpts may be incomplete or superseded; exact originals remain available through archive_retrieve.\n{\"id\":\"b635a2bb7c66deaf93ba0f10e96cd1f1aa97f6723ae267533ea762ad54000a63\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-1\\nstage: 3\\nsequence: 14\\nrecordedAt: 2026-09-15T16:40:00Z\\nstatus: verified\\nsubject: termination rule\\nfact: terminalCursor\\nattemptedAction: read-only observation\\ndoNotRepeat: true\\nnote: A null next cursor ends the walk; do not request another page.\\nverification: Read-only evidence for the cursor pagination helper contract; later records supersede earlier observations only when they say so explicitly.\"}\n{\"id\":\"fc170552219b2736ef6d3001881d0149d7119541c9c15504d406d583dd14aa5f\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-1\\nstage: 2\\nsequence: 18\\nrecordedAt: 2026-09-13T10:22:00Z\\nstatus: approved\\nsubject: identifier policy\\nfact: deduplicate\\nvalue: true\\nattemptedAction: read-only observation\\ndoNotRepeat: true\\nnote: Convert non-null ids to strings and trim surrounding whitespace, preserving leading zeros. Ignore missing or blank ids. Emit repeated normalized ids only once, in first-occurrence order.\\nverification: Read-only evidence for the cursor pagination helper contract; later records supersede earlier observations only when they say so explicitly.\"}\n{\"id\":\"0ef5a7755a6aec5fbc3d02c0b74cf9d96904a2ca2789ee8904689d8b6be85514\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-1\\nstage: 2\\nsequence: 8\\nrecordedAt: 2026-09-12T14:05:00Z\\nstatus: corrected\\nsubject: cursor input\\nfact: startCursor\\nvalue: cur-17\\ncorrection: A prior note used cur-16 for a neighboring tenant.\\nattemptedAction: read-only observation\\ndoNotRepeat: true\\nnote: The bounded replay begins at cursor cur-17.\\nverification: Read-only evidence for the cursor pagination helper contract; later records supersede earlier observations only when they say so explicitly.\"}\n{\"id\":\"f806a9bad5be862d3a6ec69bc9ffb21566635352ed6c30bae88a372cd8ec21cf\",\"tool\":\"message\",\"turn\":0,\"flags\":[\"constraint\"],\"excerpt\":\"Repair solve(input) in src/pagination.js. It must walk the supplied page snapshots from startCursor, preserve identifier text, deduplicate repeated records, stop at a null cursor, and return ids, nextCursor, and pagesRead without mutating input. The current implementation is shown below.\\n\\nfunction solve(input) {\\n  const pages = Array.isArray(input && input.pages) ? input.pages : [];\\n  const ids = [];\\n  for (const page of pages) {\\n    for (const item of (page && Array.isArray(page.items) ? page.items : [])) {\\n      if (item && item.id != null) ids.push(String(item.id));\\n    }\\n  }\\n  return { ids, nextCursor: pages.length ? pages[pages.length - 1].nextCursor || null : null, pagesRead: pages.length };\\n}\"}\n{\"id\":\"9755d7c2f7d29d59dfb9e9a23f88f208d9f796405cce8775afc046bb0f90ed0d\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-1\\nstage: 3\\nsequence: 20\\nstatus: warning\\nobservedAt: 2026-09-12T10:20:00Z\\nsummary: A historical test artifact is retained for audit and does not change runtime behavior.\\ndetails: The bounded lookup returned a stable read-only result for sample 1-3-21; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: unit-test-index\"}\n{\"id\":\"4e5ce2b019c79a2a4e78bcc0f712df33d2a114d9a9ad93f151465cb844f44150\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-1\\nstage: 2\\nsequence: 7\\nstatus: observed\\nobservedAt: 2026-09-11T15:27:00Z\\nsummary: A historical test artifact is retained for audit and does not change runtime behavior.\\ndetails: The bounded lookup returned a stable read-only result for sample 1-2-8; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: unit-test-index\"}\n{\"id\":\"14ebc0247d40065d7c7d1d1880c3f5933c4d0669a35343ac18148c8e2c39ca1e\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-1\\nstage: 3\\nsequence: 23\\nstatus: observed\\nobservedAt: 2026-09-12T13:23:00Z\\nsummary: The review found no write request, credential use, or dependency installation.\\ndetails: The bounded lookup returned a stable read-only result for sample 1-3-24; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: unit-test-index\"}\n{\"id\":\"32eaed4dc8001438444e9ef4c34707b05627aef00a261d34d1f37d61c11ef067\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-1\\nstage: 3\\nsequence: 13\\nstatus: observed\\nobservedAt: 2026-09-12T12:23:00Z\\nsummary: A historical test artifact is retained for audit and does not change runtime behavior.\\ndetails: The bounded lookup returned a stable read-only result for sample 1-3-14; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: unit-test-index\"}\n{\"id\":\"5fddfb153ac1e9b96c77d64929be13c2ae0b344e63be59f11a564b07674ef9c8\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-1\\nstage: 3\\nsequence: 6\\nstatus: observed\\nobservedAt: 2026-09-12T14:26:00Z\\nsummary: A historical test artifact is retained for audit and does not change runtime behavior.\\ndetails: The bounded lookup returned a stable read-only result for sample 1-3-7; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: stale-cache-review\"}",
+          "chars": 5662,
+          "hash": "7e9c24c1bb29fb13114968fe9ab7dc086e8a16e0fec9045dce7f4e0fab53f6c1",
+          "ids": [
+            "b635a2bb7c66deaf93ba0f10e96cd1f1aa97f6723ae267533ea762ad54000a63",
+            "fc170552219b2736ef6d3001881d0149d7119541c9c15504d406d583dd14aa5f",
+            "0ef5a7755a6aec5fbc3d02c0b74cf9d96904a2ca2789ee8904689d8b6be85514",
+            "f806a9bad5be862d3a6ec69bc9ffb21566635352ed6c30bae88a372cd8ec21cf",
+            "9755d7c2f7d29d59dfb9e9a23f88f208d9f796405cce8775afc046bb0f90ed0d",
+            "4e5ce2b019c79a2a4e78bcc0f712df33d2a114d9a9ad93f151465cb844f44150",
+            "14ebc0247d40065d7c7d1d1880c3f5933c4d0669a35343ac18148c8e2c39ca1e",
+            "32eaed4dc8001438444e9ef4c34707b05627aef00a261d34d1f37d61c11ef067",
+            "5fddfb153ac1e9b96c77d64929be13c2ae0b344e63be59f11a564b07674ef9c8"
+          ],
+          "targetRecordsShown": 3,
+          "scoredFactRecordsShown": [
+            "startCursor",
+            "terminalCursor"
+          ]
+        }
+      },
+      "checkpoints": [
+        {
+          "stage": 0,
+          "latencyMs": 9317,
+          "toolCalls": 0
+        },
+        {
+          "stage": 1,
+          "latencyMs": 5235,
+          "toolCalls": 0
+        },
+        {
+          "stage": 2,
+          "latencyMs": 4560,
+          "toolCalls": 0
+        }
+      ],
+      "compactions": [
+        {
+          "latencyMs": 8653,
+          "completed": true
+        },
+        {
+          "latencyMs": 12105,
+          "completed": true
+        },
+        {
+          "latencyMs": 18016,
+          "completed": true
+        }
+      ],
+      "continuations": [
+        {
+          "arm": "native-reference",
+          "repetition": 0,
+          "tools": [],
+          "promptHash": "81c786d71c7d5906c176f50da30ab9518cec9c1181526cacaefdb3985f736325",
+          "forkedFromBaseConfirmed": true,
+          "parsedAnswer": {
+            "source": "function solve(input) {\n  const pages = Array.isArray(input && input.pages) ? input.pages : [];\n  const byCursor = new Map();\n  for (const page of pages) {\n    if (page && page.cursor != null && !byCursor.has(page.cursor)) byCursor.set(page.cursor, page);\n  }\n  const ids = [];\n  const seen = new Set();\n  let cursor = input && input.startCursor != null ? input.startCursor : null;\n  let nextCursor = null;\n  let pagesRead = 0;\n  while (cursor !== null) {\n    const page = byCursor.get(cursor);\n    if (!page) break;\n    pagesRead++;\n    for (const item of Array.isArray(page.items) ? page.items : []) {\n      if (item && item.id != null) {\n        const id = String(item.id);\n        if (!seen.has(id)) {\n          seen.add(id);\n          ids.push(id);\n        }\n      }\n    }\n    nextCursor = page.nextCursor === null ? null : page.nextCursor;\n    if (nextCursor === null) break;\n    cursor = nextCursor;\n  }\n  return { ids, nextCursor, pagesRead };\n}",
+            "facts": {
+              "pageSize": 3,
+              "startCursor": "cur-17",
+              "terminalCursor": null
+            }
+          },
+          "score": {
+            "fullyCorrect": false,
+            "facts": {
+              "correctFields": 3,
+              "totalFields": 3,
+              "fullyCorrect": true
+            },
+            "code": {
+              "passed": 2,
+              "total": 8,
+              "allPassed": false,
+              "failedTests": [
+                "first-page",
+                "dedupe",
+                "empty-counts",
+                "missing-id",
+                "unmatched-cursor",
+                "early-stop"
+              ],
+              "regressionFailures": 2
+            }
+          },
+          "latencyMs": 19024,
+          "beforeUsage": null,
+          "reportedUsage": {
+            "totalTokens": 82686,
+            "inputTokens": 80172,
+            "cachedInputTokens": 5632,
+            "cacheWriteInputTokens": 0,
+            "outputTokens": 2514,
+            "reasoningOutputTokens": 1798
+          },
+          "reportedToolCalls": 0
+        },
+        {
+          "arm": "local",
+          "repetition": 0,
+          "tools": [],
+          "promptHash": "f4140c4c381f4f7b9f8e5d6d27e350e0dcd7976a65a56e4b8eae5b8b99a6c7cf",
+          "forkedFromBaseConfirmed": true,
+          "parsedAnswer": {
+            "source": "function solve(input) {\n  const pages = Array.isArray(input && input.pages) ? input.pages : [];\n  const byCursor = new Map();\n  for (const page of pages) {\n    if (!page || typeof page !== \"object\") continue;\n    const cursor = page.cursor !== undefined ? page.cursor : page.startCursor;\n    if (cursor !== undefined && !byCursor.has(cursor)) byCursor.set(cursor, page);\n  }\n\n  const ids = [];\n  const seen = new Set();\n  const visited = new Set();\n  let cursor = input && input.startCursor;\n  let pagesRead = 0;\n  let nextCursor = null;\n\n  while (cursor !== null && cursor !== undefined && !visited.has(cursor)) {\n    visited.add(cursor);\n    const page = byCursor.get(cursor);\n    if (!page) break;\n    pagesRead++;\n    const items = Array.isArray(page.items) ? page.items : [];\n    for (const item of items) {\n      if (!item || item.id == null) continue;\n      const id = String(item.id).trim();\n      if (id && !seen.has(id)) {\n        seen.add(id);\n        ids.push(id);\n      }\n    }\n    nextCursor = page.nextCursor == null ? null : page.nextCursor;\n    cursor = nextCursor;\n  }\n\n  return { ids, nextCursor, pagesRead };\n}",
+            "facts": {
+              "pageSize": 3,
+              "startCursor": "cur-17",
+              "terminalCursor": null
+            }
+          },
+          "score": {
+            "fullyCorrect": false,
+            "facts": {
+              "correctFields": 3,
+              "totalFields": 3,
+              "fullyCorrect": true
+            },
+            "code": {
+              "passed": 2,
+              "total": 8,
+              "allPassed": false,
+              "failedTests": [
+                "first-page",
+                "dedupe",
+                "empty-counts",
+                "missing-id",
+                "unmatched-cursor",
+                "early-stop"
+              ],
+              "regressionFailures": 2
+            }
+          },
+          "latencyMs": 18369,
+          "beforeUsage": null,
+          "reportedUsage": {
+            "totalTokens": 84304,
+            "inputTokens": 81788,
+            "cachedInputTokens": 5632,
+            "cacheWriteInputTokens": 0,
+            "outputTokens": 2516,
+            "reasoningOutputTokens": 1754
+          },
+          "reportedToolCalls": 0
+        },
+        {
+          "arm": "jev",
+          "repetition": 0,
+          "tools": [],
+          "promptHash": "396ea498d6e3272ecc247799347f5da565a7ec5bfdccee9e8bcbb29c237fea1e",
+          "forkedFromBaseConfirmed": true,
+          "parsedAnswer": {
+            "source": "function solve(input) {\n  const pages = Array.isArray(input && input.pages) ? input.pages : [];\n  const ids = [];\n  const seen = new Set();\n  let cursor = input && input.startCursor != null ? input.startCursor : null;\n  let pagesRead = 0;\n  const visited = new Set();\n\n  while (cursor !== null && !visited.has(cursor)) {\n    visited.add(cursor);\n    const page = pages.find((candidate) => candidate && (candidate.cursor === cursor || candidate.startCursor === cursor));\n    if (!page) break;\n\n    pagesRead += 1;\n    for (const item of Array.isArray(page.items) ? page.items : []) {\n      if (!item || item.id == null) continue;\n      const id = String(item.id).trim();\n      if (id && !seen.has(id)) {\n        seen.add(id);\n        ids.push(id);\n      }\n    }\n    cursor = page.nextCursor === null ? null : page.nextCursor;\n  }\n\n  return { ids, nextCursor: cursor === undefined ? null : cursor, pagesRead };\n}",
+            "facts": {
+              "pageSize": 3,
+              "startCursor": "cur-17",
+              "terminalCursor": null
+            }
+          },
+          "score": {
+            "fullyCorrect": false,
+            "facts": {
+              "correctFields": 3,
+              "totalFields": 3,
+              "fullyCorrect": true
+            },
+            "code": {
+              "passed": 3,
+              "total": 8,
+              "allPassed": false,
+              "failedTests": [
+                "first-page",
+                "dedupe",
+                "empty-counts",
+                "missing-id",
+                "early-stop"
+              ],
+              "regressionFailures": 2
+            }
+          },
+          "latencyMs": 15060,
+          "beforeUsage": null,
+          "reportedUsage": {
+            "totalTokens": 84001,
+            "inputTokens": 81792,
+            "cachedInputTokens": 21760,
+            "cacheWriteInputTokens": 0,
+            "outputTokens": 2209,
+            "reasoningOutputTokens": 1516
+          },
+          "reportedToolCalls": 0
+        },
+        {
+          "arm": "local",
+          "repetition": 1,
+          "tools": [],
+          "promptHash": "f4140c4c381f4f7b9f8e5d6d27e350e0dcd7976a65a56e4b8eae5b8b99a6c7cf",
+          "forkedFromBaseConfirmed": true,
+          "parsedAnswer": {
+            "source": "function solve(input) {\n  const pages = Array.isArray(input && input.pages) ? input.pages : [];\n  const byCursor = new Map();\n  for (const page of pages) {\n    if (page && page.cursor != null && !byCursor.has(page.cursor)) byCursor.set(page.cursor, page);\n  }\n  const ids = [];\n  const seen = new Set();\n  const visited = new Set();\n  let cursor = input && input.startCursor != null ? input.startCursor : null;\n  let nextCursor = null;\n  let pagesRead = 0;\n  while (cursor !== null && !visited.has(cursor)) {\n    visited.add(cursor);\n    const page = byCursor.get(cursor);\n    if (!page) break;\n    pagesRead++;\n    const items = Array.isArray(page.items) ? page.items : [];\n    for (const item of items) {\n      if (!item || item.id == null) continue;\n      const id = String(item.id).trim();\n      if (id && !seen.has(id)) {\n        seen.add(id);\n        ids.push(id);\n      }\n    }\n    nextCursor = page.nextCursor == null ? null : page.nextCursor;\n    cursor = nextCursor;\n  }\n  return { ids, nextCursor, pagesRead };\n}",
+            "facts": {
+              "pageSize": 3,
+              "startCursor": "cur-17",
+              "terminalCursor": null
+            }
+          },
+          "score": {
+            "fullyCorrect": false,
+            "facts": {
+              "correctFields": 3,
+              "totalFields": 3,
+              "fullyCorrect": true
+            },
+            "code": {
+              "passed": 2,
+              "total": 8,
+              "allPassed": false,
+              "failedTests": [
+                "first-page",
+                "dedupe",
+                "empty-counts",
+                "missing-id",
+                "unmatched-cursor",
+                "early-stop"
+              ],
+              "regressionFailures": 2
+            }
+          },
+          "latencyMs": 19274,
+          "beforeUsage": null,
+          "reportedUsage": {
+            "totalTokens": 84323,
+            "inputTokens": 81788,
+            "cachedInputTokens": 5632,
+            "cacheWriteInputTokens": 0,
+            "outputTokens": 2535,
+            "reasoningOutputTokens": 1798
+          },
+          "reportedToolCalls": 0
+        },
+        {
+          "arm": "jev",
+          "repetition": 1,
+          "tools": [],
+          "promptHash": "396ea498d6e3272ecc247799347f5da565a7ec5bfdccee9e8bcbb29c237fea1e",
+          "forkedFromBaseConfirmed": true,
+          "parsedAnswer": {
+            "source": "function solve(input) {\n  const pages = Array.isArray(input && input.pages) ? input.pages : [];\n  const ids = [];\n  const seen = new Set();\n  let cursor = input && input.startCursor != null ? input.startCursor : null;\n  let pagesRead = 0;\n\n  while (cursor !== null) {\n    const page = pages.find((candidate) => candidate && candidate.cursor === cursor);\n    if (!page) break;\n    pagesRead += 1;\n    for (const item of Array.isArray(page.items) ? page.items : []) {\n      if (!item || item.id == null) continue;\n      const id = String(item.id).trim();\n      if (id && !seen.has(id)) {\n        seen.add(id);\n        ids.push(id);\n      }\n    }\n    cursor = page.nextCursor == null ? null : page.nextCursor;\n  }\n\n  return { ids, nextCursor: cursor, pagesRead };\n}",
+            "facts": {
+              "pageSize": 3,
+              "startCursor": "cur-17",
+              "terminalCursor": null
+            }
+          },
+          "score": {
+            "fullyCorrect": false,
+            "facts": {
+              "correctFields": 3,
+              "totalFields": 3,
+              "fullyCorrect": true
+            },
+            "code": {
+              "passed": 3,
+              "total": 8,
+              "allPassed": false,
+              "failedTests": [
+                "first-page",
+                "dedupe",
+                "empty-counts",
+                "missing-id",
+                "early-stop"
+              ],
+              "regressionFailures": 2
+            }
+          },
+          "latencyMs": 12388,
+          "beforeUsage": null,
+          "reportedUsage": {
+            "totalTokens": 83810,
+            "inputTokens": 81792,
+            "cachedInputTokens": 5632,
+            "cacheWriteInputTokens": 0,
+            "outputTokens": 2018,
+            "reasoningOutputTokens": 1360
+          },
+          "reportedToolCalls": 0
+        },
+        {
+          "arm": "native-reference",
+          "repetition": 1,
+          "tools": [],
+          "promptHash": "81c786d71c7d5906c176f50da30ab9518cec9c1181526cacaefdb3985f736325",
+          "forkedFromBaseConfirmed": true,
+          "parsedAnswer": {
+            "source": "function solve(input) {\n  const pages = Array.isArray(input && input.pages) ? input.pages : [];\n  const ids = [];\n  const seen = new Set();\n  let cursor = input && input.startCursor;\n  let pagesRead = 0;\n  let nextCursor = null;\n  const visited = new Set();\n\n  while (cursor !== null && !visited.has(cursor)) {\n    visited.add(cursor);\n    const page = pages.find((candidate) => candidate && (candidate.cursor === cursor || candidate.startCursor === cursor));\n    if (!page) break;\n    pagesRead += 1;\n    for (const item of Array.isArray(page.items) ? page.items : []) {\n      if (!item || item.id == null) continue;\n      const id = String(item.id).trim();\n      if (id && !seen.has(id)) {\n        seen.add(id);\n        ids.push(id);\n      }\n    }\n    nextCursor = page.nextCursor;\n    cursor = nextCursor;\n  }\n\n  return { ids, nextCursor: nextCursor === null ? null : nextCursor, pagesRead };\n}",
+            "facts": {
+              "pageSize": 3,
+              "startCursor": "cur-17",
+              "terminalCursor": null
+            }
+          },
+          "score": {
+            "fullyCorrect": false,
+            "facts": {
+              "correctFields": 3,
+              "totalFields": 3,
+              "fullyCorrect": true
+            },
+            "code": {
+              "passed": 7,
+              "total": 8,
+              "allPassed": false,
+              "failedTests": [
+                "unmatched-cursor"
+              ],
+              "regressionFailures": 0
+            }
+          },
+          "latencyMs": 18524,
+          "beforeUsage": null,
+          "reportedUsage": {
+            "totalTokens": 82657,
+            "inputTokens": 80172,
+            "cachedInputTokens": 8448,
+            "cacheWriteInputTokens": 0,
+            "outputTokens": 2485,
+            "reasoningOutputTokens": 1791
+          },
+          "reportedToolCalls": 0
+        }
+      ],
+      "baseIdHash": "926163337e6d2357a71bed70547a37d8915bec31769c97730a470dcf5ce4fad9"
+    },
+    {
+      "id": "retry-key",
+      "historyChars": 53176,
+      "candidateCount": 20,
+      "candidateHash": "924e82f747006e28af5852b5163ad9f1648e300191933d94514360edc409b41f",
+      "candidateIds": [
+        "d34c4c552f1e6dbed9f7aaa90c55eae381801b07618ba3f998e4e3e220aae679",
+        "886e23c697de60252b57d75c07b97c8a4730fa763ed38e2bc8428fba36850395",
+        "99d64d3f4728855b70b1836240b4594275d24fdc947d51459ebe47eb213bde24",
+        "43d49054112285f9ccd8ef63c4e0aef66bc1b55dd0a48cee768ecc6a5a80e1b3",
+        "81666f72183d263f762f6fa99507762025125ef3a9d718a199ce1f6b05d964c9",
+        "025d5846d8a5a7ae78c0dd65e23ba663da79d9faec7c0a2abb86cd8448a62920",
+        "bd9ebcbb985880f293483b806df43a5236bdaa170d9415822628fb0b0cefeee3",
+        "39c0aa5e83243d1f829827e93c474fcca0036f8214bdb68effe7a0b0f5aaf824",
+        "f7b633c1289ef9ac0f50242bea0012132b9e36da3435a0e3ba6ce74798d26b59",
+        "17490bd6aacb142dc5b8fc8ecd6122d04bc297095bc52cf45ace0904158bb233",
+        "6c78b31a10de9af2717a2c4d2dc62fe137db6d21d75c870ff6d866569665c5a1",
+        "86be4b33d2b7a4c014fc24ee579ea900fdf2fa28e901f636cdd170b30e6ef211",
+        "1bbcfce9f32c1ee795f705b5fdadfe3d8c51a8b81e37e576b853fbda4909fb67",
+        "4ea93512d5bf525ede3714a4cc3968524081f35d84ab5714d46029f1ee54c543",
+        "55cd064f0539840e5168d32c07c811d22a353500e23e56c2253479f14f4eafc7",
+        "ee2c61ef9bd52a0fe350f5edf8ad123070ffdff0831041604d606fd5848f9809",
+        "6a5f82f3ed28aeda4c2c5b51bbce542736290e6f5916bcd706e244541977f3e2",
+        "f91f738c71cab419325f3b0d8bbb979f18266a1d8fe04030aa66f2db6fc04d1a",
+        "94a2807e8cb977e7350827c1a05d00cd3f46bf6f7d71defef3486065f9a3e25b",
+        "a19fbe1812b56cefde9de5e93f3ff59325e7654792603f80bdd43b8f87c42f10"
+      ],
+      "targetRecords": 4,
+      "targetCandidates": 4,
+      "factSources": {
+        "maxAttempts": "43d49054112285f9ccd8ef63c4e0aef66bc1b55dd0a48cee768ecc6a5a80e1b3",
+        "baseDelayMs": "99d64d3f4728855b70b1836240b4594275d24fdc947d51459ebe47eb213bde24",
+        "retryAfterMs": "886e23c697de60252b57d75c07b97c8a4730fa763ed38e2bc8428fba36850395"
+      },
+      "scoredFactsInCandidates": [
+        "maxAttempts",
+        "baseDelayMs",
+        "retryAfterMs"
+      ],
+      "jev": {
+        "calls": 1,
+        "latencyMs": 156.2448,
+        "requestChars": 23610,
+        "usage": {
+          "input_tokens": 8672,
+          "output_tokens": 414
+        },
+        "model": "jev-1.13.0"
+      },
+      "rankings": {
+        "local": [
+          "d34c4c552f1e6dbed9f7aaa90c55eae381801b07618ba3f998e4e3e220aae679",
+          "886e23c697de60252b57d75c07b97c8a4730fa763ed38e2bc8428fba36850395",
+          "99d64d3f4728855b70b1836240b4594275d24fdc947d51459ebe47eb213bde24",
+          "43d49054112285f9ccd8ef63c4e0aef66bc1b55dd0a48cee768ecc6a5a80e1b3",
+          "81666f72183d263f762f6fa99507762025125ef3a9d718a199ce1f6b05d964c9",
+          "025d5846d8a5a7ae78c0dd65e23ba663da79d9faec7c0a2abb86cd8448a62920",
+          "bd9ebcbb985880f293483b806df43a5236bdaa170d9415822628fb0b0cefeee3",
+          "39c0aa5e83243d1f829827e93c474fcca0036f8214bdb68effe7a0b0f5aaf824",
+          "f7b633c1289ef9ac0f50242bea0012132b9e36da3435a0e3ba6ce74798d26b59",
+          "17490bd6aacb142dc5b8fc8ecd6122d04bc297095bc52cf45ace0904158bb233",
+          "6c78b31a10de9af2717a2c4d2dc62fe137db6d21d75c870ff6d866569665c5a1",
+          "86be4b33d2b7a4c014fc24ee579ea900fdf2fa28e901f636cdd170b30e6ef211",
+          "1bbcfce9f32c1ee795f705b5fdadfe3d8c51a8b81e37e576b853fbda4909fb67",
+          "4ea93512d5bf525ede3714a4cc3968524081f35d84ab5714d46029f1ee54c543",
+          "55cd064f0539840e5168d32c07c811d22a353500e23e56c2253479f14f4eafc7",
+          "ee2c61ef9bd52a0fe350f5edf8ad123070ffdff0831041604d606fd5848f9809",
+          "6a5f82f3ed28aeda4c2c5b51bbce542736290e6f5916bcd706e244541977f3e2",
+          "f91f738c71cab419325f3b0d8bbb979f18266a1d8fe04030aa66f2db6fc04d1a",
+          "94a2807e8cb977e7350827c1a05d00cd3f46bf6f7d71defef3486065f9a3e25b",
+          "a19fbe1812b56cefde9de5e93f3ff59325e7654792603f80bdd43b8f87c42f10"
+        ],
+        "jev": [
+          "43d49054112285f9ccd8ef63c4e0aef66bc1b55dd0a48cee768ecc6a5a80e1b3",
+          "d34c4c552f1e6dbed9f7aaa90c55eae381801b07618ba3f998e4e3e220aae679",
+          "886e23c697de60252b57d75c07b97c8a4730fa763ed38e2bc8428fba36850395",
+          "99d64d3f4728855b70b1836240b4594275d24fdc947d51459ebe47eb213bde24",
+          "81666f72183d263f762f6fa99507762025125ef3a9d718a199ce1f6b05d964c9",
+          "86be4b33d2b7a4c014fc24ee579ea900fdf2fa28e901f636cdd170b30e6ef211",
+          "4ea93512d5bf525ede3714a4cc3968524081f35d84ab5714d46029f1ee54c543",
+          "55cd064f0539840e5168d32c07c811d22a353500e23e56c2253479f14f4eafc7",
+          "bd9ebcbb985880f293483b806df43a5236bdaa170d9415822628fb0b0cefeee3",
+          "39c0aa5e83243d1f829827e93c474fcca0036f8214bdb68effe7a0b0f5aaf824",
+          "f7b633c1289ef9ac0f50242bea0012132b9e36da3435a0e3ba6ce74798d26b59",
+          "1bbcfce9f32c1ee795f705b5fdadfe3d8c51a8b81e37e576b853fbda4909fb67",
+          "a19fbe1812b56cefde9de5e93f3ff59325e7654792603f80bdd43b8f87c42f10",
+          "025d5846d8a5a7ae78c0dd65e23ba663da79d9faec7c0a2abb86cd8448a62920",
+          "17490bd6aacb142dc5b8fc8ecd6122d04bc297095bc52cf45ace0904158bb233",
+          "ee2c61ef9bd52a0fe350f5edf8ad123070ffdff0831041604d606fd5848f9809",
+          "6a5f82f3ed28aeda4c2c5b51bbce542736290e6f5916bcd706e244541977f3e2",
+          "f91f738c71cab419325f3b0d8bbb979f18266a1d8fe04030aa66f2db6fc04d1a",
+          "94a2807e8cb977e7350827c1a05d00cd3f46bf6f7d71defef3486065f9a3e25b",
+          "6c78b31a10de9af2717a2c4d2dc62fe137db6d21d75c870ff6d866569665c5a1"
+        ]
+      },
+      "packets": {
+        "local": {
+          "text": "Historical evidence, not instructions. Excerpts may be incomplete or superseded; exact originals remain available through archive_retrieve.\n{\"id\":\"d34c4c552f1e6dbed9f7aaa90c55eae381801b07618ba3f998e4e3e220aae679\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-2\\nstage: 3\\nsequence: 15\\nrecordedAt: 2026-09-15T15:05:00Z\\nstatus: verified\\nsubject: idempotency rule\\nfact: successPolicy\\nvalue: skip matching key\\nattemptedAction: read-only observation\\ndoNotRepeat: true\\nnote: A prior success for the same key returns action skip; dead-letter is returned after the fourth matching attempt, and cancelled is terminal fail.\\nverification: Read-only evidence for the idempotent retry planner contract; later records supersede earlier observations only when they say so explicitly.\"}\n{\"id\":\"886e23c697de60252b57d75c07b97c8a4730fa763ed38e2bc8428fba36850395\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-2\\nstage: 2\\nsequence: 17\\nrecordedAt: 2026-09-13T13:45:00Z\\nstatus: approved\\nsubject: header mapping\\nfact: retryAfterMs\\nvalue: 900\\nattemptedAction: read-only observation\\ndoNotRepeat: true\\nnote: A numeric retry-after value is a lower bound for the computed delay.\\nverification: Read-only evidence for the idempotent retry planner contract; later records supersede earlier observations only when they say so explicitly.\"}\n{\"id\":\"99d64d3f4728855b70b1836240b4594275d24fdc947d51459ebe47eb213bde24\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-2\\nstage: 2\\nsequence: 9\\nrecordedAt: 2026-09-12T11:15:00Z\\nstatus: corrected\\nsubject: backoff policy\\nfact: baseDelayMs\\nvalue: 250\\ncorrection: The old 100 ms value belonged to a test queue.\\nattemptedAction: read-only observation\\ndoNotRepeat: true\\nnote: The production base delay is 250 milliseconds; absent baseDelayMs defaults to 250.\\nverification: Read-only evidence for the idempotent retry planner contract; later records supersede earlier observations only when they say so explicitly.\"}\n{\"id\":\"43d49054112285f9ccd8ef63c4e0aef66bc1b55dd0a48cee768ecc6a5a80e1b3\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-2\\nstage: 1\\nsequence: 5\\nrecordedAt: 2026-09-10T08:30:00Z\\nstatus: observed\\nsubject: queue policy\\nfact: maxAttempts\\nvalue: 4\\nattemptedAction: read-only observation\\ndoNotRepeat: true\\nnote: Four matching attempts are allowed before the job moves to dead-letter; absent maxAttempts defaults to 4.\\nverification: Read-only evidence for the idempotent retry planner contract; later records supersede earlier observations only when they say so explicitly.\"}\n{\"id\":\"81666f72183d263f762f6fa99507762025125ef3a9d718a199ce1f6b05d964c9\",\"tool\":\"message\",\"turn\":0,\"flags\":[\"constraint\"],\"excerpt\":\"Repair solve(input) in src/retry.js. It returns {action,delayMs,key} for a retry queue. Only the matching idempotency key counts; succeeded work is skipped, attempts at max are dead-lettered, retry-after wins over exponential backoff, and unknown terminal status fails.\\n\\nfunction solve(input) {\\n  const events = Array.isArray(input && input.events) ? input.events : [];\\n  const last = events[events.length - 1] || {};\\n  return { action: last.status === 'ok' ? 'skip' : 'retry', delayMs: Number(input && input.baseDelayMs) || 0, key: input && input.idempotencyKey || null };\\n}\"}\n{\"id\":\"025d5846d8a5a7ae78c0dd65e23ba663da79d9faec7c0a2abb86cd8448a62920\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-2\\nstage: 3\\nsequence: 19\\nstatus: observed\\nobservedAt: 2026-09-12T09:29:00Z\\nsummary: A historical test artifact is retained for audit and does not change runtime behavior.\\ndetails: The bounded lookup returned a stable read-only result for sample 2-3-20; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: unit-test-index\"}\n{\"id\":\"bd9ebcbb985880f293483b806df43a5236bdaa170d9415822628fb0b0cefeee3\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-2\\nstage: 3\\nsequence: 12\\nstatus: observed\\nobservedAt: 2026-09-12T11:22:00Z\\nsummary: A historical test artifact is retained for audit and does not change runtime behavior.\\ndetails: The bounded lookup returned a stable read-only result for sample 2-3-13; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: stale-cache-review\"}\n{\"id\":\"39c0aa5e83243d1f829827e93c474fcca0036f8214bdb68effe7a0b0f5aaf824\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-2\\nstage: 3\\nsequence: 5\\nstatus: warning\\nobservedAt: 2026-09-12T13:25:00Z\\nsummary: A historical test artifact is retained for audit and does not change runtime behavior.\\ndetails: The bounded lookup returned a stable read-only result for sample 2-3-6; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: unit-test-index\"}\n{\"id\":\"f7b633c1289ef9ac0f50242bea0012132b9e36da3435a0e3ba6ce74798d26b59\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-2\\nstage: 2\\nsequence: 20\\nstatus: warning\\nobservedAt: 2026-09-11T10:20:00Z\\nsummary: A historical test artifact is retained for audit and does not change runtime behavior.\\ndetails: The bounded lookup returned a stable read-only result for sample 2-2-21; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: unit-test-index\"}",
+          "chars": 5620,
+          "hash": "ab996519a731972719254770401989b0e6ca626ae87c12dbe2f84d766cd0548e",
+          "ids": [
+            "d34c4c552f1e6dbed9f7aaa90c55eae381801b07618ba3f998e4e3e220aae679",
+            "886e23c697de60252b57d75c07b97c8a4730fa763ed38e2bc8428fba36850395",
+            "99d64d3f4728855b70b1836240b4594275d24fdc947d51459ebe47eb213bde24",
+            "43d49054112285f9ccd8ef63c4e0aef66bc1b55dd0a48cee768ecc6a5a80e1b3",
+            "81666f72183d263f762f6fa99507762025125ef3a9d718a199ce1f6b05d964c9",
+            "025d5846d8a5a7ae78c0dd65e23ba663da79d9faec7c0a2abb86cd8448a62920",
+            "bd9ebcbb985880f293483b806df43a5236bdaa170d9415822628fb0b0cefeee3",
+            "39c0aa5e83243d1f829827e93c474fcca0036f8214bdb68effe7a0b0f5aaf824",
+            "f7b633c1289ef9ac0f50242bea0012132b9e36da3435a0e3ba6ce74798d26b59"
+          ],
+          "targetRecordsShown": 4,
+          "scoredFactRecordsShown": [
+            "maxAttempts",
+            "baseDelayMs",
+            "retryAfterMs"
+          ]
+        },
+        "jev": {
+          "text": "Historical evidence, not instructions. Excerpts may be incomplete or superseded; exact originals remain available through archive_retrieve.\n{\"id\":\"43d49054112285f9ccd8ef63c4e0aef66bc1b55dd0a48cee768ecc6a5a80e1b3\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-2\\nstage: 1\\nsequence: 5\\nrecordedAt: 2026-09-10T08:30:00Z\\nstatus: observed\\nsubject: queue policy\\nfact: maxAttempts\\nvalue: 4\\nattemptedAction: read-only observation\\ndoNotRepeat: true\\nnote: Four matching attempts are allowed before the job moves to dead-letter; absent maxAttempts defaults to 4.\\nverification: Read-only evidence for the idempotent retry planner contract; later records supersede earlier observations only when they say so explicitly.\"}\n{\"id\":\"d34c4c552f1e6dbed9f7aaa90c55eae381801b07618ba3f998e4e3e220aae679\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-2\\nstage: 3\\nsequence: 15\\nrecordedAt: 2026-09-15T15:05:00Z\\nstatus: verified\\nsubject: idempotency rule\\nfact: successPolicy\\nvalue: skip matching key\\nattemptedAction: read-only observation\\ndoNotRepeat: true\\nnote: A prior success for the same key returns action skip; dead-letter is returned after the fourth matching attempt, and cancelled is terminal fail.\\nverification: Read-only evidence for the idempotent retry planner contract; later records supersede earlier observations only when they say so explicitly.\"}\n{\"id\":\"886e23c697de60252b57d75c07b97c8a4730fa763ed38e2bc8428fba36850395\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-2\\nstage: 2\\nsequence: 17\\nrecordedAt: 2026-09-13T13:45:00Z\\nstatus: approved\\nsubject: header mapping\\nfact: retryAfterMs\\nvalue: 900\\nattemptedAction: read-only observation\\ndoNotRepeat: true\\nnote: A numeric retry-after value is a lower bound for the computed delay.\\nverification: Read-only evidence for the idempotent retry planner contract; later records supersede earlier observations only when they say so explicitly.\"}\n{\"id\":\"99d64d3f4728855b70b1836240b4594275d24fdc947d51459ebe47eb213bde24\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-2\\nstage: 2\\nsequence: 9\\nrecordedAt: 2026-09-12T11:15:00Z\\nstatus: corrected\\nsubject: backoff policy\\nfact: baseDelayMs\\nvalue: 250\\ncorrection: The old 100 ms value belonged to a test queue.\\nattemptedAction: read-only observation\\ndoNotRepeat: true\\nnote: The production base delay is 250 milliseconds; absent baseDelayMs defaults to 250.\\nverification: Read-only evidence for the idempotent retry planner contract; later records supersede earlier observations only when they say so explicitly.\"}\n{\"id\":\"81666f72183d263f762f6fa99507762025125ef3a9d718a199ce1f6b05d964c9\",\"tool\":\"message\",\"turn\":0,\"flags\":[\"constraint\"],\"excerpt\":\"Repair solve(input) in src/retry.js. It returns {action,delayMs,key} for a retry queue. Only the matching idempotency key counts; succeeded work is skipped, attempts at max are dead-lettered, retry-after wins over exponential backoff, and unknown terminal status fails.\\n\\nfunction solve(input) {\\n  const events = Array.isArray(input && input.events) ? input.events : [];\\n  const last = events[events.length - 1] || {};\\n  return { action: last.status === 'ok' ? 'skip' : 'retry', delayMs: Number(input && input.baseDelayMs) || 0, key: input && input.idempotencyKey || null };\\n}\"}\n{\"id\":\"86be4b33d2b7a4c014fc24ee579ea900fdf2fa28e901f636cdd170b30e6ef211\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-2\\nstage: 1\\nsequence: 21\\nstatus: observed\\nobservedAt: 2026-09-10T11:21:00Z\\nsummary: A historical test artifact is retained for audit and does not change runtime behavior.\\ndetails: The bounded lookup returned a stable read-only result for sample 2-1-22; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: stale-cache-review\"}\n{\"id\":\"4ea93512d5bf525ede3714a4cc3968524081f35d84ab5714d46029f1ee54c543\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-2\\nstage: 1\\nsequence: 7\\nstatus: observed\\nobservedAt: 2026-09-10T15:27:00Z\\nsummary: A historical test artifact is retained for audit and does not change runtime behavior.\\ndetails: The bounded lookup returned a stable read-only result for sample 2-1-8; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: unit-test-index\"}\n{\"id\":\"55cd064f0539840e5168d32c07c811d22a353500e23e56c2253479f14f4eafc7\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-2\\nstage: 1\\nsequence: 0\\nstatus: warning\\nobservedAt: 2026-09-10T08:20:00Z\\nsummary: A historical test artifact is retained for audit and does not change runtime behavior.\\ndetails: The bounded lookup returned a stable read-only result for sample 2-1-1; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: stale-cache-review\"}\n{\"id\":\"bd9ebcbb985880f293483b806df43a5236bdaa170d9415822628fb0b0cefeee3\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-2\\nstage: 3\\nsequence: 12\\nstatus: observed\\nobservedAt: 2026-09-12T11:22:00Z\\nsummary: A historical test artifact is retained for audit and does not change runtime behavior.\\ndetails: The bounded lookup returned a stable read-only result for sample 2-3-13; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: stale-cache-review\"}",
+          "chars": 5625,
+          "hash": "9000c904d2d83c3f25c55bd151d6ee2e928a48085ddd6c715d44671c1753c0a6",
+          "ids": [
+            "43d49054112285f9ccd8ef63c4e0aef66bc1b55dd0a48cee768ecc6a5a80e1b3",
+            "d34c4c552f1e6dbed9f7aaa90c55eae381801b07618ba3f998e4e3e220aae679",
+            "886e23c697de60252b57d75c07b97c8a4730fa763ed38e2bc8428fba36850395",
+            "99d64d3f4728855b70b1836240b4594275d24fdc947d51459ebe47eb213bde24",
+            "81666f72183d263f762f6fa99507762025125ef3a9d718a199ce1f6b05d964c9",
+            "86be4b33d2b7a4c014fc24ee579ea900fdf2fa28e901f636cdd170b30e6ef211",
+            "4ea93512d5bf525ede3714a4cc3968524081f35d84ab5714d46029f1ee54c543",
+            "55cd064f0539840e5168d32c07c811d22a353500e23e56c2253479f14f4eafc7",
+            "bd9ebcbb985880f293483b806df43a5236bdaa170d9415822628fb0b0cefeee3"
+          ],
+          "targetRecordsShown": 4,
+          "scoredFactRecordsShown": [
+            "maxAttempts",
+            "baseDelayMs",
+            "retryAfterMs"
+          ]
+        }
+      },
+      "checkpoints": [
+        {
+          "stage": 0,
+          "latencyMs": 7041,
+          "toolCalls": 0
+        },
+        {
+          "stage": 1,
+          "latencyMs": 6487,
+          "toolCalls": 0
+        },
+        {
+          "stage": 2,
+          "latencyMs": 3986,
+          "toolCalls": 0
+        }
+      ],
+      "compactions": [
+        {
+          "latencyMs": 9224,
+          "completed": true
+        },
+        {
+          "latencyMs": 9570,
+          "completed": true
+        },
+        {
+          "latencyMs": 10893,
+          "completed": true
+        }
+      ],
+      "continuations": [
+        {
+          "arm": "local",
+          "repetition": 0,
+          "tools": [],
+          "promptHash": "d316ac82d954f3d0041867c3e8c3316c7c8c7832d5a3536b596fcf6b59aea568",
+          "forkedFromBaseConfirmed": true,
+          "parsedAnswer": {
+            "source": "function solve(input) {\n  const value = input && typeof input === 'object' ? input : {};\n  const key = value.idempotencyKey == null ? null : value.idempotencyKey;\n  const events = Array.isArray(value.events) ? value.events : [];\n  const matching = events.filter(event => event && event.idempotencyKey === key);\n  const succeeded = matching.some(event => event.status === 'ok');\n  if (succeeded) return { action: 'skip', delayMs: 0, key };\n\n  const maxAttempts = Number.isFinite(Number(value.maxAttempts)) ? Number(value.maxAttempts) : 4;\n  const attempts = matching.length;\n  if (attempts >= maxAttempts) return { action: 'dead-letter', delayMs: 0, key };\n\n  const last = matching[matching.length - 1] || {};\n  if (last.status === 'cancelled' || (last.terminal === true && last.status !== 'ok')) {\n    return { action: 'fail', delayMs: 0, key };\n  }\n\n  const base = Number.isFinite(Number(value.baseDelayMs)) ? Number(value.baseDelayMs) : 250;\n  const backoff = base * Math.pow(2, Math.max(0, attempts - 1));\n  const retryAfter = Number(value.retryAfterMs);\n  const delayMs = Number.isFinite(retryAfter) ? Math.max(backoff, retryAfter) : backoff;\n  return { action: 'retry', delayMs, key };\n}",
+            "facts": {
+              "maxAttempts": 4,
+              "baseDelayMs": 250,
+              "retryAfterMs": 900
+            }
+          },
+          "score": {
+            "fullyCorrect": false,
+            "facts": {
+              "correctFields": 3,
+              "totalFields": 3,
+              "fullyCorrect": true
+            },
+            "code": {
+              "passed": 2,
+              "total": 8,
+              "allPassed": false,
+              "failedTests": [
+                "backoff",
+                "retry-after",
+                "success",
+                "dead-letter",
+                "terminal",
+                "null-key"
+              ],
+              "regressionFailures": 2
+            }
+          },
+          "latencyMs": 17417,
+          "beforeUsage": null,
+          "reportedUsage": {
+            "totalTokens": 83557,
+            "inputTokens": 81210,
+            "cachedInputTokens": 5632,
+            "cacheWriteInputTokens": 0,
+            "outputTokens": 2347,
+            "reasoningOutputTokens": 1574
+          },
+          "reportedToolCalls": 0
+        },
+        {
+          "arm": "jev",
+          "repetition": 0,
+          "tools": [],
+          "promptHash": "087ba9735ed32f43737a4bac9f77ae11dccdaa954f7d74e8951a35f4610640e3",
+          "forkedFromBaseConfirmed": true,
+          "parsedAnswer": {
+            "source": "function solve(input) {\n  const value = input || {};\n  const key = value.idempotencyKey || null;\n  const events = Array.isArray(value.events) ? value.events : [];\n  const matching = events.filter(event => event && event.idempotencyKey === key);\n  const latest = matching[matching.length - 1] || {};\n  const status = latest.status;\n  if (status === 'ok') return { action: 'skip', delayMs: 0, key };\n  if (status === 'cancelled' || (status && !['retry', 'error', 'failed', 'pending'].includes(status))) return { action: 'fail', delayMs: 0, key };\n  const maxAttempts = Number.isFinite(Number(value.maxAttempts)) ? Number(value.maxAttempts) : 4;\n  if (matching.length >= maxAttempts) return { action: 'dead-letter', delayMs: 0, key };\n  const base = Number.isFinite(Number(value.baseDelayMs)) ? Number(value.baseDelayMs) : 250;\n  const backoff = base * Math.pow(2, Math.max(0, matching.length - 1));\n  const retryAfter = Number(value.retryAfterMs);\n  const delayMs = Number.isFinite(retryAfter) ? Math.max(backoff, retryAfter) : backoff;\n  return { action: 'retry', delayMs, key };\n}",
+            "facts": {
+              "maxAttempts": 4,
+              "baseDelayMs": 250,
+              "retryAfterMs": 900
+            }
+          },
+          "score": {
+            "fullyCorrect": false,
+            "facts": {
+              "correctFields": 3,
+              "totalFields": 3,
+              "fullyCorrect": true
+            },
+            "code": {
+              "passed": 2,
+              "total": 8,
+              "allPassed": false,
+              "failedTests": [
+                "backoff",
+                "retry-after",
+                "success",
+                "dead-letter",
+                "terminal",
+                "null-key"
+              ],
+              "regressionFailures": 2
+            }
+          },
+          "latencyMs": 10862,
+          "beforeUsage": null,
+          "reportedUsage": {
+            "totalTokens": 83031,
+            "inputTokens": 81202,
+            "cachedInputTokens": 5632,
+            "cacheWriteInputTokens": 0,
+            "outputTokens": 1829,
+            "reasoningOutputTokens": 1090
+          },
+          "reportedToolCalls": 0
+        },
+        {
+          "arm": "native-reference",
+          "repetition": 0,
+          "tools": [],
+          "promptHash": "633db95f4da2467547b802941449023992545425b85e8f75c646c19a0e8bbcab",
+          "forkedFromBaseConfirmed": true,
+          "parsedAnswer": {
+            "source": "function solve(input) {\n  const value = input && typeof input === 'object' ? input : {};\n  const key = value.idempotencyKey || null;\n  const events = Array.isArray(value.events) ? value.events : [];\n  const matching = events.filter(event => event && event.idempotencyKey === key);\n  const last = matching[matching.length - 1] || {};\n  const maxAttempts = Number.isFinite(Number(value.maxAttempts)) ? Number(value.maxAttempts) : 4;\n  const baseDelayMs = Number.isFinite(Number(value.baseDelayMs)) ? Number(value.baseDelayMs) : 250;\n  const retryAfterMs = Number.isFinite(Number(value.retryAfterMs)) ? Number(value.retryAfterMs) : 0;\n  const attempts = matching.length;\n  const retryable = new Set(['retry', 'failed', 'error', 'timeout', 'pending']);\n\n  let action;\n  if (last.status === 'ok') action = 'skip';\n  else if (last.status === 'cancelled' || (last.status && !retryable.has(last.status))) action = 'fail';\n  else if (attempts >= maxAttempts) action = 'dead-letter';\n  else action = 'retry';\n\n  const backoff = baseDelayMs * Math.pow(2, Math.max(0, attempts - 1));\n  return { action, delayMs: action === 'retry' ? Math.max(backoff, retryAfterMs) : 0, key };\n}",
+            "facts": {
+              "maxAttempts": 4,
+              "baseDelayMs": 250,
+              "retryAfterMs": 900
+            }
+          },
+          "score": {
+            "fullyCorrect": false,
+            "facts": {
+              "correctFields": 3,
+              "totalFields": 3,
+              "fullyCorrect": true
+            },
+            "code": {
+              "passed": 2,
+              "total": 8,
+              "allPassed": false,
+              "failedTests": [
+                "backoff",
+                "retry-after",
+                "success",
+                "dead-letter",
+                "terminal",
+                "null-key"
+              ],
+              "regressionFailures": 2
+            }
+          },
+          "latencyMs": 14534,
+          "beforeUsage": null,
+          "reportedUsage": {
+            "totalTokens": 81726,
+            "inputTokens": 79602,
+            "cachedInputTokens": 5632,
+            "cacheWriteInputTokens": 0,
+            "outputTokens": 2124,
+            "reasoningOutputTokens": 1362
+          },
+          "reportedToolCalls": 0
+        },
+        {
+          "arm": "jev",
+          "repetition": 1,
+          "tools": [],
+          "promptHash": "087ba9735ed32f43737a4bac9f77ae11dccdaa954f7d74e8951a35f4610640e3",
+          "forkedFromBaseConfirmed": true,
+          "parsedAnswer": {
+            "source": "function solve(input) {\n  const data = input && typeof input === 'object' ? input : {};\n  const key = data.idempotencyKey || null;\n  const events = Array.isArray(data.events) ? data.events : [];\n  const matching = events.filter(event => {\n    if (!event || typeof event !== 'object') return false;\n    const eventKey = Object.prototype.hasOwnProperty.call(event, 'idempotencyKey') ? event.idempotencyKey : event.key;\n    return eventKey === key;\n  });\n  const maxAttempts = Number.isFinite(Number(data.maxAttempts)) ? Number(data.maxAttempts) : 4;\n  const baseDelayMs = Number.isFinite(Number(data.baseDelayMs)) ? Number(data.baseDelayMs) : 250;\n  const retryAfterMs = Number.isFinite(Number(data.retryAfterMs)) ? Number(data.retryAfterMs) : null;\n  const latest = matching[matching.length - 1] || {};\n  const retryable = new Set(['retry', 'error', 'failed', 'timeout', 'pending', 'queued', 'running', 'transient']);\n  const result = { action: 'retry', delayMs: 0, key };\n  if (matching.some(event => event.status === 'ok')) return { action: 'skip', delayMs: 0, key };\n  if (matching.length >= maxAttempts) return { action: 'dead-letter', delayMs: 0, key };\n  if (latest.status === 'cancelled' || !retryable.has(latest.status)) return { action: 'fail', delayMs: 0, key };\n  const backoff = baseDelayMs * Math.pow(2, Math.max(0, matching.length - 1));\n  result.delayMs = retryAfterMs === null ? backoff : Math.max(backoff, retryAfterMs);\n  return result;\n}",
+            "facts": {
+              "maxAttempts": 4,
+              "baseDelayMs": 250,
+              "retryAfterMs": 900
+            }
+          },
+          "score": {
+            "fullyCorrect": false,
+            "facts": {
+              "correctFields": 3,
+              "totalFields": 3,
+              "fullyCorrect": true
+            },
+            "code": {
+              "passed": 2,
+              "total": 8,
+              "allPassed": false,
+              "failedTests": [
+                "empty",
+                "backoff",
+                "retry-after",
+                "success",
+                "other-key",
+                "null-key"
+              ],
+              "regressionFailures": 1
+            }
+          },
+          "latencyMs": 16642,
+          "beforeUsage": null,
+          "reportedUsage": {
+            "totalTokens": 83450,
+            "inputTokens": 81202,
+            "cachedInputTokens": 5632,
+            "cacheWriteInputTokens": 0,
+            "outputTokens": 2248,
+            "reasoningOutputTokens": 1405
+          },
+          "reportedToolCalls": 0
+        },
+        {
+          "arm": "native-reference",
+          "repetition": 1,
+          "tools": [],
+          "promptHash": "633db95f4da2467547b802941449023992545425b85e8f75c646c19a0e8bbcab",
+          "forkedFromBaseConfirmed": true,
+          "parsedAnswer": {
+            "source": "function solve(input) {\n  const value = input || {};\n  const key = value.idempotencyKey == null ? null : value.idempotencyKey;\n  const events = Array.isArray(value.events) ? value.events : [];\n  const matching = events.filter(event => event && event.idempotencyKey === key);\n  const maxAttempts = Number.isFinite(Number(value.maxAttempts)) && Number(value.maxAttempts) > 0 ? Number(value.maxAttempts) : 4;\n  const baseDelayMs = Number.isFinite(Number(value.baseDelayMs)) && Number(value.baseDelayMs) >= 0 ? Number(value.baseDelayMs) : 250;\n  const retryAfterMs = Number.isFinite(Number(value.retryAfterMs)) && Number(value.retryAfterMs) >= 0 ? Number(value.retryAfterMs) : 0;\n  if (matching.some(event => event.status === 'ok')) return { action: 'skip', delayMs: 0, key };\n  const last = matching[matching.length - 1] || {};\n  if (last.status === 'cancelled') return { action: 'fail', delayMs: 0, key };\n  const retryable = new Set(['retry', 'retryable', 'error', 'failed', 'timeout', 'pending', 'queued', 'processing', 'in_progress']);\n  if (last.status && !retryable.has(last.status)) return { action: 'fail', delayMs: 0, key };\n  if (matching.length >= maxAttempts) return { action: 'dead-letter', delayMs: 0, key };\n  const backoff = baseDelayMs * Math.pow(2, matching.length);\n  return { action: 'retry', delayMs: Math.max(backoff, retryAfterMs), key };\n}",
+            "facts": {
+              "maxAttempts": 4,
+              "baseDelayMs": 250,
+              "retryAfterMs": 900
+            }
+          },
+          "score": {
+            "fullyCorrect": false,
+            "facts": {
+              "correctFields": 3,
+              "totalFields": 3,
+              "fullyCorrect": true
+            },
+            "code": {
+              "passed": 2,
+              "total": 8,
+              "allPassed": false,
+              "failedTests": [
+                "backoff",
+                "retry-after",
+                "success",
+                "dead-letter",
+                "terminal",
+                "null-key"
+              ],
+              "regressionFailures": 2
+            }
+          },
+          "latencyMs": 17463,
+          "beforeUsage": null,
+          "reportedUsage": {
+            "totalTokens": 81943,
+            "inputTokens": 79602,
+            "cachedInputTokens": 21760,
+            "cacheWriteInputTokens": 0,
+            "outputTokens": 2341,
+            "reasoningOutputTokens": 1526
+          },
+          "reportedToolCalls": 0
+        },
+        {
+          "arm": "local",
+          "repetition": 1,
+          "tools": [],
+          "promptHash": "d316ac82d954f3d0041867c3e8c3316c7c8c7832d5a3536b596fcf6b59aea568",
+          "forkedFromBaseConfirmed": true,
+          "parsedAnswer": {
+            "source": "function solve(input) {\n  const value = input && typeof input === 'object' ? input : {};\n  const key = value.idempotencyKey || null;\n  const events = Array.isArray(value.events) ? value.events : [];\n  const matching = events.filter(event => event && event.idempotencyKey === key);\n  const maxAttempts = Number.isFinite(Number(value.maxAttempts)) && Number(value.maxAttempts) > 0 ? Number(value.maxAttempts) : 4;\n  const baseDelayMs = Number.isFinite(Number(value.baseDelayMs)) && Number(value.baseDelayMs) >= 0 ? Number(value.baseDelayMs) : 250;\n  const retryAfterMs = Number.isFinite(Number(value.retryAfterMs)) && Number(value.retryAfterMs) >= 0 ? Number(value.retryAfterMs) : null;\n  const last = matching[matching.length - 1] || {};\n  if (matching.some(event => event.status === 'ok')) return { action: 'skip', delayMs: 0, key };\n  if (matching.length >= maxAttempts) return { action: 'dead-letter', delayMs: 0, key };\n  if (last.status === 'cancelled' || !['retry', 'pending', 'error', 'failed', 'timeout'].includes(last.status)) return { action: 'fail', delayMs: 0, key };\n  const backoff = baseDelayMs * Math.pow(2, matching.length);\n  const eventRetryAfter = Number(last.retryAfterMs);\n  const delayMs = Math.max(backoff, retryAfterMs === null ? 0 : retryAfterMs, Number.isFinite(eventRetryAfter) && eventRetryAfter >= 0 ? eventRetryAfter : 0);\n  return { action: 'retry', delayMs, key };\n}",
+            "facts": {
+              "maxAttempts": 4,
+              "baseDelayMs": 250,
+              "retryAfterMs": 900
+            }
+          },
+          "score": {
+            "fullyCorrect": false,
+            "facts": {
+              "correctFields": 3,
+              "totalFields": 3,
+              "fullyCorrect": true
+            },
+            "code": {
+              "passed": 1,
+              "total": 8,
+              "allPassed": false,
+              "failedTests": [
+                "empty",
+                "backoff",
+                "retry-after",
+                "success",
+                "other-key",
+                "dead-letter",
+                "null-key"
+              ],
+              "regressionFailures": 2
+            }
+          },
+          "latencyMs": 13346,
+          "beforeUsage": null,
+          "reportedUsage": {
+            "totalTokens": 83250,
+            "inputTokens": 81210,
+            "cachedInputTokens": 5632,
+            "cacheWriteInputTokens": 0,
+            "outputTokens": 2040,
+            "reasoningOutputTokens": 1222
+          },
+          "reportedToolCalls": 0
+        }
+      ],
+      "baseIdHash": "806ce383456a91d2e364bc6e6adfae06abe618044046cb6fa9c14bcbb883497c"
+    },
+    {
+      "id": "local-window",
+      "historyChars": 53043,
+      "candidateCount": 20,
+      "candidateHash": "2c063a3e5107825fc6b8d8b84a72f86232a80724a50fee84f3887f459ccec9ec",
+      "candidateIds": [
+        "755cd0152b23ae89c0efd81d59cdf8890d530e3c2acb3f0598d2541b73a02e71",
+        "8dfc12f20cbe3429c793d82a0cfbc129f5af8dea052ce5f044dd4e66f19ae260",
+        "3693499336def5a50353d228396d94e5df6de05453789a6f2e182fccb049089c",
+        "b9d4c31ed70d4270b8535dad700ce84dc8da0de195def42c240274556539d513",
+        "7799d410e4440aebd58ff2aab879b7e782c738e2cd2523d0cad610d82c0be3db",
+        "7ea1ca90f673c8ef371a4efe1708c36262c1026fd08656bc06a92cd1dc91f6f3",
+        "c2cfea032d31ecb2f43fdc83d5eb24734e6a2d7fa368f22fb8715146cc571bb5",
+        "d0335b1e5f1ff6623c35c94fa0499307507518141607b7160e9a66b89580a127",
+        "029b661e8b7b843b10b3c2b962a78efe3bcc54853458fb465c447d85cef622d3",
+        "2eb6d71900fc0f2b65bc072c4e1156f8bd8d91a435802b0293f41f940c37a250",
+        "fa1ee1e78a299af7c2f7a517452f99401fba7cff16ae3f75e2a85e01d6138c4d",
+        "2741b3d97adf69fcbfc44c2ad1726977b5452eb2e4bc8b04c1f7a3c689811649",
+        "dbd2f9052cdbe1467061500920c8fc7793a453fa549061395781f5e39271a857",
+        "83c9d95a949ada8764e5679065d8022d1e7b629d3906ec14010c3c14945beb62",
+        "2bd21591ac7200c71bb2d3e6d3cf62ee8ee50ad41d33a5e8266255250441fa13",
+        "f23f3d4c3b1c04a97e3fa3723fa5f14452634407ce2f50b542bbd359378d8562",
+        "de6524270bd47616d3c4ab0127a3680bd143005cdd570e30d967faef279da984",
+        "779d7c7e4772254a48175447014646387ebaf5fa6a428a008653cec3316c4507",
+        "fc6d7141a9abb19622a48c77279b0df9dfb9e0b3df9159cc2dbf9465dfb4c023",
+        "fa0d09a1d90d3cb7acc0483b37f17a89348ec500f04ecf3f03571c0b3d3ef0f7"
+      ],
+      "targetRecords": 4,
+      "targetCandidates": 4,
+      "factSources": {
+        "offsetMinutes": "7799d410e4440aebd58ff2aab879b7e782c738e2cd2523d0cad610d82c0be3db",
+        "windowStart": "b9d4c31ed70d4270b8535dad700ce84dc8da0de195def42c240274556539d513",
+        "windowEnd": "755cd0152b23ae89c0efd81d59cdf8890d530e3c2acb3f0598d2541b73a02e71"
+      },
+      "scoredFactsInCandidates": [
+        "offsetMinutes",
+        "windowStart",
+        "windowEnd"
+      ],
+      "jev": {
+        "calls": 1,
+        "latencyMs": 162.5578,
+        "requestChars": 23315,
+        "usage": {
+          "input_tokens": 8590,
+          "output_tokens": 414
+        },
+        "model": "jev-1.13.0"
+      },
+      "rankings": {
+        "local": [
+          "755cd0152b23ae89c0efd81d59cdf8890d530e3c2acb3f0598d2541b73a02e71",
+          "8dfc12f20cbe3429c793d82a0cfbc129f5af8dea052ce5f044dd4e66f19ae260",
+          "3693499336def5a50353d228396d94e5df6de05453789a6f2e182fccb049089c",
+          "b9d4c31ed70d4270b8535dad700ce84dc8da0de195def42c240274556539d513",
+          "7799d410e4440aebd58ff2aab879b7e782c738e2cd2523d0cad610d82c0be3db",
+          "7ea1ca90f673c8ef371a4efe1708c36262c1026fd08656bc06a92cd1dc91f6f3",
+          "c2cfea032d31ecb2f43fdc83d5eb24734e6a2d7fa368f22fb8715146cc571bb5",
+          "d0335b1e5f1ff6623c35c94fa0499307507518141607b7160e9a66b89580a127",
+          "029b661e8b7b843b10b3c2b962a78efe3bcc54853458fb465c447d85cef622d3",
+          "2eb6d71900fc0f2b65bc072c4e1156f8bd8d91a435802b0293f41f940c37a250",
+          "fa1ee1e78a299af7c2f7a517452f99401fba7cff16ae3f75e2a85e01d6138c4d",
+          "2741b3d97adf69fcbfc44c2ad1726977b5452eb2e4bc8b04c1f7a3c689811649",
+          "dbd2f9052cdbe1467061500920c8fc7793a453fa549061395781f5e39271a857",
+          "83c9d95a949ada8764e5679065d8022d1e7b629d3906ec14010c3c14945beb62",
+          "2bd21591ac7200c71bb2d3e6d3cf62ee8ee50ad41d33a5e8266255250441fa13",
+          "f23f3d4c3b1c04a97e3fa3723fa5f14452634407ce2f50b542bbd359378d8562",
+          "de6524270bd47616d3c4ab0127a3680bd143005cdd570e30d967faef279da984",
+          "779d7c7e4772254a48175447014646387ebaf5fa6a428a008653cec3316c4507",
+          "fc6d7141a9abb19622a48c77279b0df9dfb9e0b3df9159cc2dbf9465dfb4c023",
+          "fa0d09a1d90d3cb7acc0483b37f17a89348ec500f04ecf3f03571c0b3d3ef0f7"
+        ],
+        "jev": [
+          "8dfc12f20cbe3429c793d82a0cfbc129f5af8dea052ce5f044dd4e66f19ae260",
+          "7799d410e4440aebd58ff2aab879b7e782c738e2cd2523d0cad610d82c0be3db",
+          "755cd0152b23ae89c0efd81d59cdf8890d530e3c2acb3f0598d2541b73a02e71",
+          "3693499336def5a50353d228396d94e5df6de05453789a6f2e182fccb049089c",
+          "b9d4c31ed70d4270b8535dad700ce84dc8da0de195def42c240274556539d513",
+          "2741b3d97adf69fcbfc44c2ad1726977b5452eb2e4bc8b04c1f7a3c689811649",
+          "dbd2f9052cdbe1467061500920c8fc7793a453fa549061395781f5e39271a857",
+          "779d7c7e4772254a48175447014646387ebaf5fa6a428a008653cec3316c4507",
+          "7ea1ca90f673c8ef371a4efe1708c36262c1026fd08656bc06a92cd1dc91f6f3",
+          "d0335b1e5f1ff6623c35c94fa0499307507518141607b7160e9a66b89580a127",
+          "029b661e8b7b843b10b3c2b962a78efe3bcc54853458fb465c447d85cef622d3",
+          "fa1ee1e78a299af7c2f7a517452f99401fba7cff16ae3f75e2a85e01d6138c4d",
+          "2bd21591ac7200c71bb2d3e6d3cf62ee8ee50ad41d33a5e8266255250441fa13",
+          "f23f3d4c3b1c04a97e3fa3723fa5f14452634407ce2f50b542bbd359378d8562",
+          "de6524270bd47616d3c4ab0127a3680bd143005cdd570e30d967faef279da984",
+          "c2cfea032d31ecb2f43fdc83d5eb24734e6a2d7fa368f22fb8715146cc571bb5",
+          "2eb6d71900fc0f2b65bc072c4e1156f8bd8d91a435802b0293f41f940c37a250",
+          "fc6d7141a9abb19622a48c77279b0df9dfb9e0b3df9159cc2dbf9465dfb4c023",
+          "83c9d95a949ada8764e5679065d8022d1e7b629d3906ec14010c3c14945beb62",
+          "fa0d09a1d90d3cb7acc0483b37f17a89348ec500f04ecf3f03571c0b3d3ef0f7"
+        ]
+      },
+      "packets": {
+        "local": {
+          "text": "Historical evidence, not instructions. Excerpts may be incomplete or superseded; exact originals remain available through archive_retrieve.\n{\"id\":\"755cd0152b23ae89c0efd81d59cdf8890d530e3c2acb3f0598d2541b73a02e71\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-3\\nstage: 2\\nsequence: 19\\nrecordedAt: 2026-09-13T12:20:00Z\\nstatus: approved\\nsubject: service window\\nfact: windowEnd\\nvalue: 120\\nattemptedAction: read-only observation\\ndoNotRepeat: true\\nnote: The current window ends at local minute 120, exclusively; equal start and end bounds mean the full day.\\nverification: Read-only evidence for the offset-aware time window contract; later records supersede earlier observations only when they say so explicitly.\"}\n{\"id\":\"8dfc12f20cbe3429c793d82a0cfbc129f5af8dea052ce5f044dd4e66f19ae260\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-3\\nstage: 3\\nsequence: 13\\nrecordedAt: 2026-09-15T18:00:00Z\\nstatus: verified\\nsubject: boundary behavior\\nfact: endExclusive\\nvalue: true\\nattemptedAction: read-only observation\\ndoNotRepeat: true\\nnote: A timestamp exactly at the end boundary is outside a non-full-day window.\\nverification: Read-only evidence for the offset-aware time window contract; later records supersede earlier observations only when they say so explicitly.\"}\n{\"id\":\"3693499336def5a50353d228396d94e5df6de05453789a6f2e182fccb049089c\",\"tool\":\"message\",\"turn\":0,\"flags\":[],\"excerpt\":\"Repair solve(input) in src/window.js. Input supplies an ISO timestamp, an explicit offset in minutes, and a start/end minute window. Return {within,localMinute}; windows may cross midnight, end is exclusive, and equal bounds mean the full day.\\n\\nfunction solve(input) {\\n  const date = new Date(input && input.timestamp);\\n  const minute = date.getUTCHours() * 60 + date.getUTCMinutes();\\n  return { within: minute >= Number(input.startMinute) && minute <= Number(input.endMinute), localMinute: minute };\\n}\"}\n{\"id\":\"b9d4c31ed70d4270b8535dad700ce84dc8da0de195def42c240274556539d513\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-3\\nstage: 2\\nsequence: 6\\nrecordedAt: 2026-09-12T09:10:00Z\\nstatus: corrected\\nsubject: service window\\nfact: windowStart\\nvalue: 1320\\ncorrection: The prior 21:00 start was from an obsolete schedule.\\nattemptedAction: read-only observation\\ndoNotRepeat: true\\nnote: The current window begins at local minute 1320.\\nverification: Read-only evidence for the offset-aware time window contract; later records supersede earlier observations only when they say so explicitly.\"}\n{\"id\":\"7799d410e4440aebd58ff2aab879b7e782c738e2cd2523d0cad610d82c0be3db\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-3\\nstage: 1\\nsequence: 7\\nrecordedAt: 2026-09-10T07:40:00Z\\nstatus: observed\\nsubject: regional offset\\nfact: offsetMinutes\\nvalue: -300\\nattemptedAction: read-only observation\\ndoNotRepeat: true\\nnote: The caller supplies the current offset; the helper must not consult the host timezone.\\nverification: Read-only evidence for the offset-aware time window contract; later records supersede earlier observations only when they say so explicitly.\"}\n{\"id\":\"7ea1ca90f673c8ef371a4efe1708c36262c1026fd08656bc06a92cd1dc91f6f3\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-3\\nstage: 3\\nsequence: 21\\nstatus: observed\\nobservedAt: 2026-09-12T11:21:00Z\\nsummary: The review found no write request, credential use, or dependency installation.\\ndetails: The bounded lookup returned a stable read-only result for sample 3-3-22; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: stale-cache-review\"}\n{\"id\":\"c2cfea032d31ecb2f43fdc83d5eb24734e6a2d7fa368f22fb8715146cc571bb5\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-3\\nstage: 3\\nsequence: 18\\nstatus: observed\\nobservedAt: 2026-09-12T08:28:00Z\\nsummary: A historical test artifact is retained for audit and does not change runtime behavior.\\ndetails: The bounded lookup returned a stable read-only result for sample 3-3-19; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: stale-cache-review\"}\n{\"id\":\"d0335b1e5f1ff6623c35c94fa0499307507518141607b7160e9a66b89580a127\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-3\\nstage: 3\\nsequence: 14\\nstatus: observed\\nobservedAt: 2026-09-12T13:24:00Z\\nsummary: The review found no write request, credential use, or dependency installation.\\ndetails: The bounded lookup returned a stable read-only result for sample 3-3-15; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: unit-test-index\"}\n{\"id\":\"029b661e8b7b843b10b3c2b962a78efe3bcc54853458fb465c447d85cef622d3\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-3\\nstage: 3\\nsequence: 11\\nstatus: observed\\nobservedAt: 2026-09-12T10:21:00Z\\nsummary: A historical test artifact is retained for audit and does not change runtime behavior.\\ndetails: The bounded lookup returned a stable read-only result for sample 3-3-12; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: unit-test-index\"}\n{\"id\":\"2eb6d71900fc0f2b65bc072c4e1156f8bd8d91a435802b0293f41f940c37a250\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-3\\nstage: 3\\nsequence: 7\\nstatus: observed\\nobservedAt: 2026-09-12T15:27:00Z\\nsummary: The review found no write request, credential use, or dependency installation.\\ndetails: The bounded lookup returned a stable read-only result for sample 3-3-8; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: unit-test-index\"}",
+          "chars": 5978,
+          "hash": "5c657c5e443ce26bfe10381841bdc79a1a563d3fb147591903974d847085b997",
+          "ids": [
+            "755cd0152b23ae89c0efd81d59cdf8890d530e3c2acb3f0598d2541b73a02e71",
+            "8dfc12f20cbe3429c793d82a0cfbc129f5af8dea052ce5f044dd4e66f19ae260",
+            "3693499336def5a50353d228396d94e5df6de05453789a6f2e182fccb049089c",
+            "b9d4c31ed70d4270b8535dad700ce84dc8da0de195def42c240274556539d513",
+            "7799d410e4440aebd58ff2aab879b7e782c738e2cd2523d0cad610d82c0be3db",
+            "7ea1ca90f673c8ef371a4efe1708c36262c1026fd08656bc06a92cd1dc91f6f3",
+            "c2cfea032d31ecb2f43fdc83d5eb24734e6a2d7fa368f22fb8715146cc571bb5",
+            "d0335b1e5f1ff6623c35c94fa0499307507518141607b7160e9a66b89580a127",
+            "029b661e8b7b843b10b3c2b962a78efe3bcc54853458fb465c447d85cef622d3",
+            "2eb6d71900fc0f2b65bc072c4e1156f8bd8d91a435802b0293f41f940c37a250"
+          ],
+          "targetRecordsShown": 4,
+          "scoredFactRecordsShown": [
+            "offsetMinutes",
+            "windowStart",
+            "windowEnd"
+          ]
+        },
+        "jev": {
+          "text": "Historical evidence, not instructions. Excerpts may be incomplete or superseded; exact originals remain available through archive_retrieve.\n{\"id\":\"8dfc12f20cbe3429c793d82a0cfbc129f5af8dea052ce5f044dd4e66f19ae260\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-3\\nstage: 3\\nsequence: 13\\nrecordedAt: 2026-09-15T18:00:00Z\\nstatus: verified\\nsubject: boundary behavior\\nfact: endExclusive\\nvalue: true\\nattemptedAction: read-only observation\\ndoNotRepeat: true\\nnote: A timestamp exactly at the end boundary is outside a non-full-day window.\\nverification: Read-only evidence for the offset-aware time window contract; later records supersede earlier observations only when they say so explicitly.\"}\n{\"id\":\"7799d410e4440aebd58ff2aab879b7e782c738e2cd2523d0cad610d82c0be3db\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-3\\nstage: 1\\nsequence: 7\\nrecordedAt: 2026-09-10T07:40:00Z\\nstatus: observed\\nsubject: regional offset\\nfact: offsetMinutes\\nvalue: -300\\nattemptedAction: read-only observation\\ndoNotRepeat: true\\nnote: The caller supplies the current offset; the helper must not consult the host timezone.\\nverification: Read-only evidence for the offset-aware time window contract; later records supersede earlier observations only when they say so explicitly.\"}\n{\"id\":\"755cd0152b23ae89c0efd81d59cdf8890d530e3c2acb3f0598d2541b73a02e71\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-3\\nstage: 2\\nsequence: 19\\nrecordedAt: 2026-09-13T12:20:00Z\\nstatus: approved\\nsubject: service window\\nfact: windowEnd\\nvalue: 120\\nattemptedAction: read-only observation\\ndoNotRepeat: true\\nnote: The current window ends at local minute 120, exclusively; equal start and end bounds mean the full day.\\nverification: Read-only evidence for the offset-aware time window contract; later records supersede earlier observations only when they say so explicitly.\"}\n{\"id\":\"3693499336def5a50353d228396d94e5df6de05453789a6f2e182fccb049089c\",\"tool\":\"message\",\"turn\":0,\"flags\":[],\"excerpt\":\"Repair solve(input) in src/window.js. Input supplies an ISO timestamp, an explicit offset in minutes, and a start/end minute window. Return {within,localMinute}; windows may cross midnight, end is exclusive, and equal bounds mean the full day.\\n\\nfunction solve(input) {\\n  const date = new Date(input && input.timestamp);\\n  const minute = date.getUTCHours() * 60 + date.getUTCMinutes();\\n  return { within: minute >= Number(input.startMinute) && minute <= Number(input.endMinute), localMinute: minute };\\n}\"}\n{\"id\":\"b9d4c31ed70d4270b8535dad700ce84dc8da0de195def42c240274556539d513\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-3\\nstage: 2\\nsequence: 6\\nrecordedAt: 2026-09-12T09:10:00Z\\nstatus: corrected\\nsubject: service window\\nfact: windowStart\\nvalue: 1320\\ncorrection: The prior 21:00 start was from an obsolete schedule.\\nattemptedAction: read-only observation\\ndoNotRepeat: true\\nnote: The current window begins at local minute 1320.\\nverification: Read-only evidence for the offset-aware time window contract; later records supersede earlier observations only when they say so explicitly.\"}\n{\"id\":\"2741b3d97adf69fcbfc44c2ad1726977b5452eb2e4bc8b04c1f7a3c689811649\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-3\\nstage: 3\\nsequence: 0\\nstatus: warning\\nobservedAt: 2026-09-12T08:20:00Z\\nsummary: The review found no write request, credential use, or dependency installation.\\ndetails: The bounded lookup returned a stable read-only result for sample 3-3-1; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: stale-cache-review\"}\n{\"id\":\"dbd2f9052cdbe1467061500920c8fc7793a453fa549061395781f5e39271a857\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-3\\nstage: 2\\nsequence: 22\\nstatus: observed\\nobservedAt: 2026-09-11T12:22:00Z\\nsummary: The review found no write request, credential use, or dependency installation.\\ndetails: The bounded lookup returned a stable read-only result for sample 3-2-23; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: unit-test-index\"}\n{\"id\":\"779d7c7e4772254a48175447014646387ebaf5fa6a428a008653cec3316c4507\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-3\\nstage: 2\\nsequence: 1\\nstatus: observed\\nobservedAt: 2026-09-11T09:21:00Z\\nsummary: The review found no write request, credential use, or dependency installation.\\ndetails: The bounded lookup returned a stable read-only result for sample 3-2-2; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: unit-test-index\"}\n{\"id\":\"7ea1ca90f673c8ef371a4efe1708c36262c1026fd08656bc06a92cd1dc91f6f3\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-3\\nstage: 3\\nsequence: 21\\nstatus: observed\\nobservedAt: 2026-09-12T11:21:00Z\\nsummary: The review found no write request, credential use, or dependency installation.\\ndetails: The bounded lookup returned a stable read-only result for sample 3-3-22; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: stale-cache-review\"}\n{\"id\":\"d0335b1e5f1ff6623c35c94fa0499307507518141607b7160e9a66b89580a127\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-3\\nstage: 3\\nsequence: 14\\nstatus: observed\\nobservedAt: 2026-09-12T13:24:00Z\\nsummary: The review found no write request, credential use, or dependency installation.\\ndetails: The bounded lookup returned a stable read-only result for sample 3-3-15; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: unit-test-index\"}",
+          "chars": 5959,
+          "hash": "f30a11b0d7a748e8eba5802f06a3b89a1f0938d64e3a42a58112e321e06b1cb1",
+          "ids": [
+            "8dfc12f20cbe3429c793d82a0cfbc129f5af8dea052ce5f044dd4e66f19ae260",
+            "7799d410e4440aebd58ff2aab879b7e782c738e2cd2523d0cad610d82c0be3db",
+            "755cd0152b23ae89c0efd81d59cdf8890d530e3c2acb3f0598d2541b73a02e71",
+            "3693499336def5a50353d228396d94e5df6de05453789a6f2e182fccb049089c",
+            "b9d4c31ed70d4270b8535dad700ce84dc8da0de195def42c240274556539d513",
+            "2741b3d97adf69fcbfc44c2ad1726977b5452eb2e4bc8b04c1f7a3c689811649",
+            "dbd2f9052cdbe1467061500920c8fc7793a453fa549061395781f5e39271a857",
+            "779d7c7e4772254a48175447014646387ebaf5fa6a428a008653cec3316c4507",
+            "7ea1ca90f673c8ef371a4efe1708c36262c1026fd08656bc06a92cd1dc91f6f3",
+            "d0335b1e5f1ff6623c35c94fa0499307507518141607b7160e9a66b89580a127"
+          ],
+          "targetRecordsShown": 4,
+          "scoredFactRecordsShown": [
+            "offsetMinutes",
+            "windowStart",
+            "windowEnd"
+          ]
+        }
+      },
+      "checkpoints": [],
+      "compactions": [],
+      "continuations": []
+    },
+    {
+      "id": "cent-rounding",
+      "historyChars": 53941,
+      "candidateCount": 20,
+      "candidateHash": "6d360fe82b46ebb09b7f2af3d31cbaf38807fb7b6c9b23795fdd66008433a880",
+      "candidateIds": [
+        "0b1c5bc5902359735e1b4aa4142db59f4da50bd080914498acbc129c54a56cae",
+        "b2f7ef3cf80ec90174a80952541263627779c31733ddf13c688a74263de386b1",
+        "1e117f61e9fe9ee7d6a187823eaf7136dd2a1569551323f0f2ccba58077391f1",
+        "9cf12986267ca780163d7c890f16e344e1b0a0adb50c79d2cca5fd5e0d7ebdf1",
+        "5e5b1310c4b77ade94a6b7467f99befb3d90891ccd0fd086e4cd60527703c57f",
+        "8bf7a7b055007b3c674b59b6f9832b89deca25426c3f9995c64e5c5961fd583f",
+        "d17a39560aa7adbce87d3fecb266c91212ce7e3cfce0eea63712035dba6825ed",
+        "7af9236ed0fadeb224032f2614a61ff78585f050119b5e3572e7cb4736e6bc1a",
+        "c5fe320c4bf6349b03a1760cc6db94cb0800116028e623d5bf1b3badf92891e2",
+        "32aa409f5355dbe182d5a23f7962498c9d6fc31346dfc3e25d7fa4c541cb9508",
+        "be1412efc9a30901b1672dcf0baaf3ac5ec02c1dd85b755276e804051cf0fbe3",
+        "b87ba7152d419a0cabc108b43685107320b02d55264df67d73970651972c2104",
+        "0356a46d6067687ef656b99c8de3321e467e6b018218b04b00fd87b8e145ab87",
+        "6176e8a43bb9c62660d77da0a1405b6dee79625a9541a1d4bb73148b0968b9a8",
+        "b281fe97e504b3f19310a8352dff69218ad9961605d3c1767aeba295128ee18d",
+        "6f8c037b53b35354010bd3041d160aced147f9dbfe66dc5f5f80beb52862705e",
+        "a4807f4399688c40db223943e41778ad085ebe78e54e9a970ec5d7badad8d023",
+        "18affbbfc64263617d793dc75134cdc660cc46461559049d09a71df2daf49439",
+        "7637b044b1e663b3852b69a3873e33365d5cccdd061a292b8de75aec5b305984",
+        "29ab364790c73e06ccdc2312cf4b1b02d6776c8b8215567ade6f5a4086b0ecbd"
+      ],
+      "targetRecords": 4,
+      "targetCandidates": 3,
+      "factSources": {
+        "rateBasis": "bd4bf8817c54d773a03a90ff2f7f1212641f53dd77b9fdda42dc3885aca10fa5",
+        "rounding": "0b1c5bc5902359735e1b4aa4142db59f4da50bd080914498acbc129c54a56cae",
+        "discountCapCents": "6f8c037b53b35354010bd3041d160aced147f9dbfe66dc5f5f80beb52862705e"
+      },
+      "scoredFactsInCandidates": [
+        "rounding",
+        "discountCapCents"
+      ],
+      "jev": {
+        "calls": 1,
+        "latencyMs": 182.3062,
+        "requestChars": 23381,
+        "usage": {
+          "input_tokens": 8633,
+          "output_tokens": 414
+        },
+        "model": "jev-1.13.0"
+      },
+      "rankings": {
+        "local": [
+          "0b1c5bc5902359735e1b4aa4142db59f4da50bd080914498acbc129c54a56cae",
+          "b2f7ef3cf80ec90174a80952541263627779c31733ddf13c688a74263de386b1",
+          "1e117f61e9fe9ee7d6a187823eaf7136dd2a1569551323f0f2ccba58077391f1",
+          "9cf12986267ca780163d7c890f16e344e1b0a0adb50c79d2cca5fd5e0d7ebdf1",
+          "5e5b1310c4b77ade94a6b7467f99befb3d90891ccd0fd086e4cd60527703c57f",
+          "8bf7a7b055007b3c674b59b6f9832b89deca25426c3f9995c64e5c5961fd583f",
+          "d17a39560aa7adbce87d3fecb266c91212ce7e3cfce0eea63712035dba6825ed",
+          "7af9236ed0fadeb224032f2614a61ff78585f050119b5e3572e7cb4736e6bc1a",
+          "c5fe320c4bf6349b03a1760cc6db94cb0800116028e623d5bf1b3badf92891e2",
+          "32aa409f5355dbe182d5a23f7962498c9d6fc31346dfc3e25d7fa4c541cb9508",
+          "be1412efc9a30901b1672dcf0baaf3ac5ec02c1dd85b755276e804051cf0fbe3",
+          "b87ba7152d419a0cabc108b43685107320b02d55264df67d73970651972c2104",
+          "0356a46d6067687ef656b99c8de3321e467e6b018218b04b00fd87b8e145ab87",
+          "6176e8a43bb9c62660d77da0a1405b6dee79625a9541a1d4bb73148b0968b9a8",
+          "b281fe97e504b3f19310a8352dff69218ad9961605d3c1767aeba295128ee18d",
+          "6f8c037b53b35354010bd3041d160aced147f9dbfe66dc5f5f80beb52862705e",
+          "a4807f4399688c40db223943e41778ad085ebe78e54e9a970ec5d7badad8d023",
+          "18affbbfc64263617d793dc75134cdc660cc46461559049d09a71df2daf49439",
+          "7637b044b1e663b3852b69a3873e33365d5cccdd061a292b8de75aec5b305984",
+          "29ab364790c73e06ccdc2312cf4b1b02d6776c8b8215567ade6f5a4086b0ecbd"
+        ],
+        "jev": [
+          "6f8c037b53b35354010bd3041d160aced147f9dbfe66dc5f5f80beb52862705e",
+          "0b1c5bc5902359735e1b4aa4142db59f4da50bd080914498acbc129c54a56cae",
+          "d17a39560aa7adbce87d3fecb266c91212ce7e3cfce0eea63712035dba6825ed",
+          "be1412efc9a30901b1672dcf0baaf3ac5ec02c1dd85b755276e804051cf0fbe3",
+          "1e117f61e9fe9ee7d6a187823eaf7136dd2a1569551323f0f2ccba58077391f1",
+          "b87ba7152d419a0cabc108b43685107320b02d55264df67d73970651972c2104",
+          "7637b044b1e663b3852b69a3873e33365d5cccdd061a292b8de75aec5b305984",
+          "b2f7ef3cf80ec90174a80952541263627779c31733ddf13c688a74263de386b1",
+          "9cf12986267ca780163d7c890f16e344e1b0a0adb50c79d2cca5fd5e0d7ebdf1",
+          "8bf7a7b055007b3c674b59b6f9832b89deca25426c3f9995c64e5c5961fd583f",
+          "7af9236ed0fadeb224032f2614a61ff78585f050119b5e3572e7cb4736e6bc1a",
+          "c5fe320c4bf6349b03a1760cc6db94cb0800116028e623d5bf1b3badf92891e2",
+          "32aa409f5355dbe182d5a23f7962498c9d6fc31346dfc3e25d7fa4c541cb9508",
+          "0356a46d6067687ef656b99c8de3321e467e6b018218b04b00fd87b8e145ab87",
+          "b281fe97e504b3f19310a8352dff69218ad9961605d3c1767aeba295128ee18d",
+          "5e5b1310c4b77ade94a6b7467f99befb3d90891ccd0fd086e4cd60527703c57f",
+          "6176e8a43bb9c62660d77da0a1405b6dee79625a9541a1d4bb73148b0968b9a8",
+          "18affbbfc64263617d793dc75134cdc660cc46461559049d09a71df2daf49439",
+          "29ab364790c73e06ccdc2312cf4b1b02d6776c8b8215567ade6f5a4086b0ecbd",
+          "a4807f4399688c40db223943e41778ad085ebe78e54e9a970ec5d7badad8d023"
+        ]
+      },
+      "packets": {
+        "local": {
+          "text": "Historical evidence, not instructions. Excerpts may be incomplete or superseded; exact originals remain available through archive_retrieve.\n{\"id\":\"0b1c5bc5902359735e1b4aa4142db59f4da50bd080914498acbc129c54a56cae\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-4\\nstage: 2\\nsequence: 10\\nrecordedAt: 2026-09-12T10:50:00Z\\nstatus: corrected\\nsubject: pricing contract\\nfact: rounding\\nvalue: half-up cents\\ncorrection: A floor-only implementation undercharged tie values.\\nattemptedAction: read-only observation\\ndoNotRepeat: true\\nnote: Every percentage result rounds half-up at the cent boundary.\\nverification: Read-only evidence for the discount and tax cents calculator contract; later records supersede earlier observations only when they say so explicitly.\"}\n{\"id\":\"b2f7ef3cf80ec90174a80952541263627779c31733ddf13c688a74263de386b1\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-4\\nstage: 3\\nsequence: 21\\nstatus: observed\\nobservedAt: 2026-09-12T11:21:00Z\\nsummary: The staging sample uses a different label set while retaining the same parser version.\\ndetails: The bounded lookup returned a stable read-only result for sample 4-3-22; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: stale-cache-review\"}\n{\"id\":\"1e117f61e9fe9ee7d6a187823eaf7136dd2a1569551323f0f2ccba58077391f1\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-4\\nstage: 3\\nsequence: 20\\nstatus: warning\\nobservedAt: 2026-09-12T10:20:00Z\\nsummary: The review found no write request, credential use, or dependency installation.\\ndetails: The bounded lookup returned a stable read-only result for sample 4-3-21; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: unit-test-index\"}\n{\"id\":\"9cf12986267ca780163d7c890f16e344e1b0a0adb50c79d2cca5fd5e0d7ebdf1\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-4\\nstage: 3\\nsequence: 17\\nstatus: observed\\nobservedAt: 2026-09-12T16:27:00Z\\nsummary: A historical test artifact is retained for audit and does not change runtime behavior.\\ndetails: The bounded lookup returned a stable read-only result for sample 4-3-18; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: unit-test-index\"}\n{\"id\":\"5e5b1310c4b77ade94a6b7467f99befb3d90891ccd0fd086e4cd60527703c57f\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-4\\nstage: 3\\nsequence: 14\\nstatus: observed\\nobservedAt: 2026-09-12T13:24:00Z\\nsummary: The staging sample uses a different label set while retaining the same parser version.\\ndetails: The bounded lookup returned a stable read-only result for sample 4-3-15; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: unit-test-index\"}\n{\"id\":\"8bf7a7b055007b3c674b59b6f9832b89deca25426c3f9995c64e5c5961fd583f\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-4\\nstage: 3\\nsequence: 13\\nstatus: observed\\nobservedAt: 2026-09-12T12:23:00Z\\nsummary: The review found no write request, credential use, or dependency installation.\\ndetails: The bounded lookup returned a stable read-only result for sample 4-3-14; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: unit-test-index\"}\n{\"id\":\"d17a39560aa7adbce87d3fecb266c91212ce7e3cfce0eea63712035dba6825ed\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[\"failure\"],\"excerpt\":\"workspace: maintenance-sandbox-4\\nstage: 3\\nsequence: 12\\nrecordedAt: 2026-09-15T17:20:00Z\\nstatus: verified\\nsubject: tax configuration\\nfact: taxBps\\nvalue: 825\\nattemptedAction: read-only observation\\ndoNotRepeat: true\\nnote: Tax is computed from taxable cents after discount at 825 basis points; invalid or negative money inputs clamp to zero.\\nverification: Read-only evidence for the discount and tax cents calculator contract; later records supersede earlier observations only when they say so explicitly.\"}\n{\"id\":\"7af9236ed0fadeb224032f2614a61ff78585f050119b5e3572e7cb4736e6bc1a\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-4\\nstage: 3\\nsequence: 10\\nstatus: warning\\nobservedAt: 2026-09-12T09:20:00Z\\nsummary: A historical test artifact is retained for audit and does not change runtime behavior.\\ndetails: The bounded lookup returned a stable read-only result for sample 4-3-11; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: unit-test-index\"}\n{\"id\":\"c5fe320c4bf6349b03a1760cc6db94cb0800116028e623d5bf1b3badf92891e2\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-4\\nstage: 3\\nsequence: 7\\nstatus: observed\\nobservedAt: 2026-09-12T15:27:00Z\\nsummary: The staging sample uses a different label set while retaining the same parser version.\\ndetails: The bounded lookup returned a stable read-only result for sample 4-3-8; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: unit-test-index\"}\n{\"id\":\"32aa409f5355dbe182d5a23f7962498c9d6fc31346dfc3e25d7fa4c541cb9508\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-4\\nstage: 3\\nsequence: 6\\nstatus: observed\\nobservedAt: 2026-09-12T14:26:00Z\\nsummary: The review found no write request, credential use, or dependency installation.\\ndetails: The bounded lookup returned a stable read-only result for sample 4-3-7; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: stale-cache-review\"}",
+          "chars": 5858,
+          "hash": "1353009161ccf288023bf411a9fd4d6c1a241140ec96c9f4f4b44d3c87f3288f",
+          "ids": [
+            "0b1c5bc5902359735e1b4aa4142db59f4da50bd080914498acbc129c54a56cae",
+            "b2f7ef3cf80ec90174a80952541263627779c31733ddf13c688a74263de386b1",
+            "1e117f61e9fe9ee7d6a187823eaf7136dd2a1569551323f0f2ccba58077391f1",
+            "9cf12986267ca780163d7c890f16e344e1b0a0adb50c79d2cca5fd5e0d7ebdf1",
+            "5e5b1310c4b77ade94a6b7467f99befb3d90891ccd0fd086e4cd60527703c57f",
+            "8bf7a7b055007b3c674b59b6f9832b89deca25426c3f9995c64e5c5961fd583f",
+            "d17a39560aa7adbce87d3fecb266c91212ce7e3cfce0eea63712035dba6825ed",
+            "7af9236ed0fadeb224032f2614a61ff78585f050119b5e3572e7cb4736e6bc1a",
+            "c5fe320c4bf6349b03a1760cc6db94cb0800116028e623d5bf1b3badf92891e2",
+            "32aa409f5355dbe182d5a23f7962498c9d6fc31346dfc3e25d7fa4c541cb9508"
+          ],
+          "targetRecordsShown": 2,
+          "scoredFactRecordsShown": [
+            "rounding"
+          ]
+        },
+        "jev": {
+          "text": "Historical evidence, not instructions. Excerpts may be incomplete or superseded; exact originals remain available through archive_retrieve.\n{\"id\":\"6f8c037b53b35354010bd3041d160aced147f9dbfe66dc5f5f80beb52862705e\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-4\\nstage: 2\\nsequence: 16\\nrecordedAt: 2026-09-13T14:30:00Z\\nstatus: approved\\nsubject: promotion rule\\nfact: discountCapCents\\nvalue: 1250\\nattemptedAction: read-only observation\\ndoNotRepeat: true\\nnote: The promotion may remove no more than 1250 cents.\\nverification: Read-only evidence for the discount and tax cents calculator contract; later records supersede earlier observations only when they say so explicitly.\"}\n{\"id\":\"0b1c5bc5902359735e1b4aa4142db59f4da50bd080914498acbc129c54a56cae\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-4\\nstage: 2\\nsequence: 10\\nrecordedAt: 2026-09-12T10:50:00Z\\nstatus: corrected\\nsubject: pricing contract\\nfact: rounding\\nvalue: half-up cents\\ncorrection: A floor-only implementation undercharged tie values.\\nattemptedAction: read-only observation\\ndoNotRepeat: true\\nnote: Every percentage result rounds half-up at the cent boundary.\\nverification: Read-only evidence for the discount and tax cents calculator contract; later records supersede earlier observations only when they say so explicitly.\"}\n{\"id\":\"d17a39560aa7adbce87d3fecb266c91212ce7e3cfce0eea63712035dba6825ed\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[\"failure\"],\"excerpt\":\"workspace: maintenance-sandbox-4\\nstage: 3\\nsequence: 12\\nrecordedAt: 2026-09-15T17:20:00Z\\nstatus: verified\\nsubject: tax configuration\\nfact: taxBps\\nvalue: 825\\nattemptedAction: read-only observation\\ndoNotRepeat: true\\nnote: Tax is computed from taxable cents after discount at 825 basis points; invalid or negative money inputs clamp to zero.\\nverification: Read-only evidence for the discount and tax cents calculator contract; later records supersede earlier observations only when they say so explicitly.\"}\n{\"id\":\"be1412efc9a30901b1672dcf0baaf3ac5ec02c1dd85b755276e804051cf0fbe3\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-4\\nstage: 3\\nsequence: 3\\nstatus: observed\\nobservedAt: 2026-09-12T11:23:00Z\\nsummary: A historical test artifact is retained for audit and does not change runtime behavior.\\ndetails: The bounded lookup returned a stable read-only result for sample 4-3-4; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: stale-cache-review\"}\n{\"id\":\"1e117f61e9fe9ee7d6a187823eaf7136dd2a1569551323f0f2ccba58077391f1\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-4\\nstage: 3\\nsequence: 20\\nstatus: warning\\nobservedAt: 2026-09-12T10:20:00Z\\nsummary: The review found no write request, credential use, or dependency installation.\\ndetails: The bounded lookup returned a stable read-only result for sample 4-3-21; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: unit-test-index\"}\n{\"id\":\"b87ba7152d419a0cabc108b43685107320b02d55264df67d73970651972c2104\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-4\\nstage: 3\\nsequence: 0\\nstatus: warning\\nobservedAt: 2026-09-12T08:20:00Z\\nsummary: The staging sample uses a different label set while retaining the same parser version.\\ndetails: The bounded lookup returned a stable read-only result for sample 4-3-1; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: stale-cache-review\"}\n{\"id\":\"7637b044b1e663b3852b69a3873e33365d5cccdd061a292b8de75aec5b305984\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-4\\nstage: 2\\nsequence: 11\\nstatus: observed\\nobservedAt: 2026-09-11T10:21:00Z\\nsummary: A historical test artifact is retained for audit and does not change runtime behavior.\\ndetails: The bounded lookup returned a stable read-only result for sample 4-2-12; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: unit-test-index\"}\n{\"id\":\"b2f7ef3cf80ec90174a80952541263627779c31733ddf13c688a74263de386b1\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-4\\nstage: 3\\nsequence: 21\\nstatus: observed\\nobservedAt: 2026-09-12T11:21:00Z\\nsummary: The staging sample uses a different label set while retaining the same parser version.\\ndetails: The bounded lookup returned a stable read-only result for sample 4-3-22; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: stale-cache-review\"}\n{\"id\":\"9cf12986267ca780163d7c890f16e344e1b0a0adb50c79d2cca5fd5e0d7ebdf1\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-4\\nstage: 3\\nsequence: 17\\nstatus: observed\\nobservedAt: 2026-09-12T16:27:00Z\\nsummary: A historical test artifact is retained for audit and does not change runtime behavior.\\ndetails: The bounded lookup returned a stable read-only result for sample 4-3-18; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: unit-test-index\"}\n{\"id\":\"8bf7a7b055007b3c674b59b6f9832b89deca25426c3f9995c64e5c5961fd583f\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-4\\nstage: 3\\nsequence: 13\\nstatus: observed\\nobservedAt: 2026-09-12T12:23:00Z\\nsummary: The review found no write request, credential use, or dependency installation.\\ndetails: The bounded lookup returned a stable read-only result for sample 4-3-14; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: unit-test-index\"}",
+          "chars": 5900,
+          "hash": "f30cc0544739707d1a8702bf2c1cd4c6f1ee048334edddbcfd92e50a72469038",
+          "ids": [
+            "6f8c037b53b35354010bd3041d160aced147f9dbfe66dc5f5f80beb52862705e",
+            "0b1c5bc5902359735e1b4aa4142db59f4da50bd080914498acbc129c54a56cae",
+            "d17a39560aa7adbce87d3fecb266c91212ce7e3cfce0eea63712035dba6825ed",
+            "be1412efc9a30901b1672dcf0baaf3ac5ec02c1dd85b755276e804051cf0fbe3",
+            "1e117f61e9fe9ee7d6a187823eaf7136dd2a1569551323f0f2ccba58077391f1",
+            "b87ba7152d419a0cabc108b43685107320b02d55264df67d73970651972c2104",
+            "7637b044b1e663b3852b69a3873e33365d5cccdd061a292b8de75aec5b305984",
+            "b2f7ef3cf80ec90174a80952541263627779c31733ddf13c688a74263de386b1",
+            "9cf12986267ca780163d7c890f16e344e1b0a0adb50c79d2cca5fd5e0d7ebdf1",
+            "8bf7a7b055007b3c674b59b6f9832b89deca25426c3f9995c64e5c5961fd583f"
+          ],
+          "targetRecordsShown": 3,
+          "scoredFactRecordsShown": [
+            "rounding",
+            "discountCapCents"
+          ]
+        }
+      },
+      "checkpoints": [],
+      "compactions": [],
+      "continuations": []
+    },
+    {
+      "id": "reservation-ledger",
+      "historyChars": 53804,
+      "candidateCount": 20,
+      "candidateHash": "0d747df0b45020478d071f13c5522969820276c607ca082928edb99bc663db4e",
+      "candidateIds": [
+        "02a9292e3bf24cf49d0b316c57cad6aca03358b05e34c04e64d97c8b8cb17dac",
+        "07c96588aea885203d22665d87f283729f36de0ec35c60e3d29f0a7019d4b759",
+        "465fe78a2ecddfd59c7f212ea2d0816c15d78e1cac386f19a816505c45928433",
+        "7688983195190fed324343de963dfa209ab4f4233ef0ee99f5e2adf002362f2d",
+        "a0d5f4b758f1f1018a81262505aea3a8c829ff6128cf20c4dfb89cab27659c6f",
+        "6932fa1c38bd433552ce6e0369947f95ec97d4094719b7c2d67f3064b16c386e",
+        "5bc84f6bc95f95e786aba493f01f6fe147f8c8b2e3f3fd64796cb66df8536d24",
+        "eba6354422dbf42453a9b603a142c3d307640976c0f3ca9076aa4d5691e26c42",
+        "9fecebd6ec83c0b80eed83ec7ff2b7b7a545ee598ea430af0837ea9393c90c12",
+        "f183c95cf76ed3f6b46099a25737b628ebe311e5e9041c6f0e85a0818f7648db",
+        "7ee8760bb2365b5c170b00e63fe442b59c512abee60f83fb58caace701110133",
+        "28824325ef0244e2883bd264d9c9891186481283fe996ba30b26e271d1fc7355",
+        "7763f0435e412fa7b39ddf70f1eef8dba9a400f8861d9c5baf71f37163674f98",
+        "f6654c7c95f732b6352b27936d7bbf2a6db7a5ed0a296a8ae3fe153038259852",
+        "1e8bc0709b565b2e42d6c7f7e44a53d89f3d33b9115ded90d74059051141107b",
+        "b3175545ff12d244c67020cade0d22a49118176f0e96ecac9ce45f14165983eb",
+        "b60a299e7808153e1eebfdd8249f933dbd3fd2b9736b615af1fb6f8db1cdd2fb",
+        "41110a4acb30706da3e908ef71ff82b6f00702738c918812c59b680468e0480b",
+        "77e938b16f8361542af43f24e0c77046acb1c9856b78eae24c0ee0d56d173277",
+        "9382f167d3dbfff2902d438c1720e706409e3a975929efeb0058e12006f1b74a"
+      ],
+      "targetRecords": 4,
+      "targetCandidates": 4,
+      "factSources": {
+        "activeStatuses": "02a9292e3bf24cf49d0b316c57cad6aca03358b05e34c04e64d97c8b8cb17dac",
+        "reservationTtlMinutes": "7688983195190fed324343de963dfa209ab4f4233ef0ee99f5e2adf002362f2d",
+        "duplicatePolicy": "465fe78a2ecddfd59c7f212ea2d0816c15d78e1cac386f19a816505c45928433"
+      },
+      "scoredFactsInCandidates": [
+        "activeStatuses",
+        "reservationTtlMinutes",
+        "duplicatePolicy"
+      ],
+      "jev": {
+        "calls": 1,
+        "latencyMs": 208.7455,
+        "requestChars": 24023,
+        "usage": {
+          "input_tokens": 8750,
+          "output_tokens": 414
+        },
+        "model": "jev-1.13.0"
+      },
+      "rankings": {
+        "local": [
+          "02a9292e3bf24cf49d0b316c57cad6aca03358b05e34c04e64d97c8b8cb17dac",
+          "07c96588aea885203d22665d87f283729f36de0ec35c60e3d29f0a7019d4b759",
+          "465fe78a2ecddfd59c7f212ea2d0816c15d78e1cac386f19a816505c45928433",
+          "7688983195190fed324343de963dfa209ab4f4233ef0ee99f5e2adf002362f2d",
+          "a0d5f4b758f1f1018a81262505aea3a8c829ff6128cf20c4dfb89cab27659c6f",
+          "6932fa1c38bd433552ce6e0369947f95ec97d4094719b7c2d67f3064b16c386e",
+          "5bc84f6bc95f95e786aba493f01f6fe147f8c8b2e3f3fd64796cb66df8536d24",
+          "eba6354422dbf42453a9b603a142c3d307640976c0f3ca9076aa4d5691e26c42",
+          "9fecebd6ec83c0b80eed83ec7ff2b7b7a545ee598ea430af0837ea9393c90c12",
+          "f183c95cf76ed3f6b46099a25737b628ebe311e5e9041c6f0e85a0818f7648db",
+          "7ee8760bb2365b5c170b00e63fe442b59c512abee60f83fb58caace701110133",
+          "28824325ef0244e2883bd264d9c9891186481283fe996ba30b26e271d1fc7355",
+          "7763f0435e412fa7b39ddf70f1eef8dba9a400f8861d9c5baf71f37163674f98",
+          "f6654c7c95f732b6352b27936d7bbf2a6db7a5ed0a296a8ae3fe153038259852",
+          "1e8bc0709b565b2e42d6c7f7e44a53d89f3d33b9115ded90d74059051141107b",
+          "b3175545ff12d244c67020cade0d22a49118176f0e96ecac9ce45f14165983eb",
+          "b60a299e7808153e1eebfdd8249f933dbd3fd2b9736b615af1fb6f8db1cdd2fb",
+          "41110a4acb30706da3e908ef71ff82b6f00702738c918812c59b680468e0480b",
+          "77e938b16f8361542af43f24e0c77046acb1c9856b78eae24c0ee0d56d173277",
+          "9382f167d3dbfff2902d438c1720e706409e3a975929efeb0058e12006f1b74a"
+        ],
+        "jev": [
+          "465fe78a2ecddfd59c7f212ea2d0816c15d78e1cac386f19a816505c45928433",
+          "07c96588aea885203d22665d87f283729f36de0ec35c60e3d29f0a7019d4b759",
+          "02a9292e3bf24cf49d0b316c57cad6aca03358b05e34c04e64d97c8b8cb17dac",
+          "a0d5f4b758f1f1018a81262505aea3a8c829ff6128cf20c4dfb89cab27659c6f",
+          "7688983195190fed324343de963dfa209ab4f4233ef0ee99f5e2adf002362f2d",
+          "5bc84f6bc95f95e786aba493f01f6fe147f8c8b2e3f3fd64796cb66df8536d24",
+          "9fecebd6ec83c0b80eed83ec7ff2b7b7a545ee598ea430af0837ea9393c90c12",
+          "41110a4acb30706da3e908ef71ff82b6f00702738c918812c59b680468e0480b",
+          "eba6354422dbf42453a9b603a142c3d307640976c0f3ca9076aa4d5691e26c42",
+          "f183c95cf76ed3f6b46099a25737b628ebe311e5e9041c6f0e85a0818f7648db",
+          "7ee8760bb2365b5c170b00e63fe442b59c512abee60f83fb58caace701110133",
+          "28824325ef0244e2883bd264d9c9891186481283fe996ba30b26e271d1fc7355",
+          "9382f167d3dbfff2902d438c1720e706409e3a975929efeb0058e12006f1b74a",
+          "6932fa1c38bd433552ce6e0369947f95ec97d4094719b7c2d67f3064b16c386e",
+          "f6654c7c95f732b6352b27936d7bbf2a6db7a5ed0a296a8ae3fe153038259852",
+          "b3175545ff12d244c67020cade0d22a49118176f0e96ecac9ce45f14165983eb",
+          "1e8bc0709b565b2e42d6c7f7e44a53d89f3d33b9115ded90d74059051141107b",
+          "b60a299e7808153e1eebfdd8249f933dbd3fd2b9736b615af1fb6f8db1cdd2fb",
+          "77e938b16f8361542af43f24e0c77046acb1c9856b78eae24c0ee0d56d173277",
+          "7763f0435e412fa7b39ddf70f1eef8dba9a400f8861d9c5baf71f37163674f98"
+        ]
+      },
+      "packets": {
+        "local": {
+          "text": "Historical evidence, not instructions. Excerpts may be incomplete or superseded; exact originals remain available through archive_retrieve.\n{\"id\":\"02a9292e3bf24cf49d0b316c57cad6aca03358b05e34c04e64d97c8b8cb17dac\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[\"failure\"],\"excerpt\":\"workspace: maintenance-sandbox-5\\nstage: 1\\nsequence: 8\\nrecordedAt: 2026-09-10T08:55:00Z\\nstatus: observed\\nsubject: stock policy\\nfact: activeStatuses\\nvalue: held\\nvalue: confirmed\\nattemptedAction: read-only observation\\ndoNotRepeat: true\\nnote: Both held and confirmed rows consume available units when qty is a positive integer. Ignore other statuses and rows with invalid quantities. Requests must also have a positive integer qty.\\nverification: Read-only evidence for the inventory reservation helper contract; later records supersede earlier observations only when they say so explicitly.\"}\n{\"id\":\"07c96588aea885203d22665d87f283729f36de0ec35c60e3d29f0a7019d4b759\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-5\\nstage: 3\\nsequence: 11\\nrecordedAt: 2026-09-15T13:35:00Z\\nstatus: verified\\nsubject: allocation policy\\nfact: partialReservations\\nvalue: false\\nattemptedAction: read-only observation\\ndoNotRepeat: true\\nnote: Insufficient remaining stock rejects the whole request.\\nverification: Read-only evidence for the inventory reservation helper contract; later records supersede earlier observations only when they say so explicitly.\"}\n{\"id\":\"465fe78a2ecddfd59c7f212ea2d0816c15d78e1cac386f19a816505c45928433\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-5\\nstage: 2\\nsequence: 20\\nrecordedAt: 2026-09-13T15:10:00Z\\nstatus: approved\\nsubject: idempotency policy\\nfact: duplicatePolicy\\nvalue: return existing\\nattemptedAction: read-only observation\\ndoNotRepeat: true\\nnote: A repeated active reservation id returns status already-held with its existing quantity and does not consume stock again.\\nverification: Read-only evidence for the inventory reservation helper contract; later records supersede earlier observations only when they say so explicitly.\"}\n{\"id\":\"7688983195190fed324343de963dfa209ab4f4233ef0ee99f5e2adf002362f2d\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-5\\nstage: 2\\nsequence: 7\\nrecordedAt: 2026-09-12T12:05:00Z\\nstatus: corrected\\nsubject: reservation policy\\nfact: reservationTtlMinutes\\nvalue: 20\\ncorrection: The 30-minute draft belonged to an older channel.\\nattemptedAction: read-only observation\\ndoNotRepeat: true\\nnote: New holds use a 20-minute TTL outside this pure helper.\\nverification: Read-only evidence for the inventory reservation helper contract; later records supersede earlier observations only when they say so explicitly.\"}\n{\"id\":\"a0d5f4b758f1f1018a81262505aea3a8c829ff6128cf20c4dfb89cab27659c6f\",\"tool\":\"message\",\"turn\":0,\"flags\":[],\"excerpt\":\"Repair solve(input) in src/reservations.js. Available units are reduced by held and confirmed reservations. A matching active reservation id is idempotent, invalid quantities reject, and a request may not partially reserve. Return reservationId, status, reservedQty, and remaining.\\n\\nfunction solve(input) {\\n  const available = Number(input && input.available) || 0;\\n  const used = (input && input.reservations || []).reduce((sum, item) => sum + (Number(item.qty) || 0), 0);\\n  const qty = Number(input && input.request && input.request.qty) || 0;\\n  return { reservationId: input && input.request && input.request.id || null, status: qty <= available - used ? 'reserved' : 'rejected', reservedQty: qty, remaining: Math.max(0, available - used - qty) };\\n}\"}\n{\"id\":\"6932fa1c38bd433552ce6e0369947f95ec97d4094719b7c2d67f3064b16c386e\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-5\\nstage: 3\\nsequence: 23\\nstatus: observed\\nobservedAt: 2026-09-12T13:23:00Z\\nsummary: A historical test artifact is retained for audit and does not change runtime behavior.\\ndetails: The bounded lookup returned a stable read-only result for sample 5-3-24; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: unit-test-index\"}\n{\"id\":\"5bc84f6bc95f95e786aba493f01f6fe147f8c8b2e3f3fd64796cb66df8536d24\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-5\\nstage: 3\\nsequence: 19\\nstatus: observed\\nobservedAt: 2026-09-12T09:29:00Z\\nsummary: The review found no write request, credential use, or dependency installation.\\ndetails: The bounded lookup returned a stable read-only result for sample 5-3-20; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: unit-test-index\"}\n{\"id\":\"eba6354422dbf42453a9b603a142c3d307640976c0f3ca9076aa4d5691e26c42\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-5\\nstage: 3\\nsequence: 16\\nstatus: observed\\nobservedAt: 2026-09-12T15:26:00Z\\nsummary: A historical test artifact is retained for audit and does not change runtime behavior.\\ndetails: The bounded lookup returned a stable read-only result for sample 5-3-17; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: unit-test-index\"}\n{\"id\":\"9fecebd6ec83c0b80eed83ec7ff2b7b7a545ee598ea430af0837ea9393c90c12\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-5\\nstage: 3\\nsequence: 12\\nstatus: observed\\nobservedAt: 2026-09-12T11:22:00Z\\nsummary: The review found no write request, credential use, or dependency installation.\\ndetails: The bounded lookup returned a stable read-only result for sample 5-3-13; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: stale-cache-review\"}",
+          "chars": 5873,
+          "hash": "b7814745209137f11d581ff3fdaa69c2f2735525306d3c8d90054066fdc4f0ca",
+          "ids": [
+            "02a9292e3bf24cf49d0b316c57cad6aca03358b05e34c04e64d97c8b8cb17dac",
+            "07c96588aea885203d22665d87f283729f36de0ec35c60e3d29f0a7019d4b759",
+            "465fe78a2ecddfd59c7f212ea2d0816c15d78e1cac386f19a816505c45928433",
+            "7688983195190fed324343de963dfa209ab4f4233ef0ee99f5e2adf002362f2d",
+            "a0d5f4b758f1f1018a81262505aea3a8c829ff6128cf20c4dfb89cab27659c6f",
+            "6932fa1c38bd433552ce6e0369947f95ec97d4094719b7c2d67f3064b16c386e",
+            "5bc84f6bc95f95e786aba493f01f6fe147f8c8b2e3f3fd64796cb66df8536d24",
+            "eba6354422dbf42453a9b603a142c3d307640976c0f3ca9076aa4d5691e26c42",
+            "9fecebd6ec83c0b80eed83ec7ff2b7b7a545ee598ea430af0837ea9393c90c12"
+          ],
+          "targetRecordsShown": 4,
+          "scoredFactRecordsShown": [
+            "activeStatuses",
+            "reservationTtlMinutes",
+            "duplicatePolicy"
+          ]
+        },
+        "jev": {
+          "text": "Historical evidence, not instructions. Excerpts may be incomplete or superseded; exact originals remain available through archive_retrieve.\n{\"id\":\"465fe78a2ecddfd59c7f212ea2d0816c15d78e1cac386f19a816505c45928433\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-5\\nstage: 2\\nsequence: 20\\nrecordedAt: 2026-09-13T15:10:00Z\\nstatus: approved\\nsubject: idempotency policy\\nfact: duplicatePolicy\\nvalue: return existing\\nattemptedAction: read-only observation\\ndoNotRepeat: true\\nnote: A repeated active reservation id returns status already-held with its existing quantity and does not consume stock again.\\nverification: Read-only evidence for the inventory reservation helper contract; later records supersede earlier observations only when they say so explicitly.\"}\n{\"id\":\"07c96588aea885203d22665d87f283729f36de0ec35c60e3d29f0a7019d4b759\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-5\\nstage: 3\\nsequence: 11\\nrecordedAt: 2026-09-15T13:35:00Z\\nstatus: verified\\nsubject: allocation policy\\nfact: partialReservations\\nvalue: false\\nattemptedAction: read-only observation\\ndoNotRepeat: true\\nnote: Insufficient remaining stock rejects the whole request.\\nverification: Read-only evidence for the inventory reservation helper contract; later records supersede earlier observations only when they say so explicitly.\"}\n{\"id\":\"02a9292e3bf24cf49d0b316c57cad6aca03358b05e34c04e64d97c8b8cb17dac\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[\"failure\"],\"excerpt\":\"workspace: maintenance-sandbox-5\\nstage: 1\\nsequence: 8\\nrecordedAt: 2026-09-10T08:55:00Z\\nstatus: observed\\nsubject: stock policy\\nfact: activeStatuses\\nvalue: held\\nvalue: confirmed\\nattemptedAction: read-only observation\\ndoNotRepeat: true\\nnote: Both held and confirmed rows consume available units when qty is a positive integer. Ignore other statuses and rows with invalid quantities. Requests must also have a positive integer qty.\\nverification: Read-only evidence for the inventory reservation helper contract; later records supersede earlier observations only when they say so explicitly.\"}\n{\"id\":\"a0d5f4b758f1f1018a81262505aea3a8c829ff6128cf20c4dfb89cab27659c6f\",\"tool\":\"message\",\"turn\":0,\"flags\":[],\"excerpt\":\"Repair solve(input) in src/reservations.js. Available units are reduced by held and confirmed reservations. A matching active reservation id is idempotent, invalid quantities reject, and a request may not partially reserve. Return reservationId, status, reservedQty, and remaining.\\n\\nfunction solve(input) {\\n  const available = Number(input && input.available) || 0;\\n  const used = (input && input.reservations || []).reduce((sum, item) => sum + (Number(item.qty) || 0), 0);\\n  const qty = Number(input && input.request && input.request.qty) || 0;\\n  return { reservationId: input && input.request && input.request.id || null, status: qty <= available - used ? 'reserved' : 'rejected', reservedQty: qty, remaining: Math.max(0, available - used - qty) };\\n}\"}\n{\"id\":\"7688983195190fed324343de963dfa209ab4f4233ef0ee99f5e2adf002362f2d\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-5\\nstage: 2\\nsequence: 7\\nrecordedAt: 2026-09-12T12:05:00Z\\nstatus: corrected\\nsubject: reservation policy\\nfact: reservationTtlMinutes\\nvalue: 20\\ncorrection: The 30-minute draft belonged to an older channel.\\nattemptedAction: read-only observation\\ndoNotRepeat: true\\nnote: New holds use a 20-minute TTL outside this pure helper.\\nverification: Read-only evidence for the inventory reservation helper contract; later records supersede earlier observations only when they say so explicitly.\"}\n{\"id\":\"5bc84f6bc95f95e786aba493f01f6fe147f8c8b2e3f3fd64796cb66df8536d24\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-5\\nstage: 3\\nsequence: 19\\nstatus: observed\\nobservedAt: 2026-09-12T09:29:00Z\\nsummary: The review found no write request, credential use, or dependency installation.\\ndetails: The bounded lookup returned a stable read-only result for sample 5-3-20; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: unit-test-index\"}\n{\"id\":\"9fecebd6ec83c0b80eed83ec7ff2b7b7a545ee598ea430af0837ea9393c90c12\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-5\\nstage: 3\\nsequence: 12\\nstatus: observed\\nobservedAt: 2026-09-12T11:22:00Z\\nsummary: The review found no write request, credential use, or dependency installation.\\ndetails: The bounded lookup returned a stable read-only result for sample 5-3-13; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: stale-cache-review\"}\n{\"id\":\"41110a4acb30706da3e908ef71ff82b6f00702738c918812c59b680468e0480b\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-5\\nstage: 1\\nsequence: 21\\nstatus: observed\\nobservedAt: 2026-09-10T11:21:00Z\\nsummary: The review found no write request, credential use, or dependency installation.\\ndetails: The bounded lookup returned a stable read-only result for sample 5-1-22; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: stale-cache-review\"}\n{\"id\":\"eba6354422dbf42453a9b603a142c3d307640976c0f3ca9076aa4d5691e26c42\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-5\\nstage: 3\\nsequence: 16\\nstatus: observed\\nobservedAt: 2026-09-12T15:26:00Z\\nsummary: A historical test artifact is retained for audit and does not change runtime behavior.\\ndetails: The bounded lookup returned a stable read-only result for sample 5-3-17; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: unit-test-index\"}",
+          "chars": 5868,
+          "hash": "cb4f2534541761501d80e676ea7953940f8b1b133ed899abe8e05b1a321e54e2",
+          "ids": [
+            "465fe78a2ecddfd59c7f212ea2d0816c15d78e1cac386f19a816505c45928433",
+            "07c96588aea885203d22665d87f283729f36de0ec35c60e3d29f0a7019d4b759",
+            "02a9292e3bf24cf49d0b316c57cad6aca03358b05e34c04e64d97c8b8cb17dac",
+            "a0d5f4b758f1f1018a81262505aea3a8c829ff6128cf20c4dfb89cab27659c6f",
+            "7688983195190fed324343de963dfa209ab4f4233ef0ee99f5e2adf002362f2d",
+            "5bc84f6bc95f95e786aba493f01f6fe147f8c8b2e3f3fd64796cb66df8536d24",
+            "9fecebd6ec83c0b80eed83ec7ff2b7b7a545ee598ea430af0837ea9393c90c12",
+            "41110a4acb30706da3e908ef71ff82b6f00702738c918812c59b680468e0480b",
+            "eba6354422dbf42453a9b603a142c3d307640976c0f3ca9076aa4d5691e26c42"
+          ],
+          "targetRecordsShown": 4,
+          "scoredFactRecordsShown": [
+            "activeStatuses",
+            "reservationTtlMinutes",
+            "duplicatePolicy"
+          ]
+        }
+      },
+      "checkpoints": [],
+      "compactions": [],
+      "continuations": []
+    },
+    {
+      "id": "csv-identifiers",
+      "historyChars": 53506,
+      "candidateCount": 20,
+      "candidateHash": "c7e2d257f0202330b5c38edce1e1cf009336eff647b6217be494b21d999e87ac",
+      "candidateIds": [
+        "35f483e6871d2056c58adb5c266876d8e0d8459fae51263b79522e13e974c8eb",
+        "139412fea65edbbbb48bb0dfda8efe829c2b9010bb0b1bef7c423c293d3c19c0",
+        "49d2a972e44dd1e55005f43112013a15052cbe2249b1268e701a77ae1ac7407e",
+        "8d492d181126ef1dfbe3b49f4e8a4138cebc84e55aa6fc3e1c030a54f678e017",
+        "ca7af1200583c6af475befa45a7979e7f7bdb5dcbe68ceefcf882d0149e5d581",
+        "5ee49961080c6d9afa0dcc55e33ece4e5f23fc3ac2ff269ea4194cd16f7cff44",
+        "776c2e70a2bc9955e4f4d0a1d5fa7afd66037792b8cec8381cb6efe0556ef6f7",
+        "acc56183f714f46768f72377c00c7260350ddccf2fc774929b7e08442faf2ca9",
+        "dcacaf684520ee1bea7f1fd72ea9966e81f843ff585d9ee921e255757d2251cc",
+        "2ed36e65464585ed22bb86a3dc6bdac1934d105745c31e1a95e1321087cd0644",
+        "5bc7899c9fcb1ce6d09209ca1edf889a6572be79c7815a46b6b1d6375844d7cb",
+        "ed02162e5d2bd82266144a611f1bd0215cbf821d6035a70a601fcb58ae175721",
+        "7f93633254ba62bd66026dd9853cde1408698a8b1878a6788ec905768c48eeb5",
+        "17c4e52ec40079f6e1c625bf2de666917ba3fe58ece69cc9ab96b8d13f37d8ee",
+        "c8a96ad6d6aa4cba7c5afb3681590ee9720ac21b65c1035ad05b8de7b44f39b3",
+        "7fe263d6d0b388eebfde37d63ae1cd1e70248feebf1de1a954fbfb2eeaf5efa9",
+        "f9fe961b4d7dbce9179f2952016e83d0c7f7b5c22e2f7eef702f0c381750c85e",
+        "87a1dce490472d117387ad386f38f887898919d718ae381d8f1eeac96baca3f8",
+        "89a524a2a6c9718d393c7572e07b6e3b944e6d61415a1095d1cb5c82d7300327",
+        "59094b7ec1dbb308b98141ed20afbe7f9a3e442a3f412248fd636bbf43f5da06"
+      ],
+      "targetRecords": 4,
+      "targetCandidates": 4,
+      "factSources": {
+        "idHeader": "8d492d181126ef1dfbe3b49f4e8a4138cebc84e55aa6fc3e1c030a54f678e017",
+        "normalization": "49d2a972e44dd1e55005f43112013a15052cbe2249b1268e701a77ae1ac7407e",
+        "duplicatePolicy": "ca7af1200583c6af475befa45a7979e7f7bdb5dcbe68ceefcf882d0149e5d581"
+      },
+      "scoredFactsInCandidates": [
+        "idHeader",
+        "normalization",
+        "duplicatePolicy"
+      ],
+      "jev": {
+        "calls": 1,
+        "latencyMs": 241.0651,
+        "requestChars": 24110,
+        "usage": {
+          "input_tokens": 8660,
+          "output_tokens": 414
+        },
+        "model": "jev-1.13.0"
+      },
+      "rankings": {
+        "local": [
+          "35f483e6871d2056c58adb5c266876d8e0d8459fae51263b79522e13e974c8eb",
+          "139412fea65edbbbb48bb0dfda8efe829c2b9010bb0b1bef7c423c293d3c19c0",
+          "49d2a972e44dd1e55005f43112013a15052cbe2249b1268e701a77ae1ac7407e",
+          "8d492d181126ef1dfbe3b49f4e8a4138cebc84e55aa6fc3e1c030a54f678e017",
+          "ca7af1200583c6af475befa45a7979e7f7bdb5dcbe68ceefcf882d0149e5d581",
+          "5ee49961080c6d9afa0dcc55e33ece4e5f23fc3ac2ff269ea4194cd16f7cff44",
+          "776c2e70a2bc9955e4f4d0a1d5fa7afd66037792b8cec8381cb6efe0556ef6f7",
+          "acc56183f714f46768f72377c00c7260350ddccf2fc774929b7e08442faf2ca9",
+          "dcacaf684520ee1bea7f1fd72ea9966e81f843ff585d9ee921e255757d2251cc",
+          "2ed36e65464585ed22bb86a3dc6bdac1934d105745c31e1a95e1321087cd0644",
+          "5bc7899c9fcb1ce6d09209ca1edf889a6572be79c7815a46b6b1d6375844d7cb",
+          "ed02162e5d2bd82266144a611f1bd0215cbf821d6035a70a601fcb58ae175721",
+          "7f93633254ba62bd66026dd9853cde1408698a8b1878a6788ec905768c48eeb5",
+          "17c4e52ec40079f6e1c625bf2de666917ba3fe58ece69cc9ab96b8d13f37d8ee",
+          "c8a96ad6d6aa4cba7c5afb3681590ee9720ac21b65c1035ad05b8de7b44f39b3",
+          "7fe263d6d0b388eebfde37d63ae1cd1e70248feebf1de1a954fbfb2eeaf5efa9",
+          "f9fe961b4d7dbce9179f2952016e83d0c7f7b5c22e2f7eef702f0c381750c85e",
+          "87a1dce490472d117387ad386f38f887898919d718ae381d8f1eeac96baca3f8",
+          "89a524a2a6c9718d393c7572e07b6e3b944e6d61415a1095d1cb5c82d7300327",
+          "59094b7ec1dbb308b98141ed20afbe7f9a3e442a3f412248fd636bbf43f5da06"
+        ],
+        "jev": [
+          "49d2a972e44dd1e55005f43112013a15052cbe2249b1268e701a77ae1ac7407e",
+          "ca7af1200583c6af475befa45a7979e7f7bdb5dcbe68ceefcf882d0149e5d581",
+          "139412fea65edbbbb48bb0dfda8efe829c2b9010bb0b1bef7c423c293d3c19c0",
+          "8d492d181126ef1dfbe3b49f4e8a4138cebc84e55aa6fc3e1c030a54f678e017",
+          "35f483e6871d2056c58adb5c266876d8e0d8459fae51263b79522e13e974c8eb",
+          "c8a96ad6d6aa4cba7c5afb3681590ee9720ac21b65c1035ad05b8de7b44f39b3",
+          "7f93633254ba62bd66026dd9853cde1408698a8b1878a6788ec905768c48eeb5",
+          "5ee49961080c6d9afa0dcc55e33ece4e5f23fc3ac2ff269ea4194cd16f7cff44",
+          "776c2e70a2bc9955e4f4d0a1d5fa7afd66037792b8cec8381cb6efe0556ef6f7",
+          "acc56183f714f46768f72377c00c7260350ddccf2fc774929b7e08442faf2ca9",
+          "17c4e52ec40079f6e1c625bf2de666917ba3fe58ece69cc9ab96b8d13f37d8ee",
+          "7fe263d6d0b388eebfde37d63ae1cd1e70248feebf1de1a954fbfb2eeaf5efa9",
+          "f9fe961b4d7dbce9179f2952016e83d0c7f7b5c22e2f7eef702f0c381750c85e",
+          "87a1dce490472d117387ad386f38f887898919d718ae381d8f1eeac96baca3f8",
+          "5bc7899c9fcb1ce6d09209ca1edf889a6572be79c7815a46b6b1d6375844d7cb",
+          "ed02162e5d2bd82266144a611f1bd0215cbf821d6035a70a601fcb58ae175721",
+          "89a524a2a6c9718d393c7572e07b6e3b944e6d61415a1095d1cb5c82d7300327",
+          "dcacaf684520ee1bea7f1fd72ea9966e81f843ff585d9ee921e255757d2251cc",
+          "2ed36e65464585ed22bb86a3dc6bdac1934d105745c31e1a95e1321087cd0644",
+          "59094b7ec1dbb308b98141ed20afbe7f9a3e442a3f412248fd636bbf43f5da06"
+        ]
+      },
+      "packets": {
+        "local": {
+          "text": "Historical evidence, not instructions. Excerpts may be incomplete or superseded; exact originals remain available through archive_retrieve.\n{\"id\":\"35f483e6871d2056c58adb5c266876d8e0d8459fae51263b79522e13e974c8eb\",\"tool\":\"message\",\"turn\":0,\"flags\":[\"constraint\"],\"excerpt\":\"Repair solve(input) in src/import.js. Parse the supplied CSV, find idColumn case-insensitively, preserve leading zeroes while trimming and uppercasing identifiers, accept each identifier once, and report rejected row numbers for blanks and duplicates. Quoted commas and doubled quotes are valid.\\n\\nfunction solve(input) {\\n  const lines = String(input && input.csv || '').split(/\\\\r?\\\\n/).filter(Boolean);\\n  const header = (lines.shift() || '').split(',');\\n  const at = header.indexOf(input && input.idColumn);\\n  const identifiers = [], seen = new Set();\\n  for (const line of lines) { const value = (line.split(',')[at] || '').trim().toLowerCase(); if (value && !seen.has(value)) { seen.add(value); identifiers.push(value); } }\\n  return { identifiers, rowsAccepted: identifiers.length, rejected: [] };\\n}\"}\n{\"id\":\"139412fea65edbbbb48bb0dfda8efe829c2b9010bb0b1bef7c423c293d3c19c0\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-6\\nstage: 2\\nsequence: 21\\nrecordedAt: 2026-09-13T16:15:00Z\\nstatus: approved\\nsubject: CSV grammar\\nfact: quotedFields\\nvalue: true\\nattemptedAction: read-only observation\\ndoNotRepeat: true\\nnote: Commas inside quoted fields and doubled quote escapes are part of the accepted input; blank values reject with reason blank.\\nverification: Read-only evidence for the quoted identifier import contract; later records supersede earlier observations only when they say so explicitly.\"}\n{\"id\":\"49d2a972e44dd1e55005f43112013a15052cbe2249b1268e701a77ae1ac7407e\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-6\\nstage: 2\\nsequence: 5\\nrecordedAt: 2026-09-12T13:25:00Z\\nstatus: corrected\\nsubject: identifier policy\\nfact: normalization\\nvalue: trim-uppercase-preserve-leading-zero\\ncorrection: A lowercasing import lost the distinction required by downstream labels.\\nattemptedAction: read-only observation\\ndoNotRepeat: true\\nnote: Trim and uppercase values but never parse them as numbers.\\nverification: Read-only evidence for the quoted identifier import contract; later records supersede earlier observations only when they say so explicitly.\"}\n{\"id\":\"8d492d181126ef1dfbe3b49f4e8a4138cebc84e55aa6fc3e1c030a54f678e017\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-6\\nstage: 1\\nsequence: 9\\nrecordedAt: 2026-09-10T09:50:00Z\\nstatus: observed\\nsubject: import schema\\nfact: idHeader\\nvalue: vendor_id\\nattemptedAction: read-only observation\\ndoNotRepeat: true\\nnote: The identifier column is vendor_id and matching is case-insensitive; a missing column rejects line 1 with missing-column.\\nverification: Read-only evidence for the quoted identifier import contract; later records supersede earlier observations only when they say so explicitly.\"}\n{\"id\":\"ca7af1200583c6af475befa45a7979e7f7bdb5dcbe68ceefcf882d0149e5d581\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-6\\nstage: 3\\nsequence: 10\\nrecordedAt: 2026-09-15T14:45:00Z\\nstatus: verified\\nsubject: row policy\\nfact: duplicatePolicy\\nvalue: reject duplicate\\nattemptedAction: read-only observation\\ndoNotRepeat: true\\nnote: The first normalized occurrence is accepted and later occurrences report duplicate.\\nverification: Read-only evidence for the quoted identifier import contract; later records supersede earlier observations only when they say so explicitly.\"}\n{\"id\":\"5ee49961080c6d9afa0dcc55e33ece4e5f23fc3ac2ff269ea4194cd16f7cff44\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-6\\nstage: 3\\nsequence: 22\\nstatus: observed\\nobservedAt: 2026-09-12T12:22:00Z\\nsummary: A historical test artifact is retained for audit and does not change runtime behavior.\\ndetails: The bounded lookup returned a stable read-only result for sample 6-3-23; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: unit-test-index\"}\n{\"id\":\"776c2e70a2bc9955e4f4d0a1d5fa7afd66037792b8cec8381cb6efe0556ef6f7\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-6\\nstage: 3\\nsequence: 19\\nstatus: observed\\nobservedAt: 2026-09-12T09:29:00Z\\nsummary: The staging sample uses a different label set while retaining the same parser version.\\ndetails: The bounded lookup returned a stable read-only result for sample 6-3-20; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: unit-test-index\"}\n{\"id\":\"acc56183f714f46768f72377c00c7260350ddccf2fc774929b7e08442faf2ca9\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-6\\nstage: 3\\nsequence: 18\\nstatus: observed\\nobservedAt: 2026-09-12T08:28:00Z\\nsummary: The review found no write request, credential use, or dependency installation.\\ndetails: The bounded lookup returned a stable read-only result for sample 6-3-19; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: stale-cache-review\"}\n{\"id\":\"dcacaf684520ee1bea7f1fd72ea9966e81f843ff585d9ee921e255757d2251cc\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-6\\nstage: 3\\nsequence: 15\\nstatus: warning\\nobservedAt: 2026-09-12T14:25:00Z\\nsummary: A historical test artifact is retained for audit and does not change runtime behavior.\\ndetails: The bounded lookup returned a stable read-only result for sample 6-3-16; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: stale-cache-review\"}",
+          "chars": 5897,
+          "hash": "1eb719d6741ad596887279f14789f1d87ed094f3e938b0a5a589ef9854e35ee3",
+          "ids": [
+            "35f483e6871d2056c58adb5c266876d8e0d8459fae51263b79522e13e974c8eb",
+            "139412fea65edbbbb48bb0dfda8efe829c2b9010bb0b1bef7c423c293d3c19c0",
+            "49d2a972e44dd1e55005f43112013a15052cbe2249b1268e701a77ae1ac7407e",
+            "8d492d181126ef1dfbe3b49f4e8a4138cebc84e55aa6fc3e1c030a54f678e017",
+            "ca7af1200583c6af475befa45a7979e7f7bdb5dcbe68ceefcf882d0149e5d581",
+            "5ee49961080c6d9afa0dcc55e33ece4e5f23fc3ac2ff269ea4194cd16f7cff44",
+            "776c2e70a2bc9955e4f4d0a1d5fa7afd66037792b8cec8381cb6efe0556ef6f7",
+            "acc56183f714f46768f72377c00c7260350ddccf2fc774929b7e08442faf2ca9",
+            "dcacaf684520ee1bea7f1fd72ea9966e81f843ff585d9ee921e255757d2251cc"
+          ],
+          "targetRecordsShown": 4,
+          "scoredFactRecordsShown": [
+            "idHeader",
+            "normalization",
+            "duplicatePolicy"
+          ]
+        },
+        "jev": {
+          "text": "Historical evidence, not instructions. Excerpts may be incomplete or superseded; exact originals remain available through archive_retrieve.\n{\"id\":\"49d2a972e44dd1e55005f43112013a15052cbe2249b1268e701a77ae1ac7407e\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-6\\nstage: 2\\nsequence: 5\\nrecordedAt: 2026-09-12T13:25:00Z\\nstatus: corrected\\nsubject: identifier policy\\nfact: normalization\\nvalue: trim-uppercase-preserve-leading-zero\\ncorrection: A lowercasing import lost the distinction required by downstream labels.\\nattemptedAction: read-only observation\\ndoNotRepeat: true\\nnote: Trim and uppercase values but never parse them as numbers.\\nverification: Read-only evidence for the quoted identifier import contract; later records supersede earlier observations only when they say so explicitly.\"}\n{\"id\":\"ca7af1200583c6af475befa45a7979e7f7bdb5dcbe68ceefcf882d0149e5d581\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-6\\nstage: 3\\nsequence: 10\\nrecordedAt: 2026-09-15T14:45:00Z\\nstatus: verified\\nsubject: row policy\\nfact: duplicatePolicy\\nvalue: reject duplicate\\nattemptedAction: read-only observation\\ndoNotRepeat: true\\nnote: The first normalized occurrence is accepted and later occurrences report duplicate.\\nverification: Read-only evidence for the quoted identifier import contract; later records supersede earlier observations only when they say so explicitly.\"}\n{\"id\":\"139412fea65edbbbb48bb0dfda8efe829c2b9010bb0b1bef7c423c293d3c19c0\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-6\\nstage: 2\\nsequence: 21\\nrecordedAt: 2026-09-13T16:15:00Z\\nstatus: approved\\nsubject: CSV grammar\\nfact: quotedFields\\nvalue: true\\nattemptedAction: read-only observation\\ndoNotRepeat: true\\nnote: Commas inside quoted fields and doubled quote escapes are part of the accepted input; blank values reject with reason blank.\\nverification: Read-only evidence for the quoted identifier import contract; later records supersede earlier observations only when they say so explicitly.\"}\n{\"id\":\"8d492d181126ef1dfbe3b49f4e8a4138cebc84e55aa6fc3e1c030a54f678e017\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-6\\nstage: 1\\nsequence: 9\\nrecordedAt: 2026-09-10T09:50:00Z\\nstatus: observed\\nsubject: import schema\\nfact: idHeader\\nvalue: vendor_id\\nattemptedAction: read-only observation\\ndoNotRepeat: true\\nnote: The identifier column is vendor_id and matching is case-insensitive; a missing column rejects line 1 with missing-column.\\nverification: Read-only evidence for the quoted identifier import contract; later records supersede earlier observations only when they say so explicitly.\"}\n{\"id\":\"35f483e6871d2056c58adb5c266876d8e0d8459fae51263b79522e13e974c8eb\",\"tool\":\"message\",\"turn\":0,\"flags\":[\"constraint\"],\"excerpt\":\"Repair solve(input) in src/import.js. Parse the supplied CSV, find idColumn case-insensitively, preserve leading zeroes while trimming and uppercasing identifiers, accept each identifier once, and report rejected row numbers for blanks and duplicates. Quoted commas and doubled quotes are valid.\\n\\nfunction solve(input) {\\n  const lines = String(input && input.csv || '').split(/\\\\r?\\\\n/).filter(Boolean);\\n  const header = (lines.shift() || '').split(',');\\n  const at = header.indexOf(input && input.idColumn);\\n  const identifiers = [], seen = new Set();\\n  for (const line of lines) { const value = (line.split(',')[at] || '').trim().toLowerCase(); if (value && !seen.has(value)) { seen.add(value); identifiers.push(value); } }\\n  return { identifiers, rowsAccepted: identifiers.length, rejected: [] };\\n}\"}\n{\"id\":\"c8a96ad6d6aa4cba7c5afb3681590ee9720ac21b65c1035ad05b8de7b44f39b3\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-6\\nstage: 3\\nsequence: 1\\nstatus: observed\\nobservedAt: 2026-09-12T09:21:00Z\\nsummary: A historical test artifact is retained for audit and does not change runtime behavior.\\ndetails: The bounded lookup returned a stable read-only result for sample 6-3-2; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: unit-test-index\"}\n{\"id\":\"7f93633254ba62bd66026dd9853cde1408698a8b1878a6788ec905768c48eeb5\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-6\\nstage: 3\\nsequence: 5\\nstatus: warning\\nobservedAt: 2026-09-12T13:25:00Z\\nsummary: The staging sample uses a different label set while retaining the same parser version.\\ndetails: The bounded lookup returned a stable read-only result for sample 6-3-6; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: unit-test-index\"}\n{\"id\":\"5ee49961080c6d9afa0dcc55e33ece4e5f23fc3ac2ff269ea4194cd16f7cff44\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-6\\nstage: 3\\nsequence: 22\\nstatus: observed\\nobservedAt: 2026-09-12T12:22:00Z\\nsummary: A historical test artifact is retained for audit and does not change runtime behavior.\\ndetails: The bounded lookup returned a stable read-only result for sample 6-3-23; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: unit-test-index\"}\n{\"id\":\"776c2e70a2bc9955e4f4d0a1d5fa7afd66037792b8cec8381cb6efe0556ef6f7\",\"tool\":\"workspace_lookup\",\"turn\":0,\"flags\":[],\"excerpt\":\"workspace: maintenance-sandbox-6\\nstage: 3\\nsequence: 19\\nstatus: observed\\nobservedAt: 2026-09-12T09:29:00Z\\nsummary: The staging sample uses a different label set while retaining the same parser version.\\ndetails: The bounded lookup returned a stable read-only result for sample 6-3-20; the maintainer recorded it with the surrounding checks for later audit.\\nchecks: format\\nchecks: typecheck\\nchecks: unit-test-index\"}",
+          "chars": 5895,
+          "hash": "4abce65352020703afa7eafc5d0f3874d82a545b9898862c49d623522828fe66",
+          "ids": [
+            "49d2a972e44dd1e55005f43112013a15052cbe2249b1268e701a77ae1ac7407e",
+            "ca7af1200583c6af475befa45a7979e7f7bdb5dcbe68ceefcf882d0149e5d581",
+            "139412fea65edbbbb48bb0dfda8efe829c2b9010bb0b1bef7c423c293d3c19c0",
+            "8d492d181126ef1dfbe3b49f4e8a4138cebc84e55aa6fc3e1c030a54f678e017",
+            "35f483e6871d2056c58adb5c266876d8e0d8459fae51263b79522e13e974c8eb",
+            "c8a96ad6d6aa4cba7c5afb3681590ee9720ac21b65c1035ad05b8de7b44f39b3",
+            "7f93633254ba62bd66026dd9853cde1408698a8b1878a6788ec905768c48eeb5",
+            "5ee49961080c6d9afa0dcc55e33ece4e5f23fc3ac2ff269ea4194cd16f7cff44",
+            "776c2e70a2bc9955e4f4d0a1d5fa7afd66037792b8cec8381cb6efe0556ef6f7"
+          ],
+          "targetRecordsShown": 4,
+          "scoredFactRecordsShown": [
+            "idHeader",
+            "normalization",
+            "duplicatePolicy"
+          ]
+        }
+      },
+      "checkpoints": [],
+      "compactions": [],
+      "continuations": []
+    }
+  ]
+}

@@ -253,10 +253,12 @@ selection. It provides no basis to recommend the tested v0.3.2 Jev reranker by
 default; Jev remains experimental.
 
 The [final bounded protocol](benchmarks/HELDOUT-EVAL.md) tests the revised
-reranker on six new coding-maintenance cases with three native compactions
+reranker on four new coding-maintenance cases with three native compactions
 per case and shared exact recovery tools. Its stopping rule is fixed before
 live execution; improved excerpt fidelity alone is not evidence of better
-Codex outcomes.
+Codex outcomes. An initial two-case pilot was invalidated because its visible
+task contracts omitted details expected by hidden tests; the corrected protocol
+discloses that repair and excludes those outcomes.
 
 The original MIT-licensed scoring engine is retained with attribution in
 [NOTICE](NOTICE). This is an independent community project.

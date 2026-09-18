@@ -30,7 +30,10 @@ try {
     assert(!scoreAnswer(testCase, null).fullyCorrect);
     for (let repetition = 0; repetition < 2; repetition++) armOrder(caseIndex, repetition).forEach((arm, position) => positions[arm][position]++);
   }
-  for (const counts of Object.values(positions)) assert.deepEqual(counts, [4, 4, 4]);
+  for (const counts of Object.values(positions)) {
+    assert.equal(counts.reduce((a, b) => a + b), 8);
+    assert(Math.max(...counts) - Math.min(...counts) <= 1);
+  }
   assert.equal(scoreCode('function solve(input) { while (true) {} }', [{ input: {}, expected: {} }]).passed, 0);
   assert.equal(scoreCode('function solve(input) { return process.env; }', [{ input: {}, expected: {} }]).passed, 0);
   assert.equal(scoreCode('function solve(input) { return input.constructor.constructor("return process")(); }', [{ input: {}, expected: {} }]).passed, 0);

@@ -327,6 +327,7 @@ const CASE_DEFS = [
   {
     id: 'local-window', topic: 'offset-aware time window',
     taskContext: 'Repair solve(input) in src/window.js. Input supplies an ISO timestamp, an explicit offset in minutes, and a start/end minute window. Return {within,localMinute}; windows may cross midnight, end is exclusive, and equal bounds mean the full day.\n\n',
+    contract: 'Contract: input is an object with timestamp string, offsetMinutes finite number (default 0), startMinute number, and endMinute number. Output is exactly {within:boolean,localMinute:number|null}. Invalid dates return {within:false,localMinute:null}; valid minutes wrap modulo 1440 after applying the supplied offset. The start boundary is included and the end boundary excluded; a crossing-midnight range accepts either side, and equal bounds accept the full day.\n\n',
     query: 'Repair the time-window helper shown in the task context. Return JSON {source,facts}; preserve explicit offsets, midnight crossing, inclusive start, exclusive end, and invalid-date behavior. Use historical records for contract facts.',
     source: WINDOW_SOURCE, expectedSource: WINDOW_EXPECTED,
     expectedFacts: { offsetMinutes: -300, windowStart: 1320, windowEnd: 120 },
@@ -350,6 +351,7 @@ const CASE_DEFS = [
   {
     id: 'cent-rounding', topic: 'discount and tax cents calculator',
     taskContext: 'Repair solve(input) in src/money.js. Amounts are integer cents. Discount and tax rates are basis points, each operation rounds half-up to cents, discount is capped, and totals must remain integer cents. Return discountCents, taxableCents, taxCents, totalCents.\n\n',
+    contract: 'Contract: input fields are subtotalCents integer (default 0), discountBps finite number (default 0), optional discountCapCents nonnegative integer, and taxBps finite number (default 0). Output is exactly four nonnegative integer cents fields: discountCents, taxableCents, taxCents, totalCents. Invalid or negative amounts/rates clamp to zero. Percentage cents use half-up rounding; discount is bounded by the cap and subtotal, tax uses post-discount taxable cents, and total is taxable plus tax.\n\n',
     query: 'Repair the cents calculator shown in the task context. Return JSON {source,facts}; preserve basis-point arithmetic, half-up rounding, the discount cap, nonnegative inputs, and integer totals. Use historical records for contract facts.',
     source: MONEY_SOURCE, expectedSource: MONEY_EXPECTED,
     expectedFacts: { rateBasis: 'basis points', rounding: 'half-up cents', discountCapCents: 1250 },
@@ -373,6 +375,7 @@ const CASE_DEFS = [
   {
     id: 'reservation-ledger', topic: 'inventory reservation helper',
     taskContext: 'Repair solve(input) in src/reservations.js. Available units are reduced by held and confirmed reservations. A matching active reservation id is idempotent, invalid quantities reject, and a request may not partially reserve. Return reservationId, status, reservedQty, and remaining.\n\n',
+    contract: 'Contract: input has available integer units (default 0), reservations array of {id,qty,status}, and request {id,qty}. Output is exactly {reservationId:string|null,status:string,reservedQty:integer,remaining:integer}. Active statuses are held and confirmed. A repeated active id returns status already-held with its existing quantity; invalid or nonpositive requests and insufficient stock return rejected with reservedQty 0; successful requests return reserved. When calculating used stock, count only positive integer quantities on active rows; ignore invalid or nonpositive quantities. Remaining never goes below zero.\n\n',
     query: 'Repair the reservation helper shown in the task context. Return JSON {source,facts}; preserve active statuses, idempotent reservation ids, no partial holds, and remaining inventory. Use historical records for contract facts.',
     source: INVENTORY_SOURCE, expectedSource: INVENTORY_EXPECTED,
     expectedFacts: { activeStatuses: ['held', 'confirmed'], reservationTtlMinutes: 20, duplicatePolicy: 'return existing' },
@@ -396,6 +399,7 @@ const CASE_DEFS = [
   {
     id: 'csv-identifiers', topic: 'quoted identifier import',
     taskContext: 'Repair solve(input) in src/import.js. Parse the supplied CSV, find idColumn case-insensitively, preserve leading zeroes while trimming and uppercasing identifiers, accept each identifier once, and report rejected row numbers for blanks and duplicates. Quoted commas and doubled quotes are valid.\n\n',
+    contract: 'Contract: input has csv string (default empty) and idColumn string. Output is exactly {identifiers:string[],rowsAccepted:integer,rejected:{line:integer,reason:string}[]}. Headers match case-insensitively. Values are trimmed and uppercased without numeric conversion; quoted commas, newlines, and doubled quotes parse as CSV. The first normalized identifier is accepted, later ones reject with duplicate, blank values reject with blank, and a missing header rejects line 1 with missing-column.\n\n',
     query: 'Repair the CSV identifier importer shown in the task context. Return JSON {source,facts}; preserve quoted fields, header matching, leading zeroes, duplicate reporting, and blank reporting. Use historical records for contract facts.',
     source: CSV_SOURCE, expectedSource: CSV_EXPECTED,
     expectedFacts: { idHeader: 'vendor_id', normalization: 'trim-uppercase-preserve-leading-zero', duplicatePolicy: 'reject duplicate' },
@@ -418,7 +422,7 @@ const CASE_DEFS = [
   },
 ];
 
-for (const spec of CASE_DEFS) spec.taskContext += spec.source;
+for (const spec of CASE_DEFS) spec.taskContext += `${spec.contract || ''}${spec.source}`;
 
 const REGRESSION_NAMES = Object.freeze({
   'cursor-window': ['dedupe', 'early-stop'],
@@ -429,8 +433,9 @@ const REGRESSION_NAMES = Object.freeze({
   'csv-identifiers': ['quoted-comma', 'duplicate'],
 });
 
-export function makeHeldoutCases() {
-  return CASE_DEFS.map((spec, caseIndex) => {
+const PRIMARY_CASE_IDS = Object.freeze(['local-window', 'cent-rounding', 'reservation-ledger', 'csv-identifiers']);
+
+function materializeCase(spec, caseIndex) {
     const { stages, relevantCallIds } = buildStages(spec, caseIndex);
     const expectedFacts = clone(spec.expectedFacts);
     return {
@@ -447,6 +452,16 @@ export function makeHeldoutCases() {
       answerSchema: schemaFor(expectedFacts),
       scoreFacts: scoreFactory(expectedFacts),
     };
+}
+
+export function makePilotCases() {
+  return CASE_DEFS.map((spec, caseIndex) => materializeCase(spec, caseIndex));
+}
+
+export function makeHeldoutCases() {
+  return PRIMARY_CASE_IDS.map((id) => {
+    const spec = CASE_DEFS.find((candidate) => candidate.id === id);
+    return materializeCase(spec, CASE_DEFS.indexOf(spec));
   });
 }
 
