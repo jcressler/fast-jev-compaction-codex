@@ -1,7 +1,7 @@
 # Fast Jev Compaction for Codex
 
 Fast Jev Compaction adds task-aware Jev evidence selection around Codex's native
-compaction. Version 0.3.2 records stable, immutable content-addressed objects
+compaction. Version 0.3.3 records stable, immutable content-addressed objects
 and a cumulative index that survives compaction. It helps you find and inspect
 earlier tool evidence after native compaction; it does not rewrite a live
 transcript, replace native compaction, or claim live token reduction.
@@ -33,8 +33,9 @@ structured and JSON-encoded batches. It returns query-centered excerpts with
 the original parent ID, record index, and field. This works with existing v2
 archives without rebuilding an index or changing stored objects.
 Search is lexical and bounded: a missing result is not proof of absence.
-Automatic Jev selection at compaction still uses bounded excerpts; this release
-improves archive search, not that selector's candidate extraction.
+Automatic Jev selection at compaction still uses its existing bounded excerpts.
+Version 0.3.3 improves explicit search reranking with fuller visible evidence,
+optional task context, and stable local ordering on ties or failed requests.
 
 Hooks are disabled with `FAST_JEV_ENABLED=0`. `FAST_JEV_ALLOW_NETWORK=1` enables
 network use only together with `FAST_JEV_MODE=jev` and a key. It does not gate
@@ -152,7 +153,8 @@ Inspect `scan.complete`, `scan.skipped`, and `scan.nextOffset`; continue using
 `--offset NEXT_OFFSET` when present. Cursors address catalog entries, not ranked
 results, so each page ranks only its scanned entries. `scan.resultsTruncated`
 means the result limit omitted matching entries; increase `--limit` up to 100.
-Each result includes up to three 280-character match excerpts.
+Each result includes up to three 280-character match excerpts and a visible
+`rerankEvidence` view capped at 1,800 characters.
 Oversized, missing, corrupt, or extraction-limited objects are reported as gaps;
 they do not prevent later objects from being searched. A final page can have
 `nextOffset: null` and `complete: false` when gaps remain. Exact retrieval uses
@@ -163,10 +165,13 @@ merges cumulative capture manifests. Queries allow up to 4,000 characters and
 Use optional Jev ranking only when the transfer is authorized:
 
 ```sh
-TYPESAFE_API_KEY=your-key node dist/cli.js search \
+node dist/cli.js search \
   --archive DIRECTORY/index.json --query "migration failure" \
+  --task-context "Continue the approved schema repair; preserve earlier constraints" \
   --limit 10 --jev --allow-network
 ```
+
+Supply `TYPESAFE_API_KEY` through secure shell input or your secret manager.
 
 Retrieve exact raw content by its full content ID. Retrieval is bounded and
 paginated; it never reruns a tool or writes to recover missing evidence:
@@ -185,9 +190,13 @@ incompatible with guaranteed live replay and is not the recommended workflow.
 
 Jev hooks send bounded user objectives, recent user/assistant discussion, and
 candidate tool input/output excerpts to TypeSafe. Explicit Jev search sends the
-query and bounded visible tool/message excerpts centered on local search matches
-(at most 20 candidates, 120 outcome characters per candidate). It does not send
-raw objects or match arrays. Failure falls back to the local search order.
+query (up to 1,000 characters), optional task context (up to 2,000), and bounded
+visible output/message excerpts (at most 20 candidates, up to 1,800 evidence
+characters plus 300 outcome characters per candidate). Structured corrections,
+status, and chronology are retained when they fit. State plus questions are
+capped at 48 KiB, shrinking evidence if necessary while retaining every
+candidate. Search reranking excludes raw tool input, objects, and match arrays.
+Tied scores and failures preserve the original local search order.
 These excerpts are not a redactor and
 may contain sensitive text; configure Jev only for tasks whose transfer is
 authorized. Opaque reasoning and system/developer records are excluded. The local archive is complete for the
@@ -240,8 +249,14 @@ character caps, and 48 continuations from confirmed common-base forks. Native
 and enhanced local recovery each answered 12/12 correctly; Jev and the
 equal-score production-order control each answered 8/12. This tests explicit
 search reranking with a custom evidence packet, not automatic PreCompact
-selection. It provides no basis to recommend the current Jev reranker by
+selection. It provides no basis to recommend the tested v0.3.2 Jev reranker by
 default; Jev remains experimental.
+
+The [final bounded protocol](benchmarks/HELDOUT-EVAL.md) tests the revised
+reranker on six new coding-maintenance cases with three native compactions
+per case and shared exact recovery tools. Its stopping rule is fixed before
+live execution; improved excerpt fidelity alone is not evidence of better
+Codex outcomes.
 
 The original MIT-licensed scoring engine is retained with attribution in
 [NOTICE](NOTICE). This is an independent community project.

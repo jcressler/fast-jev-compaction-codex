@@ -235,8 +235,9 @@ describe('bounded raw archive search', () => {
     const state = receivedState as { candidates: Array<Record<string, unknown>> };
     expect(state.candidates.length).toBeGreaterThan(0);
     expect(state.candidates.every((candidate) => !('records' in candidate) && !('matches' in candidate))).toBe(true);
-    expect(state.candidates.every((candidate) => typeof candidate.outcome === 'string' && (candidate.outcome as string).length <= 120)).toBe(true);
-    expect(state.candidates.some((candidate) => /boundary-fact/i.test(String(candidate.outcome)))).toBe(true);
+    expect(state.candidates.every((candidate) => typeof candidate.outcome === 'string' && (candidate.outcome as string).length <= 300)).toBe(true);
+    expect(state.candidates.every((candidate) => !('arguments' in candidate) && !('input' in candidate))).toBe(true);
+    expect(state.candidates.some((candidate) => /boundary-fact/i.test(String(candidate.evidence)))).toBe(true);
     expect(JSON.stringify({ receivedState, receivedQuestions })).not.toContain('records');
     expect(JSON.stringify({ receivedState, receivedQuestions })).not.toContain('matches');
   });
@@ -280,6 +281,99 @@ describe('bounded raw archive search', () => {
     const ranked = await rankArchiveSearch(local, 'CAFÉ ΔELTA', asker, 10);
     expect(ranked.mode).toBe('local-fallback');
     expect(ranked.entries.map((entry) => entry.id)).toEqual(originalIDs);
+  });
+
+  it('keeps local order for exact Jev ties and sends late correction context', async () => {
+    const query = 'CORRECTION-QUERY-FACT';
+    const correction = `${query} ${'historical context '.repeat(30)} CORRECTED: the earlier deployment failed and was superseded by the final revision.`;
+    const f = await fixture([
+      ...pair('correction-old', correction),
+      ...pair('correction-new', `${query} newer supporting result`),
+    ]);
+    const local = await searchArchive(f.index, query, { limit: 10 });
+    const localIDs = local.entries.map((entry) => entry.id);
+    expect(local.entries.find((entry) => entry.callId === 'correction-old')?.rerankEvidence).toMatch(/CORRECTED|superseded/i);
+    let receivedState: unknown;
+    const asker: JevAsker = {
+      ask: async (state, questions) => {
+        receivedState = state;
+        const candidates = (state as { candidates: Array<{ evidence?: string }> }).candidates;
+        expect(Object.keys(questions)).toHaveLength(candidates.length);
+        return { answers: Object.fromEntries(candidates.map((_, index) => [`evidence_${index}`, { type: 'noul' as const, noul: 0.5 }])) };
+      },
+    };
+    const ranked = await rankArchiveSearch(local, query, asker, 10);
+    expect(ranked.entries.map((entry) => entry.id)).toEqual(localIDs);
+    expect(JSON.stringify(receivedState)).toMatch(/CORRECTED|superseded/i);
+  });
+
+  it('includes structured status and excludes protected reasoning from rerank evidence', async () => {
+    const visible = 'STATUS-NEARBY-FACT';
+    const protectedMarker = 'RERANK-PROTECTED-REASONING';
+    const f = await fixture([
+      ...pair('status-nearby', {
+        details: `${visible} result body`,
+        status: 'failed',
+        correction: 'proposed fix was superseded by the current status',
+        reasoning: protectedMarker,
+        content: [{ type: 'reasoning', text: protectedMarker }, { type: 'text', text: visible }],
+      }),
+    ]);
+    const local = await searchArchive(f.index, visible);
+    expect(local.entries[0]?.rerankEvidence).toMatch(/status: failed/i);
+    let sent: unknown;
+    const asker: JevAsker = { ask: async (state) => {
+      sent = state;
+      const candidates = (state as { candidates: unknown[] }).candidates;
+      return { answers: Object.fromEntries(candidates.map((_, index) => [`evidence_${index}`, { type: 'noul' as const, noul: 0.7 }])) };
+    } };
+    await rankArchiveSearch(local, visible, asker);
+    expect(JSON.stringify(sent)).toContain('status: failed');
+    expect(JSON.stringify(sent)).not.toContain(protectedMarker);
+  });
+
+  it('keeps approved numeric and timestamp siblings beside a long structured paragraph', async () => {
+    const query = 'PAGE-SIZE-FACT';
+    const f = await fixture([
+      ...pair('structured-siblings', {
+        paragraph: `${query} ${'long historical paragraph '.repeat(90)}`,
+        status: 'approved',
+        pageSize: 3,
+        observedAt: '2026-09-18T12:34:56Z',
+        note: 'current approved configuration',
+      }),
+    ]);
+    const local = await searchArchive(f.index, query);
+    const evidence = local.entries[0]?.rerankEvidence ?? '';
+    expect(evidence.length).toBeLessThanOrEqual(1_800);
+    expect(evidence).toMatch(/status: approved/i);
+    expect(evidence).toContain('pageSize: 3');
+    expect(evidence).toContain('observedAt: 2026-09-18T12:34:56Z');
+  });
+
+  it('bounds the full rerank request while retaining all twenty local candidates', async () => {
+    const query = 'REQUEST-BOUND-FACT';
+    const f = await fixture(Array.from({ length: 20 }, (_, index) => pair(
+      `bound-${index}`,
+      `${query} ${'visible result '.repeat(160)} status complete`,
+    )).flat());
+    const local = await searchArchive(f.index, query, { limit: 20 });
+    let receivedState: unknown;
+    let receivedQuestions: unknown;
+    const asker: JevAsker = { ask: async (state, questions) => {
+      receivedState = state;
+      receivedQuestions = questions;
+      const candidates = (state as { candidates: unknown[] }).candidates;
+      return { answers: Object.fromEntries(candidates.map((_, index) => [`evidence_${index}`, { type: 'noul' as const, noul: index / candidates.length }])) };
+    } };
+    const longQuery = `${query}${'q'.repeat(1_200)}`;
+    await rankArchiveSearch(local, longQuery, asker, 20, { taskContext: 'task context '.repeat(300) });
+    const state = receivedState as { query: string; taskContext?: string; candidates: Array<{ evidence?: string }> };
+    expect(state.query.length).toBeLessThanOrEqual(1_000);
+    expect(state.taskContext?.length ?? 0).toBeLessThanOrEqual(2_000);
+    expect(state.candidates).toHaveLength(20);
+    expect(state.candidates.every((candidate) => (candidate.evidence?.length ?? 0) <= 1_800)).toBe(true);
+    expect(Buffer.byteLength(JSON.stringify({ state: receivedState, questions: receivedQuestions }), 'utf8')).toBeLessThanOrEqual(48 * 1024);
   });
 
   it('reports bounded text extraction when a structured result exceeds traversal limits', async () => {

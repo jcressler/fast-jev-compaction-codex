@@ -1,4 +1,4 @@
-import { type EvidenceSummary } from './evidence.js';
+import type { EvidenceSummary } from './evidence.js';
 import type { JevAsker } from './types.js';
 export interface ArchiveSearchOptions {
     limit?: number;
@@ -16,6 +16,8 @@ export interface EvidenceMatch {
 export interface ArchiveSearchHit extends EvidenceSummary {
     matches: EvidenceMatch[];
     matchedTerms: string[];
+    /** Bounded, visible output/message context prepared during the verified read. */
+    rerankEvidence?: string;
 }
 export interface ArchiveSearchResult {
     entries: ArchiveSearchHit[];
@@ -40,9 +42,14 @@ export interface ArchiveSearchResult {
  * A complete scan describes this page's coverage, not semantic recall.
  */
 export declare function searchArchive(archivePath: string, query: string, options?: ArchiveSearchOptions): Promise<ArchiveSearchResult>;
-/** Opt-in Jev reranking uses only bounded visible excerpts, never raw objects. */
-export declare function rankArchiveSearch(result: ArchiveSearchResult, query: string, asker: JevAsker, limit?: number): Promise<{
+export interface RankArchiveSearchOptions {
+    taskContext?: string;
+}
+/** Opt-in Jev reranking scores the existing local page without rereading raw data. */
+export declare function rankArchiveSearch(result: ArchiveSearchResult, query: string, asker: JevAsker, limit?: number, options?: RankArchiveSearchOptions): Promise<{
     entries: ArchiveSearchHit[];
+    mode: "local-fallback";
+    requests: number;
     scan: {
         resultsTruncated: boolean;
         generation: string;
@@ -57,11 +64,27 @@ export declare function rankArchiveSearch(result: ArchiveSearchResult, query: st
             reason: string;
         }[];
     };
-    mode: "jev" | "local-fallback";
-    requests: number;
+} | {
+    scan: {
+        resultsTruncated: boolean;
+        generation: string;
+        offset: number;
+        scannedEntries: number;
+        scannedBytes: number;
+        scanBudgetBytes: number;
+        complete: boolean;
+        nextOffset: number | null;
+        skipped: {
+            id: string;
+            reason: string;
+        }[];
+    };
     usage?: {
         input_tokens?: number;
         output_tokens?: number;
-    };
+    } | undefined;
+    entries: ArchiveSearchHit[];
+    mode: "jev";
+    requests: number;
 }>;
 //# sourceMappingURL=search.d.ts.map

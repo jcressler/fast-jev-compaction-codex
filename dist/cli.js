@@ -20,6 +20,7 @@ const HELP = `fast-jev-codex — local evidence recovery around native Codex com
 search accepts --limit 1..100 (default 10) and --offset for the next scan page.
 Search scans up to 128 entries / 8 MiB, at most 2 MiB per object; inspect scan.complete,
 scan.skipped and scan.nextOffset. Jev ranks at most 20 local matches.
+Jev search accepts --task-context "current objective and constraints" (up to 2000 characters).
 retrieve accepts --offset and --max-chars 1..64000 (default 12000) for large records.
 Local commands need no key. Jev hooks require FAST_JEV_MODE=jev,
 FAST_JEV_ALLOW_NETWORK=1 and TYPESAFE_API_KEY. Jev search requires TYPESAFE_API_KEY and
@@ -61,7 +62,7 @@ async function main() {
     const { values } = parseArgs({ args: process.argv.slice(3), options: {
             input: { type: 'string' }, output: { type: 'string' }, archive: { type: 'string' },
             query: { type: 'string' }, id: { type: 'string' }, limit: { type: 'string' },
-            offset: { type: 'string' }, 'max-chars': { type: 'string' },
+            offset: { type: 'string' }, 'max-chars': { type: 'string' }, 'task-context': { type: 'string' },
             jev: { type: 'boolean' }, 'allow-network': { type: 'boolean' },
         } });
     if (command === 'search' || command === 'retrieve' || command === 'status') {
@@ -79,6 +80,8 @@ async function main() {
                 throw new Error('--query is required');
             if (values.query.length > 4_000)
                 throw new Error('Query exceeds 4000 characters');
+            if ((values['task-context']?.length ?? 0) > 2000)
+                throw new Error('Task context exceeds 2000 characters');
             const limit = integer(values.limit, 10, 1, 100, '--limit');
             if (values.jev && !values['allow-network'])
                 throw new Error('--allow-network is required for Jev ranking');
@@ -87,7 +90,7 @@ async function main() {
             const offset = integer(values.offset, 0, 0, Number.MAX_SAFE_INTEGER, '--offset');
             const local = await searchArchive(values.archive, values.query, { limit: values.jev ? 20 : limit, offset });
             const result = values.jev
-                ? await rankArchiveSearch(local, values.query, new JevClient(), limit)
+                ? await rankArchiveSearch(local, values.query, new JevClient(), limit, { taskContext: values['task-context'] })
                 : { ...local, mode: 'local', requests: 0 };
             console.log(JSON.stringify({ archive: resolve(values.archive), ...result }, null, 2));
         }
