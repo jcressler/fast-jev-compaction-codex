@@ -160,6 +160,26 @@ describe('fast-jev-codex CLI', () => {
     expect(collision.stderr).toMatch(/identity|transcript|different session/i);
   });
 
+  it('finds a buried output fact offline and reports search coverage', async () => {
+    const value = await archiveFixture();
+    const lines = value.transcript.trim().split('\n').map(line => JSON.parse(line));
+    lines[lines.length - 1].payload.output = `${'diagnostic noise '.repeat(2000)} buried-receipt-Z7 quantity=37`;
+    await writeFile(value.input, lines.map(line => JSON.stringify(line)).join('\n'));
+    const archive = join(value.directory, 'evidence-archive');
+    const env = { ...environment(value.directory), TYPESAFE_API_KEY: 'unused-local-test-key' };
+    expect((await invoke(['archive', '--input', value.input, '--output', archive], { env })).code).toBe(0);
+    const args = ['search', '--archive', join(archive, 'index.json'), '--query', 'buried-receipt-Z7'];
+    const result = await invoke(args, { env });
+    expect(result.code).toBe(0);
+    const found = JSON.parse(result.stdout);
+    expect(found).toMatchObject({ mode: 'local', requests: 0, scan: { complete: true, nextOffset: null } });
+    expect(found.entries).toHaveLength(1);
+    expect(found.entries[0].matches[0].text).toContain('quantity=37');
+    const invalid = await invoke([...args, '--offset', '-1'], { env });
+    expect(invalid.code).toBe(1);
+    expect(invalid.stderr).toContain('--offset');
+  });
+
   it('requires explicit network opt-in and a key for optional Jev search', async () => {
     const value = await archiveFixture();
     const archive = join(value.directory, 'evidence-archive');

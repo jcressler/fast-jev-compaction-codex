@@ -68,6 +68,7 @@ export function recoveryContext(catalog, archive, maxChars = 6_000, selection) {
         `CLI: node ${JSON.stringify(fileURLToPath(new URL('./cli.js', import.meta.url)))}. ` +
         'Run that CLI with search --archive <that path> --query <current question>, then ' +
         'retrieve --archive <that path> --id <id>. Both are offline by default. ' +
+        'Search reports scan.complete and scan.skipped; continue with --offset scan.nextOffset when present. ' +
         `Selection: ${selection?.mode ?? 'local'}.\n`;
     if (prefix.length + 120 > maxChars)
         return 'Local recovery index omitted: path exceeds context budget.'.slice(0, maxChars);

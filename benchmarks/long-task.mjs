@@ -8,7 +8,7 @@ import { spawn } from 'node:child_process';
 import { CodexEvalClient } from './codex-eval-client.mjs';
 import { createFixture, createToolHandler, evaluateWorkspace } from './long-task-fixture.mjs';
 import { readCatalog, retrieveEvidence } from '../dist/archive.js';
-import { searchEvidence } from '../dist/evidence.js';
+import { searchArchive } from '../dist/search.js';
 
 const args = process.argv.slice(2);
 const arg = (name, fallback) => { const i = args.indexOf(name); return i < 0 ? fallback : args[i + 1]; };
@@ -38,7 +38,7 @@ const protocol = { schemaVersion: 1, model: 'gpt-5.6-luna', effort: 'medium', se
 await writeFile(join(root, 'protocol.json'), JSON.stringify(protocol, null, 2) + '\n', { flag: 'wx', mode: 0o600 });
 
 const archiveTools = [
-  { type: 'function', name: 'archive_search', description: 'Search evidence saved by the recovery hook for this task. Offline; unavailable before a hook capture.', inputSchema: { type: 'object', properties: { query: { type: 'string' } }, required: ['query'], additionalProperties: false } },
+  { type: 'function', name: 'archive_search', description: 'Search saved original evidence offline. Inspect scan.complete and scan.skipped; continue with scan.nextOffset when present. Unavailable before a hook capture.', inputSchema: { type: 'object', properties: { query: { type: 'string' }, offset: { type: 'integer', minimum: 0 } }, required: ['query'], additionalProperties: false } },
   { type: 'function', name: 'archive_retrieve', description: 'Retrieve an exact original evidence record by ID from this task recovery archive. Use this instead of repeating an external write.', inputSchema: { type: 'object', properties: { id: { type: 'string' } }, required: ['id'], additionalProperties: false } },
 ];
 
@@ -122,7 +122,7 @@ async function runArm(mode) {
     else if (tool.startsWith('archive_')) {
       const saved = await latestArchive(data);
       if (!saved) result = { error: 'No recovery archive available for this task' };
-      else if (tool === 'archive_search') result = { entries: searchEvidence(saved.catalog.entries.filter(e => e.kind !== 'opaque'), args.query, 10) };
+      else if (tool === 'archive_search') result = await searchArchive(saved.path, args.query, { offset: args.offset });
       else {
         const entry = saved.catalog.entries.find(e => e.id === args.id);
         result = entry && entry.kind !== 'opaque' ? await retrieveEvidence(saved.path, args.id) : { error: 'Unknown evidence ID' };

@@ -12,7 +12,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { JevClient } from '../dist/client.js';
 import { captureArchive, readCatalog, retrieveEvidence } from '../dist/archive.js';
-import { rankEvidence, searchEvidence } from '../dist/evidence.js';
+import { rankArchiveSearch, searchArchive } from '../dist/search.js';
 
 const args = new Set(process.argv.slice(2));
 const useJev = args.has('--jev');
@@ -105,7 +105,7 @@ async function archiveReplay(items, mode = 'archive') {
     await captureArchive(items.second, root, identity, Date.now() + 1);
     if (!sourceBefore.equals(await readFile(sourcePath))) throw new Error('source fixture mutated');
     const catalog = await readCatalog(catalogPath);
-    const selected = tasks.flatMap((task) => searchEvidence(catalog.entries, task.prompt, 3));
+    const selected = (await Promise.all(tasks.map(task => searchArchive(catalogPath, task.prompt, { limit: 3 })))).flatMap(result => result.entries);
     const recovered = await retrieveMatches(catalogPath, selected);
     return { mode, scoreKind: 'deterministic-fixture', latencyMs: elapsed(start), costUsd: 0,
       compactions: 2, entries: catalog.entries.length, ...evaluate(recovered) };
@@ -122,11 +122,11 @@ async function jevReplay(items) {
     const identity = { session: 'benchmark-session', transcript: join(root, 'synthetic-rollout.jsonl'), cwd: root };
     await captureArchive(items.first, root, identity, Date.now());
     await captureArchive(items.second, root, identity, Date.now() + 1);
-    const catalog = await readCatalog(catalogPath);
     const ranked = [];
     const ranking = [];
     for (const task of tasks) {
-      const result = await rankEvidence(catalog.entries, task.prompt, new JevClient(), 3);
+      const local = await searchArchive(catalogPath, task.prompt, { limit: 20 });
+      const result = await rankArchiveSearch(local, task.prompt, new JevClient(), 3);
       ranking.push({ taskId: task.id, mode: result.mode, requests: result.requests, usage: result.usage ?? null });
       ranked.push(...(await retrieveMatches(catalogPath, result.entries)));
     }

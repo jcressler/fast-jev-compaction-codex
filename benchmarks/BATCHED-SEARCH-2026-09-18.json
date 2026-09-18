@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-09-18",
+  "implementationVersion": "0.3.2",
+  "comparison": "same-record offline retrieval",
+  "nativeModelCalls": 0,
+  "jevCalls": 0,
+  "generatedFixture": {
+    "schemaVersion": 1,
+    "benchmark": "batched-search",
+    "mode": "offline-fixture",
+    "batches": 6,
+    "records": 90,
+    "diagnosticBytes": 17231,
+    "metrics": {
+      "queries": 48,
+      "baselineHits": 30,
+      "archiveHits": 48,
+      "baselineEntries": 60,
+      "archiveEntries": 48,
+      "recovered": 48,
+      "targetTop1": 48,
+      "pages": 48,
+      "scanSkipped": 0,
+      "fieldMatches": 48
+    },
+    "objectsPreserved": true,
+    "passed": true,
+    "regressions": []
+  },
+  "longerTrialLocalArchive": {
+    "schemaVersion": 1,
+    "benchmark": "batched-search",
+    "mode": "archive",
+    "entries": 36,
+    "metrics": {
+      "queries": 3,
+      "baselineHits": 0,
+      "archiveHits": 3,
+      "baselineEntries": 0,
+      "archiveEntries": 5,
+      "recovered": 3,
+      "targetTop1": 3,
+      "pages": 3,
+      "scanSkipped": 0,
+      "fieldMatches": 3
+    },
+    "objectsPreserved": true,
+    "passed": true,
+    "regressions": []
+  },
+  "queriesReplayed": [
+    "synthetic_receipt_lookup",
+    "receiptId",
+    "legacy"
+  ],
+  "limitations": [
+    "Generated queries measure lexical retrieval, not semantic recall or model quality.",
+    "Saved-run queries were selected because v0.3.1 returned no matches; this is a regression replay, not a held-out outcome test.",
+    "No longer model task was rerun; historical scores are unchanged.",
+    "Automatic PreCompact Jev candidate extraction is unchanged."
+  ],
+  "validation": {
+    "unitTestsPassed": 95,
+    "pluginManifest": "passed",
+    "build": "passed",
+    "typecheck": "passed",
+    "skill": "passed"
+  }
+}

@@ -1,5 +1,16 @@
 # Recovery replay benchmark
 
+`node benchmarks/batched-search.mjs` compares summary search with bounded raw
+archive search on the same generated records, entirely offline. It checks
+parent IDs, query-centered match fields, exact retrieval, and unchanged objects
+across six captures. To replay an existing synthetic archive, provide
+`--archive DIRECTORY/index.json --queries queries.json`; descriptors can include
+`query`, `entryId` or `callId`, `field`, and an expected `fact`. Repeated `--query`
+arguments support discovery checks without expected IDs. Output contains
+aggregate counts, never archived text. The
+[recorded search results](BATCHED-SEARCH-2026-09-18.md) distinguish coverage from
+end-to-end model quality.
+
 Run the deterministic local comparison after building the package:
 
 ```sh

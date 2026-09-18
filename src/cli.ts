@@ -6,7 +6,7 @@ import { JevClient } from './client.js';
 import { compactCodexItems, parseCodexTranscript } from './codex.js';
 import { readRecoveryRun, runHook, writeNewArchive } from './hooks.js';
 import { captureArchive, readBounded, readCatalog, retrieveEvidence } from './archive.js';
-import { rankEvidence, searchEvidence } from './evidence.js';
+import { rankArchiveSearch, searchArchive } from './search.js';
 
 const HELP = `fast-jev-codex — local evidence recovery around native Codex compaction
 
@@ -18,7 +18,9 @@ const HELP = `fast-jev-codex — local evidence recovery around native Codex com
   fast-jev-codex search --archive index.json --query "question" --jev --allow-network
   fast-jev-codex hook       (Codex hook JSON on stdin; local or configured Jev mode)
 
-search accepts --limit 1..100 (default 10); Jev ranks at most 20 candidates.
+search accepts --limit 1..100 (default 10) and --offset for the next scan page.
+Search scans up to 128 entries / 8 MiB, at most 2 MiB per object; inspect scan.complete,
+scan.skipped and scan.nextOffset. Jev ranks at most 20 local matches.
 retrieve accepts --offset and --max-chars 1..64000 (default 12000) for large records.
 Local commands need no key. Jev hooks require FAST_JEV_MODE=jev,
 FAST_JEV_ALLOW_NETWORK=1 and TYPESAFE_API_KEY. Jev search requires TYPESAFE_API_KEY and
@@ -71,10 +73,11 @@ async function main() {
       const limit = integer(values.limit, 10, 1, 100, '--limit');
       if (values.jev && !values['allow-network']) throw new Error('--allow-network is required for Jev ranking');
       if (values.jev && !process.env.TYPESAFE_API_KEY) throw new Error('TYPESAFE_API_KEY is required');
-      const catalog = await readCatalog(values.archive);
+      const offset = integer(values.offset, 0, 0, Number.MAX_SAFE_INTEGER, '--offset');
+      const local = await searchArchive(values.archive, values.query, { limit: values.jev ? 20 : limit, offset });
       const result = values.jev
-        ? await rankEvidence(catalog.entries, values.query, new JevClient(), limit)
-        : { entries: searchEvidence(catalog.entries, values.query, limit), mode: 'local', requests: 0 };
+        ? await rankArchiveSearch(local, values.query, new JevClient(), limit)
+        : { ...local, mode: 'local', requests: 0 };
       console.log(JSON.stringify({ archive: resolve(values.archive), ...result }, null, 2));
     } else {
       if (!values.id) throw new Error('--id is required');

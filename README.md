@@ -1,7 +1,7 @@
 # Fast Jev Compaction for Codex
 
 Fast Jev Compaction adds task-aware Jev evidence selection around Codex's native
-compaction. Version 0.3.1 records stable, immutable content-addressed objects
+compaction. Version 0.3.2 records stable, immutable content-addressed objects
 and a cumulative index that survives compaction. It helps you find and inspect
 earlier tool evidence after native compaction; it does not rewrite a live
 transcript, replace native compaction, or claim live token reduction.
@@ -28,11 +28,13 @@ semantic guarantee. Raw records remain retrievable by full content ID when a
 flag is insufficient. Recovery reads historical evidence only; it does not
 authorize repeating a recorded action.
 
-Current limitation: search uses short index summaries and outcomes. A large
-batched `exec` result can hide later receipt/error details from those snippets
-even though the raw object is preserved. Jev also sees bounded excerpts, so
-ranking cannot reliably recover facts that those excerpts omit. An empty
-search result does not mean the evidence never existed.
+Search inspects the original visible inputs, outputs, and messages, including
+structured and JSON-encoded batches. It returns query-centered excerpts with
+the original parent ID, record index, and field. This works with existing v2
+archives without rebuilding an index or changing stored objects.
+Search is lexical and bounded: a missing result is not proof of absence.
+Automatic Jev selection at compaction still uses bounded excerpts; this release
+improves archive search, not that selector's candidate extraction.
 
 Hooks are disabled with `FAST_JEV_ENABLED=0`. `FAST_JEV_ALLOW_NETWORK=1` enables
 network use only together with `FAST_JEV_MODE=jev` and a key. It does not gate
@@ -138,11 +140,25 @@ Archive a rollout into a durable local recovery directory:
 node dist/cli.js archive --input rollout.jsonl --output DIRECTORY
 ```
 
-Search the cumulative index offline:
+Search the cumulative archive offline:
 
 ```sh
 node dist/cli.js search --archive DIRECTORY/index.json --query "migration failure" --limit 10
 ```
+
+Each scan reads at most 128 eligible entries and 8 MiB of object bytes, with a
+2 MiB per-object limit. It scans full eligible objects, not just their prefixes.
+Inspect `scan.complete`, `scan.skipped`, and `scan.nextOffset`; continue using
+`--offset NEXT_OFFSET` when present. Cursors address catalog entries, not ranked
+results, so each page ranks only its scanned entries. `scan.resultsTruncated`
+means the result limit omitted matching entries; increase `--limit` up to 100.
+Each result includes up to three 280-character match excerpts.
+Oversized, missing, corrupt, or extraction-limited objects are reported as gaps;
+they do not prevent later objects from being searched. A final page can have
+`nextOffset: null` and `complete: false` when gaps remain. Exact retrieval uses
+the existing separate limits. These scan limits exclude catalog loading, which
+merges cumulative capture manifests. Queries allow up to 4,000 characters and
+64 distinct terms.
 
 Use optional Jev ranking only when the transfer is authorized:
 
@@ -169,7 +185,10 @@ incompatible with guaranteed live replay and is not the recommended workflow.
 
 Jev hooks send bounded user objectives, recent user/assistant discussion, and
 candidate tool input/output excerpts to TypeSafe. Explicit Jev search sends the
-query and bounded tool outcome snippets. These excerpts are not a redactor and
+query and bounded visible tool/message excerpts centered on local search matches
+(at most 20 candidates, 120 outcome characters per candidate). It does not send
+raw objects or match arrays. Failure falls back to the local search order.
+These excerpts are not a redactor and
 may contain sensitive text; configure Jev only for tasks whose transfer is
 authorized. Opaque reasoning and system/developer records are excluded. The local archive is complete for the
 records it received and is the source of truth for retrieval. Jev may influence
@@ -210,7 +229,10 @@ Jev-assisted recovery both scored 100/100; local recovery and the candidate-orde
 control scored 84/100 after losing receipt facts in their final audits. All three
 automatic Jev calls and restorations succeeded. This single task demonstrates
 integration, not an advantage over native defaults, and exposed a batched-output
-search weakness that should be addressed before stronger claims.
+search weakness. Version 0.3.2 addresses that retrieval failure; the longer model
+trial has not been rerun with the fix. See the
+[offline search evaluation](benchmarks/BATCHED-SEARCH-2026-09-18.md) for the
+same-record comparison. Neither evaluation establishes that Jev improves Codex.
 
 The original MIT-licensed scoring engine is retained with attribution in
 [NOTICE](NOTICE). This is an independent community project.
