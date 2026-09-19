@@ -1,5 +1,14 @@
 # Explicit-contract automatic comparison results
 
+> **Interpretation corrected 2026-09-19.** The raw measurements below are
+> retained, but they do not establish that Jev is slower, more expensive, or
+> less effective than stock Codex. All arms hit a 100% quality ceiling, the
+> exact contract and stage-2 correction were recoverable from the persistent
+> workspace, and the pilot and scored run used different Codex CLI binaries.
+> An independent paired audit found no stable latency, token, or proxy-cost
+> difference. See
+> [`AUTOMATIC-EXPLICIT-RESULTS-AUDIT-2026-09-19.md`](AUTOMATIC-EXPLICIT-RESULTS-AUDIT-2026-09-19.md).
+
 The scored run completed all 36 fresh executions: six task units, two
 repetitions, and three arms. Every execution completed, passed its frozen
 grader, and passed the integration gate. The independent native transcript
@@ -41,11 +50,12 @@ addition to the native Codex transcripts. Jev selection therefore does not
 remove the plugin's local archive requirement in this implementation.
 
 The earlier one-task excluded pilot favored Jev on latency and Codex usage.
-This larger run did not reproduce the token advantage and showed a much smaller
-latency advantage over stock. The larger result should carry more weight, while
-the shared 100% quality rate shows that the benchmark needs harder tasks or
-longer natural-context trajectories to test whether retrieval improves
-downstream correctness.
+The scored aggregate did not reproduce the token advantage. Because the exact
+same task reversed its token result after the Codex CLI changed, and because
+paired uncertainty spans advantages in both directions, neither run should be
+used to claim a stable cost or speed ordering. The shared 100% quality rate
+shows that this fixture can validate integration and non-regression, but cannot
+test whether retrieval improves downstream correctness.
 
 The privacy-safe per-run evidence, frozen hashes, selection telemetry, native
 usage counters, audit metadata, and pairwise calculations are in
