@@ -25,7 +25,11 @@ uses a new directory and manifest, with hashes of both fixture files and this
 protocol. Every run gets a fresh workspace, session, and recovery archive.
 The three already authenticated profiles are reused, one per approach.
 
-CLI remains 0.155.0, model `gpt-5.6-luna`, effort `medium`, plugin version 0.3.5.
+The scored run uses Codex CLI `0.155.0-alpha.9.2`, the current Codex Desktop
+binary available after the application updated between the excluded pilot and
+the scored run. The pilot's exact `0.155.0` binary is no longer installed. All
+three scored arms use the same frozen binary. Model `gpt-5.6-luna`, effort
+`medium`, and plugin version 0.3.5 are unchanged.
 The source plugin, installed bundles, base instructions, writable sandbox,
 approval policy, disabled apps/memories/multi-agent/web search, and secret
 exclusion policy are unchanged. Each boundary allows at most one Jev selection
