@@ -267,6 +267,10 @@ them.
 
 ## Development and benchmark status
 
+The latest 36-execution explicit-contract comparison is documented in
+[`benchmarks/AUTOMATIC-EXPLICIT-RESULTS-2026-09-18.md`](benchmarks/AUTOMATIC-EXPLICIT-RESULTS-2026-09-18.md),
+with privacy-safe per-run evidence in the adjacent JSON file.
+
 The build and transcript runtime target Node.js 22.12+. Run the ordinary local
 checks from a checkout:
 
