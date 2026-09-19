@@ -1,23 +1,20 @@
 # Fast Jev Compaction for Codex
 
-**Experimental; added value is not yet established.** An audit of the
-[earlier comparison](benchmarks/HELDOUT-RESULTS-2026-09-18.md) found that its Jev
-question treated a yes/no probability as an ordinal utility rating and omitted
-the requested fact fields from the reranker's task. The earlier data is retained,
-but its recommendation to shelve the overall idea was too broad. Version 0.3.4
-corrects those issues and adds selection across explicit requirements. The
-[corrected comparison](benchmarks/CORRECTED-RESULTS-2026-09-18.md) completed four
-fresh tasks and 24 continuations: Jev and local retrieval each passed all checks
-in 7/8 runs, versus 6/8 for the native reference. All three recovered 24/24 facts.
-The trial does not demonstrate added value over local retrieval. Native
-compaction and local retrieval remain the defaults.
+**Experimental. Native integration is verified; a coding-quality benefit has not
+been established.** Version 0.3.5 was exercised through the actual installed
+plugin in 42 native Codex runs. Every run passed its integration checks,
+including live Jev requests and matching delivered-context hashes. The
+[contract audit](benchmarks/AUTOMATIC-CONTRACT-AUDIT-2026-09-18.md) found missing
+output-schema details in the benchmark's visible instructions, so those coding
+scores are retained as contract-invalid and cannot fairly rank the approaches.
+A [fresh explicit-contract comparison](benchmarks/AUTOMATIC-EXPLICIT-EVAL.md)
+keeps the hidden grader and thresholds while clarifying every required shape.
 
-Version 0.3.5 extends coverage selection to the automatic hook path and records
-which references the hook actually emits. Its [integration check](benchmarks/AUTOMATIC-HOOK-CHECK-2026-09-18.md)
-passed the hook-function check and, after authenticating the isolated test
-profile, a real native Codex compaction with one live Jev request and model
-confirmation of the delivered recovery index. This used reviewed user hooks;
-bundled installation and the planned repository quality comparison remain untested.
+The earlier [explicit-retrieval comparison](benchmarks/CORRECTED-RESULTS-2026-09-18.md)
+found Jev and local retrieval each passing 7/8 runs, versus 6/8 for its native
+reference. That small test did not show added value over local retrieval and
+used a different design from automatic installed-plugin recovery. Native
+compaction and optional local retrieval remain the defaults.
 
 Fast Jev Compaction adds task-aware Jev evidence selection around Codex's native
 compaction. It records stable, immutable content-addressed objects
@@ -182,7 +179,7 @@ node benchmarks/automatic-hook-check.mjs --live --allow-network --output hook-ch
 
 This check validates requirement propagation, metadata, immutable originals,
 and the single-use handoff. It does not launch Codex or measure coding quality.
-The [next automatic evaluation protocol](benchmarks/AUTOMATIC-EVAL.md) describes
+The [frozen automatic evaluation protocol](benchmarks/AUTOMATIC-EVAL.md) describes
 a separate comparison with ordinary Codex, local recovery, and Jev recovery.
 
 ## CLI

@@ -1,5 +1,10 @@
 # Recovery replay benchmark
 
+For the installed-plugin experiment, see the [contract audit](AUTOMATIC-CONTRACT-AUDIT-2026-09-18.md)
+and [fresh explicit-contract protocol](AUTOMATIC-EXPLICIT-EVAL.md). The earlier
+42 executions verified native integration, but their coding-quality scores are
+contract-invalid because visible instructions omitted required output details.
+
 For the controlled same-candidate comparison and repeated native continuations,
 see [the paired evaluation protocol](PAIRED-EVAL.md). It compares enhanced local
 search, the production equal-score ordering control, live Jev, and native-only
